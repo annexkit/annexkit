@@ -1,0 +1,24 @@
+[project]
+name = "annexkit-demo-chatbot-openai"
+version = "0.1.0"
+description = "End-to-end AnnexKit demo: chatbot -> collector -> Annex IV PDF"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "annexkit",
+    "httpx>=0.27",
+    "openai>=1.40",
+    "python-dotenv>=1.0",
+]
+
+[tool.uv.sources]
+# Pull the SDK from the local sibling path so the demo always runs against
+# the version of AnnexKit you have checked out — no PyPI roundtrip needed.
+annexkit = { path = "../../sdk", editable = true }
+
+[tool.uv]
+# This project ships a script (``chatbot.py``); it's not a library to be
+# built or published. ``package = false`` skips the build step on
+# ``uv sync`` so we don't need a hatchling/setuptools config for an
+# example file.
+package = false

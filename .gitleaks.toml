@@ -1,0 +1,40 @@
+# Gitleaks configuration — extend the default rules with project-
+# specific allow-lists so legitimate strings don't trip the scanner.
+#
+# The default ruleset (loaded via `useDefault = true`) already covers:
+#   * Stripe secret keys (sk_live_, sk_test_)
+#   * AWS access keys
+#   * Google / GCP credentials
+#   * Generic high-entropy strings
+#   * Private keys (RSA/EC/OpenSSH)
+#   * JWTs, Slack tokens, GitHub PATs, etc.
+#
+# What we override here is the allow-list: strings that LOOK like
+# secrets but are deliberately committed placeholders (dev defaults,
+# test fixtures). When gitleaks flags one of those, we add a rule here
+# rather than whitelisting the whole file.
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Global allow-list — placeholders that are not real secrets"
+# Paths that are test fixtures or docs-only examples.
+paths = [
+  '''\.env\.example$''',
+  '''SECURITY_AND_LEGAL\.md$''',
+  '''README\.md$''',
+  '''backend/tests/''',
+  '''\.pre-commit-config\.yaml$''',
+  '''\.gitleaks\.toml$''',
+]
+# Specific strings that are public/placeholder values we've intentionally
+# committed. Each entry should have a short comment explaining why.
+regexes = [
+  # Dev default for SECRET_KEY — documented as "change in prod".
+  '''dev-only-insecure-change-me-in-production''',
+  # Sample Stripe test price id pattern — not a live key.
+  '''sk_test_EXAMPLE''',
+  # Dev database password — local-only.
+  '''dev_password''',
+]

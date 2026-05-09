@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Annex IV — {{ ctx.system.system_id }}</title>
+<style>
+  /* ----------------- Page setup ----------------- */
+  @page {
+    size: A4;
+    margin: 22mm 18mm 24mm 18mm;
+    @top-left {
+      content: "Annex IV — {{ ctx.system.system_id }}";
+      font-family: 'DejaVu Sans', sans-serif; font-size: 8pt; color: #666;
+    }
+    @top-right {
+      content: "Page " counter(page) " of " counter(pages);
+      font-family: 'DejaVu Sans', sans-serif; font-size: 8pt; color: #666;
+    }
+    @bottom-left {
+      content: "Document " "{{ ctx.document_id }}";
+      font-family: 'DejaVu Sans Mono', monospace; font-size: 7pt; color: #888;
+    }
+    @bottom-right {
+      content: "AnnexKit v{{ ctx.annexkit_version }} — annexkit.dev";
+      font-family: 'DejaVu Sans', sans-serif; font-size: 7pt; color: #888;
+    }
+    @bottom-center {
+      content: "Not legal advice — consult counsel";
+      font-family: 'DejaVu Sans', sans-serif; font-size: 7pt; color: #b00;
+    }
+  }
+  @page :first {
+    @top-left { content: ""; }
+    @top-right { content: ""; }
+  }
+
+  body {
+    font-family: 'DejaVu Sans', 'Liberation Sans', system-ui, sans-serif;
+    font-size: 9.5pt;
+    line-height: 1.5;
+    color: #1a1a1a;
+  }
+
+  /* ----------------- Cover page ----------------- */
+  .cover {
+    page-break-after: always;
+    height: 247mm;
+    display: flex; flex-direction: column; justify-content: space-between;
+    align-items: center; text-align: center;
+  }
+  .cover-top { margin-top: 25mm; }
+  .cover-eyebrow {
+    font-size: 9pt; letter-spacing: 0.3em; text-transform: uppercase;
+    color: #666; margin-bottom: 8pt;
+  }
+  .cover-title {
+    font-size: 28pt; font-weight: 700; margin: 0 0 4pt 0; line-height: 1.1;
+  }
+  .cover-subtitle {
+    font-size: 14pt; color: #555; font-weight: 400; margin: 0 0 18pt 0;
+  }
+  .cover-citation {
+    font-size: 10pt; color: #444; margin-bottom: 28pt;
+    padding: 6pt 12pt; border: 1pt solid #ddd; display: inline-block;
+    background: #fafafa;
+  }
+  .cover-system {
+    font-size: 22pt; font-family: 'DejaVu Sans Mono', monospace;
+    margin: 14pt 0 4pt 0; color: #111;
+  }
+  .cover-tenant {
+    font-size: 12pt; color: #555; margin-bottom: 24pt;
+  }
+  .cover-tier-wrap { margin: 16pt 0 30pt 0; }
+  .cover-tier-badge {
+    display: inline-block; padding: 12pt 24pt;
+    font-size: 18pt; font-weight: 700; letter-spacing: 0.1em;
+    border: 3pt solid; border-radius: 4pt;
+  }
+  .cover-tier-badge.unacceptable { color: #fff; background: #b00; border-color: #800; }
+  .cover-tier-badge.high { color: #fff; background: #d56000; border-color: #a04000; }
+  .cover-tier-badge.limited { color: #fff; background: #266; border-color: #144; }
+  .cover-tier-badge.minimal { color: #fff; background: #2a7; border-color: #150; }
+  .cover-tier-badge.auto { color: #fff; background: #888; border-color: #555; }
+  .cover-meta {
+    font-size: 9pt; color: #555;
+    border-top: 1pt solid #ddd; padding-top: 14pt; width: 70%;
+  }
+  .cover-meta dl { margin: 0; }
+  .cover-meta dt {
+    float: left; clear: left; width: 45%; font-weight: 600; padding: 2pt 0;
+    text-align: right; padding-right: 8pt;
+  }
+  .cover-meta dd { margin-left: 50%; padding: 2pt 0; text-align: left; }
+  .cover-disclaimer {
+    margin-top: 20pt; font-style: italic; color: #b00; font-size: 9pt;
+  }
+
+  /* ----------------- Body ----------------- */
+  h1 {
+    font-size: 16pt; margin: 18pt 0 6pt 0; color: #111;
+    border-bottom: 2pt solid #111; padding-bottom: 4pt;
+    page-break-before: always; page-break-after: avoid;
+  }
+  h1.no-break { page-break-before: auto; }
+  h2 {
+    font-size: 12pt; margin-top: 14pt; margin-bottom: 4pt; color: #222;
+    page-break-after: avoid;
+  }
+  h3 {
+    font-size: 10.5pt; margin-top: 10pt; margin-bottom: 3pt; color: #333;
+    page-break-after: avoid;
+  }
+  p { margin: 5pt 0; }
+
+  /* ----------------- Tables ----------------- */
+  table {
+    border-collapse: collapse; width: 100%; margin: 6pt 0; font-size: 8.5pt;
+    page-break-inside: auto;
+  }
+  th, td {
+    border: 1pt solid #ccc; padding: 4pt 6pt; text-align: left; vertical-align: top;
+  }
+  th { background: #f0f0f0; font-weight: 600; }
+  tr:nth-child(even) { background: #fafafa; }
+
+  code, .mono {
+    font-family: 'DejaVu Sans Mono', 'Liberation Mono', monospace; font-size: 8.5pt;
+  }
+
+  /* ----------------- Tier badges inline ----------------- */
+  .tier { font-weight: 700; padding: 1pt 4pt; border-radius: 2pt; }
+  .tier-unacceptable { color: #b00; background: #fde; }
+  .tier-high { color: #c60; background: #fed; }
+  .tier-limited { color: #069; background: #def; }
+  .tier-minimal { color: #060; background: #dfd; }
+  .tier-auto { color: #888; font-style: italic; }
+
+  /* ----------------- Callouts ----------------- */
+  blockquote {
+    border-left: 3pt solid #b00; background: #fff7f7;
+    padding: 6pt 10pt; margin: 8pt 0; font-style: italic; color: #600;
+  }
+  .placeholder { color: #888; font-style: italic; }
+  .info-callout {
+    border-left: 3pt solid #069; background: #f0f7fc;
+    padding: 6pt 10pt; margin: 8pt 0; color: #069;
+  }
+  .summary-box {
+    border: 1pt solid #ddd; background: #fafafa; padding: 8pt 12pt;
+    margin: 10pt 0; line-height: 1.55;
+  }
+
+  /* ----------------- Gap analysis statuses ----------------- */
+  .status { font-weight: 700; font-size: 8pt; padding: 1pt 4pt; }
+  .status-auto { color: #050; background: #dfd; }
+  .status-partial { color: #850; background: #ffe6cc; }
+  .status-manual { color: #444; background: #eee; }
+
+  /* ----------------- TOC ----------------- */
+  .toc { font-size: 9pt; margin: 8pt 0; }
+  .toc ol { padding-left: 18pt; }
+  .toc li { padding: 1pt 0; }
+
+  /* ----------------- Sign-off block ----------------- */
+  .signature-row {
+    margin: 16pt 0; padding: 12pt; border: 1pt dashed #aaa; background: #fafafa;
+  }
+  .signature-line {
+    display: inline-block; width: 70%; border-bottom: 1pt solid #444;
+    margin: 8pt 0 2pt 0;
+  }
+  .signature-label { font-size: 8pt; color: #666; }
+
+  hr { border: 0; border-top: 1pt solid #ddd; margin: 14pt 0; }
+
+  ul, ol { margin: 4pt 0; padding-left: 20pt; }
+  li { margin: 2pt 0; }
+</style>
+</head>
+<body>
+
+{# ============================== COVER PAGE ============================== #}
+<div class="cover">
+  <div class="cover-top">
+    <div class="cover-eyebrow">Annex IV / Allegato IV</div>
+    <h1 class="cover-title" style="page-break-before: auto; border: none; margin: 0;">
+      Technical Documentation
+    </h1>
+    <div class="cover-subtitle">Documentazione tecnica</div>
+    <div class="cover-citation">
+      Reg. (UE) 2024/1689 — AI Act — Article 11 + Annex IV
+    </div>
+
+    <div class="cover-system"><code>{{ ctx.system.system_id }}</code></div>
+    <div class="cover-tenant">Tenant: {{ ctx.tenant.name }}</div>
+
+    <div class="cover-tier-wrap">
+      {% set tier_class = ctx.system.risk_tier %}
+      {% set tier_label = {
+        "unacceptable": "UNACCEPTABLE / INACCETTABILE",
+        "high": "HIGH RISK / ALTO RISCHIO",
+        "limited": "LIMITED RISK / RISCHIO LIMITATO",
+        "minimal": "MINIMAL RISK / RISCHIO MINIMO",
+        "auto": "PENDING CLASSIFICATION"
+      }[ctx.system.risk_tier] %}
+      <div class="cover-tier-badge {{ tier_class }}">{{ tier_label }}</div>
+    </div>
+  </div>
+
+  <div class="cover-meta">
+    <dl>
+      <dt>Document ID</dt><dd><code>{{ ctx.document_id }}</code></dd>
+      <dt>Generated (UTC)</dt><dd>{{ ctx.generated_at.isoformat() }}</dd>
+      <dt>Rules version</dt><dd>{{ ctx.system.rules_version }}</dd>
+      <dt>System UUID</dt><dd><code>{{ ctx.system.id }}</code></dd>
+      <dt>Generator</dt><dd>AnnexKit v{{ ctx.annexkit_version }}</dd>
+    </dl>
+    <div class="cover-disclaimer">
+      AnnexKit is not a law firm / AnnexKit non è uno studio legale —
+      see disclaimer inside.
+    </div>
+  </div>
+</div>
+
+{# ============================== EXECUTIVE SUMMARY ============================== #}
+<h1 class="no-break">Executive summary</h1>
+<div class="summary-box">{{ ctx.executive_summary }}</div>
+
+<blockquote>
+  <strong>Disclaimer / Avviso</strong>: AnnexKit is not a law firm /
+  AnnexKit non è uno studio legale. This document presents technical
+  evidence collected from runtime telemetry; legal interpretation,
+  sign-off, and the related Article 47 EU declaration of conformity
+  are the responsibility of the provider's legal counsel.
+</blockquote>
+
+{# ============================== TABLE OF CONTENTS ============================== #}
+<h1>Table of contents / Indice</h1>
+<div class="toc">
+  <ol>
+    <li>General description / Descrizione generale</li>
+    <li>Detailed description (design choices) / Descrizione dettagliata</li>
+    <li>Monitoring, control, human oversight / Monitoraggio, controllo, sorveglianza</li>
+    <li>Risk management (Article 9) / Gestione del rischio</li>
+    <li>Description of changes / Storico modifiche</li>
+    <li>Harmonised standards / Norme armonizzate</li>
+    <li>EU declaration of conformity (Article 47)</li>
+    <li>Post-market monitoring (Article 72) / Monitoraggio post-mercato</li>
+    <li>Information for deployers (Article 13) / Informazioni per deployer</li>
+  </ol>
+  <p><strong>Appendices:</strong></p>
+  <ul>
+    <li>A — Compliance gap analysis</li>
+    <li>B — Glossary / Glossario</li>
+    <li>C — Sample evidence (recent spans)</li>
+    <li>D — Document control &amp; sign-off</li>
+  </ul>
+</div>
+
+{# ============================== §1 ============================== #}
+<h1>1. General description / Descrizione generale</h1>
+
+<h2>1.1 Intended purpose / Finalità (Annex IV §1(a))</h2>
+<p><strong>Declared purpose</strong>:
+  {% if ctx.system.purpose %}{{ ctx.system.purpose }}{% else %}<span class="placeholder">Provider input required — set the <code>purpose</code> field on the AI system declaration.</span>{% endif %}
+</p>
+<table>
+  <tr><th>System identifier</th><td><code>{{ ctx.system.system_id }}</code></td></tr>
+  <tr><th>General-purpose AI (GPAI)</th><td>{{ "Yes / Sì" if ctx.system.is_gpai else "No" }}</td></tr>
+</table>
+
+<h2>1.2 Persons responsible / Soggetti responsabili (Annex IV §1(b))</h2>
+<table>
+  <tr><th style="width:38%">Field</th><th>Value</th></tr>
+  <tr><td>Legal name</td><td>{% if ctx.system.provider_info.legal_name %}{{ ctx.system.provider_info.legal_name }}{% else %}<span class="placeholder">Provider input required</span>{% endif %}</td></tr>
+  <tr><td>Registered address</td><td>{% if ctx.system.provider_info.address %}{{ ctx.system.provider_info.address }}{% else %}<span class="placeholder">Provider input required</span>{% endif %}</td></tr>
+  <tr><td>Country (ISO)</td><td>{% if ctx.system.provider_info.country %}<code>{{ ctx.system.provider_info.country }}</code>{% else %}<span class="placeholder">Provider input required</span>{% endif %}</td></tr>
+  <tr><td>Contact email</td><td>{% if ctx.system.provider_info.contact_email %}{{ ctx.system.provider_info.contact_email }}{% else %}<span class="placeholder">Provider input required</span>{% endif %}</td></tr>
+  <tr><td>Authorised representative<br><small>(non-EU providers, Article 22)</small></td><td>{% if ctx.system.provider_info.authorised_representative %}{{ ctx.system.provider_info.authorised_representative }}{% else %}<span class="placeholder">Not applicable, or provider input required</span>{% endif %}</td></tr>
+</table>
+
+<h2>1.3 System version + environment / Versione + ambiente (Annex IV §1(c)+(d))</h2>
+<table>
+  <tr><th style="width:38%">Field</th><th>Value</th></tr>
+  <tr><td>System version</td><td>{% if ctx.system.provider_info.system_version %}<code>{{ ctx.system.provider_info.system_version }}</code>{% else %}<span class="placeholder">Provider input required</span>{% endif %}</td></tr>
+  <tr><td>Software environment</td><td>{% if ctx.system.provider_info.software_environment %}{{ ctx.system.provider_info.software_environment }}{% else %}<span class="placeholder">Provider input required</span>{% endif %}</td></tr>
+  <tr><td>Hardware environment</td><td>{% if ctx.system.provider_info.hardware_environment %}{{ ctx.system.provider_info.hardware_environment }}{% else %}<span class="placeholder">Provider input required</span>{% endif %}</td></tr>
+</table>
+
+<h2>1.4 Risk classification / Classificazione di rischio</h2>
+<p><strong>Risk tier</strong>: <span class="tier tier-{{ ctx.system.risk_tier }}">{{ tier_label }}</span> (rules version {{ ctx.system.rules_version }})</p>
+
+{% if ctx.system.reasoning %}
+<table>
+  <thead><tr><th>Rule ID</th><th>Type</th><th>Article</th><th>Description (EN)</th><th>Descrizione (IT)</th></tr></thead>
+  <tbody>
+    {% for r in ctx.system.reasoning %}
+    <tr><td><code>{{ r.rule_id }}</code></td><td>{{ r.rule_type }}</td><td>{{ r.article }}</td><td>{{ r.name_en }}</td><td>{{ r.name_it }}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="placeholder">No prohibited practices, high-risk Annex III categories, or Article 50 transparency triggers were declared. The system is classified as <strong>MINIMAL</strong> risk under the rules engine.</p>
+{% endif %}
+
+<h2>1.5 Lifecycle dates / Date di ciclo di vita</h2>
+<table>
+  <tr><th>First declared</th><td>{{ ctx.system.created_at.isoformat() }}</td></tr>
+  <tr><th>Last reclassification</th><td>{{ ctx.system.classified_at.isoformat() }}</td></tr>
+  <tr><th>Operational status</th><td>{{ "Active (last invocation within 7 days)" if ctx.aggregations.is_active else "Inactive (no invocation in last 7 days)" }}</td></tr>
+</table>
+
+{# ============================== §2 ============================== #}
+<h1>2. Detailed description (design choices) / Descrizione dettagliata</h1>
+
+<h2>2.1 Methodology and design / Metodologia (Annex IV §2(a)+(b))</h2>
+{% if ctx.system.provider_info.notes %}
+<p>{{ ctx.system.provider_info.notes }}</p>
+{% else %}
+<p class="placeholder">Provider input required — describe methods, training methodology, key design choices, and architectural decisions. Use the <code>provider_info.notes</code> field on the AI system declaration.</p>
+{% endif %}
+
+<h2>2.2 Models in use / Modelli utilizzati</h2>
+{% if ctx.aggregations.models %}
+<table>
+  <thead><tr><th>Provider</th><th>Model</th><th>Version</th><th>Invocations</th><th>First seen</th><th>Last seen</th></tr></thead>
+  <tbody>
+    {% for m in ctx.aggregations.models %}
+    <tr>
+      <td>{{ m.provider or "—" }}</td>
+      <td>{{ m.name or "—" }}</td>
+      <td>{{ m.version or "—" }}</td>
+      <td>{{ m.invocations }}</td>
+      <td>{{ m.first_seen.isoformat() if m.first_seen else "—" }}</td>
+      <td>{{ m.last_seen.isoformat() if m.last_seen else "—" }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="placeholder">No invocations recorded yet.</p>
+{% endif %}
+
+<h2>2.3 Retrieval sources cited / Fonti di retrieval</h2>
+{% if ctx.aggregations.sources %}
+<table>
+  <thead><tr><th>Source URI</th><th>Citations</th><th>Versions seen</th></tr></thead>
+  <tbody>
+    {% for s in ctx.aggregations.sources %}
+    <tr><td><code>{{ s.uri }}</code></td><td>{{ s.citations }}</td><td>{{ s.versions | join(", ") if s.versions else "—" }}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="placeholder">No retrieval sources recorded — system is either non-RAG or has recorded no invocations yet.</p>
+{% endif %}
+
+<h2>2.4 Validation and testing / Validazione e test (Annex IV §2(e))</h2>
+{% if ctx.system.provider_info.validation_methods %}
+<p>{{ ctx.system.provider_info.validation_methods }}</p>
+{% else %}
+<p class="placeholder">Provider input required — Article 9(8) requires testing methodology for high-risk systems. Set <code>provider_info.validation_methods</code> on the AI system declaration.</p>
+{% endif %}
+
+<h2>2.5 Pre-determined changes / Modifiche predeterminate (Annex IV §2(f))</h2>
+<p class="placeholder">Provider input required — list any pre-determined changes the system can undergo without requiring a new conformity assessment.</p>
+
+{# ============================== §3 ============================== #}
+<h1>3. Monitoring, control, human oversight / Monitoraggio</h1>
+
+<h2>3.1 Capabilities and limitations / Capacità e limiti (Annex IV §3(a))</h2>
+<p>The system is classified as <span class="tier tier-{{ ctx.system.risk_tier }}">{{ tier_label }}</span> under the EU AI Act.</p>
+{% if ctx.system.annex_iii_categories %}
+<p>It operates in the following high-risk Annex III categories:</p>
+<ul>
+  {% for cat in ctx.system.annex_iii_categories %}<li><code>{{ cat }}</code></li>{% endfor %}
+</ul>
+{% endif %}
+
+<h2>3.2 Article 12 — Logging / Tracciatura</h2>
+<p>This system's runtime activity is logged via the AnnexKit SDK (<code>@track</code> decorator). Every invocation captures: model identifiers, input/output SHA-256 hashes, retrieval source URIs and content hashes, latency, errors, and the role of the invoking user.</p>
+<table>
+  <tr><th>Total invocations</th><td>{{ ctx.aggregations.total }}</td></tr>
+  <tr><th>Errors observed</th><td>{{ ctx.aggregations.error_count }}</td></tr>
+  <tr><th>Recording started</th><td>{% if ctx.aggregations.first_span_at %}{{ ctx.aggregations.first_span_at.isoformat() }}{% else %}<span class="placeholder">(no spans yet)</span>{% endif %}</td></tr>
+  <tr><th>Most recent invocation</th><td>{% if ctx.aggregations.last_span_at %}{{ ctx.aggregations.last_span_at.isoformat() }}{% else %}<span class="placeholder">(no spans yet)</span>{% endif %}</td></tr>
+  <tr><th>Deployments observed</th><td>{{ ctx.aggregations.deployments | join(", ") if ctx.aggregations.deployments else "—" }}</td></tr>
+  <tr><th>SDK versions seen</th><td>{{ ctx.aggregations.sdk_versions | join(", ") if ctx.aggregations.sdk_versions else "—" }}</td></tr>
+</table>
+
+<h2>3.3 Latency performance / Prestazioni di latenza</h2>
+{% for w in ctx.aggregations.windows %}
+<h3>Window: {{ w.window }} (sample size: {{ w.latency.sample_size }})</h3>
+<table>
+  <tr><th>Total invocations</th><td>{{ w.total }}</td><th>Errors</th><td>{{ w.error_count }}</td></tr>
+  <tr><th>Error rate</th><td>{% if w.error_rate_pct is not none %}{{ "%.2f"|format(w.error_rate_pct) }}%{% else %}—{% endif %}</td><th>Mean latency</th><td>{{ w.latency.mean_ms ~ " ms" if w.latency.mean_ms is not none else "—" }}</td></tr>
+  <tr><th>p50 latency</th><td>{{ w.latency.p50_ms ~ " ms" if w.latency.p50_ms is not none else "—" }}</td><th>p95 latency</th><td>{{ w.latency.p95_ms ~ " ms" if w.latency.p95_ms is not none else "—" }}</td></tr>
+  <tr><th>p99 latency</th><td>{{ w.latency.p99_ms ~ " ms" if w.latency.p99_ms is not none else "—" }}</td><th>Max latency</th><td>{{ w.latency.max_ms ~ " ms" if w.latency.max_ms is not none else "—" }}</td></tr>
+</table>
+{% endfor %}
+
+<h2>3.4 Article 14 — Human oversight / Sorveglianza umana</h2>
+{% if ctx.aggregations.user_roles %}
+<p>Distinct user roles observed in invocations: {{ ctx.aggregations.user_roles | join(", ") }}.</p>
+{% else %}
+<p class="placeholder">No <code>user_role</code> field has been populated on incoming spans yet. Add <code>span.set_user_role(...)</code> (or pass <code>user_role=</code> to the tracked function) to surface oversight context.</p>
+{% endif %}
+
+<h2>3.5 Predetermined performance metrics (Annex IV §3(e))</h2>
+<p class="placeholder">Provider input recommended — declare the accuracy / robustness / fairness metrics the system targets and how they are measured.</p>
+
+{# ============================== §4 ============================== #}
+<h1>4. Risk management (Article 9) / Gestione del rischio</h1>
+
+<h2>4.1 Classification basis / Base della classificazione</h2>
+<p>The risk tier above (<span class="tier tier-{{ ctx.system.risk_tier }}">{{ tier_label }}</span>) was produced by AnnexKit's deterministic rule engine (ruleset version {{ ctx.system.rules_version }}). The engine <strong>never declassifies</strong> — once a higher tier triggers, the final tier is that. Triggered rules are listed in §1.4.</p>
+
+<h2>4.2 Article 9 lifecycle</h2>
+<table>
+  <tr><th>(a) Risk identification</th><td><span class="placeholder">Provider input required — identification methodology.</span></td></tr>
+  <tr><th>(b) Risk analysis &amp; estimation</th><td><span class="placeholder">Provider input required.</span></td></tr>
+  <tr><th>(c) Risk evaluation</th><td><span class="placeholder">Provider input required.</span></td></tr>
+  <tr><th>(d) Risk mitigation</th><td><span class="placeholder">Provider input required.</span></td></tr>
+  <tr><th>(e) Testing for residual risks</th><td><span class="placeholder">Provider input required.</span></td></tr>
+</table>
+
+{# ============================== §5 ============================== #}
+<h1>5. Description of changes / Storico modifiche</h1>
+
+{% if ctx.changes %}
+<table>
+  <thead><tr><th>Date (UTC)</th><th>Action</th><th>Details</th></tr></thead>
+  <tbody>
+    {% for c in ctx.changes %}
+    <tr><td>{{ c.occurred_at.isoformat() }}</td><td><code>{{ c.action }}</code></td><td>{{ c.details }}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="placeholder">No declaration changes recorded since the system was first declared.</p>
+{% endif %}
+<div class="info-callout">Span ingestions are operational telemetry, not lifecycle changes — they are excluded by design and surface in §8 instead.</div>
+
+{# ============================== §6 ============================== #}
+<h1>6. Harmonised standards / Norme armonizzate</h1>
+
+<p class="placeholder">Provider input required — list the harmonised standards (in full or in part) the system conforms to.</p>
+
+<p>Indicative references:</p>
+<ul>
+  <li><strong>EN ISO/IEC 42001</strong> — AI management systems</li>
+  <li><strong>EN ISO/IEC 23894</strong> — AI risk management</li>
+  <li><strong>EN ISO/IEC TR 24028</strong> — AI trustworthiness</li>
+  <li><strong>EN ISO/IEC 5338</strong> — AI engineering</li>
+  <li><strong>EN ISO/IEC 25059</strong> — Quality model for AI systems</li>
+</ul>
+
+{# ============================== §7 ============================== #}
+<h1>7. EU declaration of conformity (Article 47)</h1>
+<p>The Article 47 EU declaration of conformity is a separate legal artefact issued by the provider's authorised representative. AnnexKit does not generate it — your legal counsel signs it referencing this document as evidence of the technical documentation.</p>
+
+{# ============================== §8 ============================== #}
+<h1>8. Post-market monitoring (Article 72) / Monitoraggio post-mercato</h1>
+
+<h2>8.1 Operational metrics summary</h2>
+<p>See §3.2 (logging totals) and §3.3 (latency by window).</p>
+
+<h2>8.2 Error analysis / Analisi errori</h2>
+<table>
+  <tr><th>Total errors</th><td>{{ ctx.aggregations.error_count }}</td></tr>
+  <tr><th>Error rate (all-time)</th><td>{% if ctx.aggregations.total %}{{ "%.2f"|format(ctx.aggregations.error_count * 100.0 / ctx.aggregations.total) }}%{% else %}—{% endif %}</td></tr>
+</table>
+
+{% if ctx.aggregations.error_breakdown %}
+<h3>Error breakdown by class</h3>
+<table>
+  <thead><tr><th>Error class</th><th>Count</th></tr></thead>
+  <tbody>
+    {% for e in ctx.aggregations.error_breakdown %}
+    <tr><td><code>{{ e.error_class }}</code></td><td>{{ e.count }}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="placeholder">No errors recorded.</p>
+{% endif %}
+
+<h2>8.3 Models inventory</h2>
+<p>See §2.2.</p>
+
+<h2>8.4 Detection of malfunctions and unforeseen risks</h2>
+<p class="placeholder">Provider input recommended — describe alerting rules, on-call procedures, and incident-response thresholds for this system.</p>
+
+<h2>8.5 Reporting framework / Quadro di segnalazione</h2>
+<p>Article 73 requires reporting of serious incidents to the relevant market-surveillance authority within 15 days (10 for widespread infringements, immediate for fatalities).</p>
+<p class="placeholder">Provider input required — name the responsible person + reporting channel.</p>
+
+{# ============================== §9 ============================== #}
+<h1>9. Information for deployers (Article 13) / Informazioni per deployer</h1>
+
+<h2>9.1 Capabilities / Capacità</h2>
+{% if ctx.system.purpose %}
+<p>The system is designed to: {{ ctx.system.purpose }}.</p>
+{% else %}
+<p>See §1.1 — purpose declaration required.</p>
+{% endif %}
+<p>Risk classification: <span class="tier tier-{{ ctx.system.risk_tier }}">{{ tier_label }}</span>.</p>
+{% if ctx.system.annex_iii_categories %}
+<p><strong>High-risk Annex III categories declared</strong>:</p>
+<ul>{% for cat in ctx.system.annex_iii_categories %}<li><code>{{ cat }}</code></li>{% endfor %}</ul>
+{% endif %}
+
+<h2>9.2 Limitations / Limitazioni</h2>
+<p>The risk classification implies that the deployer must:</p>
+<ul>
+{% if ctx.system.risk_tier == "high" %}
+  <li>Comply with <strong>Article 26</strong> deployer obligations (logging, oversight, monitoring).</li>
+  <li>Conduct a <strong>fundamental rights impact assessment</strong> if applicable (Article 27).</li>
+  <li>Inform end-users that they are subject to the system's output where required.</li>
+{% elif ctx.system.risk_tier == "limited" %}
+  <li>Comply with <strong>Article 50</strong> transparency obligations.</li>
+  <li>Disclose the AI nature of relevant interactions to end-users.</li>
+{% elif ctx.system.risk_tier == "unacceptable" %}
+  <li><strong>STOP</strong> — the system is classified as Article 5 prohibited. Deployment in the EU is not legally permitted.</li>
+{% else %}
+  <li>Voluntary best-practice oversight is recommended; no specific Article-26 obligations apply at the minimal-risk tier.</li>
+{% endif %}
+</ul>
+
+<h2>9.3 Performance characteristics / Caratteristiche di prestazione</h2>
+<p>See §3.3 for latency percentiles by window.</p>
+
+<h2>9.4 Input data specification / Specifiche dati input</h2>
+<p class="placeholder">Provider input required — describe the expected input format, validation rules, and any pre-processing performed before model inference.</p>
+
+<h2>9.5 Output description / Descrizione output</h2>
+<p class="placeholder">Provider input required — describe the output format, confidence indicators, and any post-processing.</p>
+
+<h2>9.6 Transparency triggers (Article 50) / Obblighi di trasparenza</h2>
+{% if ctx.system.transparency_triggers %}
+<p>The provider has declared the following Article 50 transparency triggers:</p>
+<ul>{% for t in ctx.system.transparency_triggers %}<li><code>{{ t }}</code></li>{% endfor %}</ul>
+<p>Deployers MUST disclose the AI nature of relevant interactions to end-users per the provisions of these articles.</p>
+{% else %}
+<p class="placeholder">No Article 50 transparency triggers declared.</p>
+{% endif %}
+
+{# ============================== APPENDIX A ============================== #}
+<h1>Appendix A — Compliance gap analysis</h1>
+<p>The status column shows AnnexKit's auto-population status for each Annex IV requirement: <span class="status status-auto">AUTO</span> (auto from runtime or declaration), <span class="status status-partial">PARTIAL</span> (some data, more needed), <span class="status status-manual">MANUAL</span> (provider/legal-team input required).</p>
+
+<table>
+  <thead><tr><th>Section</th><th>Requirement (EN)</th><th>Requisito (IT)</th><th>Status</th><th>Note</th></tr></thead>
+  <tbody>
+    {% for g in ctx.gap_analysis %}
+    <tr>
+      <td><strong>{{ g.section }}</strong></td>
+      <td>{{ g.requirement_en }}</td>
+      <td>{{ g.requirement_it }}</td>
+      <td><span class="status status-{{ g.status }}">{{ g.status | upper }}</span></td>
+      <td>{{ g.note or "—" }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{# ============================== APPENDIX B ============================== #}
+<h1>Appendix B — Glossary / Glossario</h1>
+<dl>
+  <dt><strong>AI Act</strong></dt><dd>Regulation (EU) 2024/1689 of the European Parliament and of the Council on artificial intelligence.</dd>
+  <dt><strong>Annex III</strong></dt><dd>List of high-risk AI systems by category.</dd>
+  <dt><strong>Annex IV</strong></dt><dd>Required content of technical documentation for high-risk AI systems (this document's structure).</dd>
+  <dt><strong>GPAI</strong></dt><dd>General-Purpose AI model (Article 3(63)). Subject to separate obligations under Chapter V.</dd>
+  <dt><strong>Provider</strong></dt><dd>Article 3(3) — natural or legal person that develops an AI system or has it developed and places it on the market under its own name.</dd>
+  <dt><strong>Deployer</strong></dt><dd>Article 3(4) — natural or legal person using an AI system under its authority. Previously called "user" in earlier drafts.</dd>
+  <dt><strong>Authorised representative</strong></dt><dd>Article 3(5) — required for non-EU-established providers (Article 22).</dd>
+  <dt><strong>Conformity assessment</strong></dt><dd>Article 43 — procedure demonstrating compliance for high-risk systems before market placement.</dd>
+  <dt><strong>Post-market monitoring</strong></dt><dd>Article 72 — provider obligation to systematically collect and analyse data on system performance throughout its lifetime.</dd>
+  <dt><strong>Article 5</strong></dt><dd>Prohibited AI practices.</dd>
+  <dt><strong>Article 6 + Annex III</strong></dt><dd>High-risk classification.</dd>
+  <dt><strong>Article 9</strong></dt><dd>Risk management system.</dd>
+  <dt><strong>Article 12</strong></dt><dd>Record-keeping (logs).</dd>
+  <dt><strong>Article 13</strong></dt><dd>Transparency and information for deployers.</dd>
+  <dt><strong>Article 14</strong></dt><dd>Human oversight.</dd>
+  <dt><strong>Article 26</strong></dt><dd>Deployer obligations for high-risk systems.</dd>
+  <dt><strong>Article 27</strong></dt><dd>Fundamental rights impact assessment.</dd>
+  <dt><strong>Article 47</strong></dt><dd>EU declaration of conformity.</dd>
+  <dt><strong>Article 50</strong></dt><dd>Transparency obligations for certain AI systems.</dd>
+  <dt><strong>Article 72</strong></dt><dd>Post-market monitoring.</dd>
+  <dt><strong>Article 73</strong></dt><dd>Serious incident reporting.</dd>
+</dl>
+
+{# ============================== APPENDIX C ============================== #}
+<h1>Appendix C — Sample evidence (recent spans)</h1>
+<p>The most recent invocations recorded for this system, included as audit anchors. Cross-reference these <code>trace_id</code> / <code>span_id</code> values in the AnnexKit collector for full per-invocation forensics.</p>
+
+{% if ctx.sample_spans %}
+<table>
+  <thead><tr><th>Started at (UTC)</th><th>trace_id</th><th>span_id</th><th>Risk tier</th><th>Model</th><th>Error</th></tr></thead>
+  <tbody>
+    {% for s in ctx.sample_spans %}
+    <tr>
+      <td>{{ s.started_at.isoformat() }}</td>
+      <td><code>{{ s.trace_id }}</code></td>
+      <td><code>{{ s.span_id }}</code></td>
+      <td>{{ s.risk_tier }}</td>
+      <td>{{ s.model or "—" }}</td>
+      <td>{{ s.error or "—" }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p class="placeholder">No spans recorded yet.</p>
+{% endif %}
+
+{# ============================== APPENDIX D ============================== #}
+<h1>Appendix D — Document control &amp; sign-off</h1>
+
+<table>
+  <tr><th>Document ID</th><td><code>{{ ctx.document_id }}</code></td></tr>
+  <tr><th>Document version</th><td>1 (regenerate to bump)</td></tr>
+  <tr><th>Generated</th><td>{{ ctx.generated_at.isoformat() }}</td></tr>
+  <tr><th>AnnexKit version</th><td>{{ ctx.annexkit_version }}</td></tr>
+  <tr><th>Generator</th><td>https://annexkit.dev</td></tr>
+  <tr><th>Tenant</th><td>{{ ctx.tenant.name }} (slug: <code>{{ ctx.tenant.slug }}</code>)</td></tr>
+  <tr><th>System ID</th><td><code>{{ ctx.system.system_id }}</code></td></tr>
+  <tr><th>System UUID</th><td><code>{{ ctx.system.id }}</code></td></tr>
+  <tr><th>Rules version</th><td>{{ ctx.system.rules_version }}</td></tr>
+</table>
+
+<h2>Signatures / Firme</h2>
+
+<div class="signature-row">
+  <strong>Provider's authorised signatory / Firmatario autorizzato del provider</strong>
+  <p>Name / Nome: <span class="signature-line">&nbsp;</span></p>
+  <p>Role / Ruolo: <span class="signature-line">&nbsp;</span></p>
+  <p>Date / Data: <span class="signature-line">&nbsp;</span></p>
+  <p>Signature / Firma: <span class="signature-line">&nbsp;</span></p>
+</div>
+
+<div class="signature-row">
+  <strong>Compliance officer (optional) / Responsabile compliance (opzionale)</strong>
+  <p>Name / Nome: <span class="signature-line">&nbsp;</span></p>
+  <p>Role / Ruolo: <span class="signature-line">&nbsp;</span></p>
+  <p>Date / Data: <span class="signature-line">&nbsp;</span></p>
+  <p>Signature / Firma: <span class="signature-line">&nbsp;</span></p>
+</div>
+
+<blockquote>
+  <strong>Reminder / Promemoria</strong>: AnnexKit is not a law firm /
+  AnnexKit non è uno studio legale. The classification, evidence
+  aggregations, and citations above are technical artefacts produced by
+  instrumenting the system's runtime via the AnnexKit SDK. Legal
+  interpretation, sign-off, and the related Article 47 EU declaration of
+  conformity are the responsibility of the provider's legal counsel.
+</blockquote>
+
+<p style="text-align: center; color: #888; font-size: 9pt; margin-top: 20pt;">— End of document / Fine documento —</p>
+
+</body>
+</html>

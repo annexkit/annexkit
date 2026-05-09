@@ -1,0 +1,522 @@
+{# Annex IV (EU AI Act, Reg. 2024/1689) — Markdown template.
+
+   The same content is rendered as PDF via ``annex_iv.html.jinja`` —
+   keep both templates in sync when adding sections.
+
+   Variables exposed: ``ctx`` — :class:`AnnexIVContext`.
+   #}
+{% set tier = ctx.system.risk_tier -%}
+{% set tier_label = {"unacceptable":"UNACCEPTABLE","high":"HIGH","limited":"LIMITED","minimal":"MINIMAL","auto":"PENDING"}[tier] -%}
+{% set status_icon = {"auto":"OK","partial":"PARTIAL","manual":"MANUAL"} -%}
+==============================================================================
+
+                       Annex IV — Technical Documentation
+                       Allegato IV — Documentazione Tecnica
+
+                  Reg. (UE) 2024/1689 (AI Act) — Article 11 + Annex IV
+
+                                {{ ctx.system.system_id }}
+                                Tenant: {{ ctx.tenant.name }}
+
+                              ┌──────────────────────┐
+                              │ RISK TIER: {{ "%-9s"|format(tier_label) }} │
+                              └──────────────────────┘
+
+   Document ID:    {{ ctx.document_id }}
+   Generated:      {{ ctx.generated_at.isoformat() }}
+   Rules version:  {{ ctx.system.rules_version }}
+   Generator:      AnnexKit v{{ ctx.annexkit_version }} — annexkit.dev
+
+==============================================================================
+
+> **Disclaimer / Avviso**: AnnexKit is not a law firm /
+> AnnexKit non è uno studio legale. This document presents technical
+> evidence collected from runtime telemetry; legal interpretation, sign-off,
+> and the related Article 47 EU declaration of conformity are the
+> responsibility of the provider's legal counsel.
+
+---
+
+## Executive summary
+
+{{ ctx.executive_summary }}
+
+---
+
+## Table of contents
+
+1. General description / Descrizione generale
+2. Detailed description (design choices) / Descrizione dettagliata (scelte di progettazione)
+3. Monitoring, control, human oversight / Monitoraggio, controllo, sorveglianza umana
+4. Risk management (Article 9) / Gestione del rischio (Articolo 9)
+5. Description of changes / Storico delle modifiche
+6. Harmonised standards applied / Norme armonizzate applicate
+7. EU declaration of conformity (Article 47) / Dichiarazione UE di conformità
+8. Post-market monitoring (Article 72) / Monitoraggio post-mercato
+9. Information for deployers (Article 13) / Informazioni per i deployer
+- Appendix A: Compliance gap analysis
+- Appendix B: Glossary
+- Appendix C: Sample evidence (recent spans)
+- Appendix D: Document control & sign-off
+
+---
+
+## 1. General description / Descrizione generale
+
+### 1.1 Intended purpose / Finalità (Annex IV §1(a))
+
+**Declared purpose**:
+{{ ctx.system.purpose if ctx.system.purpose else "*Provider input required — set the `purpose` field on the AI system declaration.*" }}
+
+| | |
+|---|---|
+| **System identifier** | `{{ ctx.system.system_id }}` |
+| **General-purpose AI (GPAI)** | {{ "Yes / Sì" if ctx.system.is_gpai else "No" }} |
+
+### 1.2 Persons responsible / Soggetti responsabili (Annex IV §1(b))
+
+| Field | Value |
+|---|---|
+| **Legal name** | {{ ctx.system.provider_info.legal_name if ctx.system.provider_info.legal_name else "*Provider input required*" }} |
+| **Registered address** | {{ ctx.system.provider_info.address if ctx.system.provider_info.address else "*Provider input required*" }} |
+| **Country (ISO)** | {{ ctx.system.provider_info.country if ctx.system.provider_info.country else "*Provider input required*" }} |
+| **Contact email** | {{ ctx.system.provider_info.contact_email if ctx.system.provider_info.contact_email else "*Provider input required*" }} |
+| **Authorised representative (if non-EU)** | {{ ctx.system.provider_info.authorised_representative if ctx.system.provider_info.authorised_representative else "*Not applicable, or provider input required (Article 22)*" }} |
+
+### 1.3 System version + environment / Versione + ambiente (Annex IV §1(c)+(d))
+
+| Field | Value |
+|---|---|
+| **System version** | {{ ctx.system.provider_info.system_version if ctx.system.provider_info.system_version else "*Provider input required*" }} |
+| **Software environment** | {{ ctx.system.provider_info.software_environment if ctx.system.provider_info.software_environment else "*Provider input required*" }} |
+| **Hardware environment** | {{ ctx.system.provider_info.hardware_environment if ctx.system.provider_info.hardware_environment else "*Provider input required*" }} |
+
+### 1.4 Risk classification / Classificazione di rischio (EU AI Act)
+
+**Risk tier**: **{{ tier_label }}** (rules version {{ ctx.system.rules_version }})
+
+{% if ctx.system.reasoning -%}
+**Triggered rules** / Regole attivate:
+
+| Rule ID | Type | Article | Description (EN) | Descrizione (IT) |
+|---|---|---|---|---|
+{% for r in ctx.system.reasoning -%}
+| `{{ r.rule_id }}` | {{ r.rule_type }} | {{ r.article }} | {{ r.name_en }} | {{ r.name_it }} |
+{% endfor %}
+{% else -%}
+*No prohibited practices, high-risk Annex III categories, or Article 50
+transparency triggers were declared. The system is classified as
+**MINIMAL** risk under the rules engine.*
+{% endif %}
+
+### 1.5 Lifecycle dates / Date di ciclo di vita
+
+| | |
+|---|---|
+| **First declared** | {{ ctx.system.created_at.isoformat() }} |
+| **Last reclassification** | {{ ctx.system.classified_at.isoformat() }} |
+| **Operational status** | {{ "Active (last invocation within 7 days)" if ctx.aggregations.is_active else "Inactive (no invocation in last 7 days)" }} |
+
+---
+
+## 2. Detailed description (design choices) / Descrizione dettagliata
+
+### 2.1 Methodology and design / Metodologia e progettazione (Annex IV §2(a)+(b))
+
+{% if ctx.system.provider_info.notes -%}
+{{ ctx.system.provider_info.notes }}
+{% else -%}
+*Provider input required — describe the methods, training methodology,
+key design choices, and architectural decisions of the system. Use the
+`provider_info.notes` field on the AI system declaration.*
+{% endif %}
+
+### 2.2 Models in use / Modelli utilizzati (auto-aggregated from runtime)
+
+{% if ctx.aggregations.models -%}
+| Provider | Model | Version | Invocations | First seen | Last seen |
+|---|---|---|---|---|---|
+{% for m in ctx.aggregations.models -%}
+| {{ m.provider or "—" }} | {{ m.name or "—" }} | {{ m.version or "—" }} | {{ m.invocations }} | {{ m.first_seen.isoformat() if m.first_seen else "—" }} | {{ m.last_seen.isoformat() if m.last_seen else "—" }} |
+{% endfor %}
+{% else -%}
+*No invocations recorded yet.*
+{% endif %}
+
+### 2.3 Retrieval sources cited / Fonti di retrieval citate
+
+{% if ctx.aggregations.sources -%}
+| Source URI | Citations | Versions seen |
+|---|---|---|
+{% for s in ctx.aggregations.sources -%}
+| `{{ s.uri }}` | {{ s.citations }} | {{ s.versions | join(", ") if s.versions else "—" }} |
+{% endfor %}
+{% else -%}
+*No retrieval sources recorded — system is either non-RAG or has
+recorded no invocations yet.*
+{% endif %}
+
+### 2.4 Validation and testing methodology / Validazione e test (Annex IV §2(e))
+
+{% if ctx.system.provider_info.validation_methods -%}
+{{ ctx.system.provider_info.validation_methods }}
+{% else -%}
+*Provider input required — Article 9(8) requires testing methodology
+for high-risk systems. Set `provider_info.validation_methods` on the
+AI system declaration.*
+{% endif %}
+
+### 2.5 Pre-determined changes / Modifiche predeterminate (Annex IV §2(f))
+
+*Provider input required — list any pre-determined changes the system
+can undergo without requiring a new conformity assessment.*
+
+---
+
+## 3. Monitoring, control, human oversight / Monitoraggio, controllo, sorveglianza
+
+### 3.1 Capabilities and limitations / Capacità e limiti (Annex IV §3(a))
+
+The system is classified as **{{ tier_label }}** under the EU AI Act.
+{% if ctx.system.annex_iii_categories %}It operates in the following
+high-risk Annex III categories:
+{% for cat in ctx.system.annex_iii_categories %}
+- `{{ cat }}`
+{%- endfor %}
+{% endif %}
+
+### 3.2 Article 12 — Logging / Articolo 12 — Tracciatura
+
+This system's runtime activity is logged via the AnnexKit SDK
+(`@track` decorator). Every invocation captures: model identifiers,
+input/output SHA-256 hashes, retrieval source URIs and content hashes,
+latency, errors, and the role of the invoking user.
+
+| | |
+|---|---|
+| **Total invocations** | {{ ctx.aggregations.total }} |
+| **Errors observed** | {{ ctx.aggregations.error_count }} |
+| **Recording started** | {{ ctx.aggregations.first_span_at.isoformat() if ctx.aggregations.first_span_at else "*(no spans yet)*" }} |
+| **Most recent invocation** | {{ ctx.aggregations.last_span_at.isoformat() if ctx.aggregations.last_span_at else "*(no spans yet)*" }} |
+| **Deployments observed** | {{ ctx.aggregations.deployments | join(", ") if ctx.aggregations.deployments else "—" }} |
+| **SDK versions seen** | {{ ctx.aggregations.sdk_versions | join(", ") if ctx.aggregations.sdk_versions else "—" }} |
+
+### 3.3 Latency performance / Prestazioni di latenza
+
+{% for w in ctx.aggregations.windows -%}
+**Window: {{ w.window }}** (sample size: {{ w.latency.sample_size }})
+
+| Metric | Value |
+|---|---|
+| Total invocations | {{ w.total }} |
+| Errors | {{ w.error_count }} |
+| Error rate | {{ "%.2f%%"|format(w.error_rate_pct) if w.error_rate_pct is not none else "—" }} |
+| p50 latency (ms) | {{ w.latency.p50_ms if w.latency.p50_ms is not none else "—" }} |
+| p95 latency (ms) | {{ w.latency.p95_ms if w.latency.p95_ms is not none else "—" }} |
+| p99 latency (ms) | {{ w.latency.p99_ms if w.latency.p99_ms is not none else "—" }} |
+| Mean latency (ms) | {{ w.latency.mean_ms if w.latency.mean_ms is not none else "—" }} |
+| Max latency (ms) | {{ w.latency.max_ms if w.latency.max_ms is not none else "—" }} |
+
+{% endfor %}
+
+### 3.4 Article 14 — Human oversight / Articolo 14 — Sorveglianza umana
+
+{% if ctx.aggregations.user_roles -%}
+Distinct user roles observed: {{ ctx.aggregations.user_roles | join(", ") }}.
+{% else -%}
+*No `user_role` field has been populated on incoming spans yet. Add
+``span.set_user_role(...)`` (or pass `user_role=` to the tracked
+function) to surface oversight context.*
+{% endif %}
+
+### 3.5 Predetermined performance metrics / Metriche di prestazione (Annex IV §3(e))
+
+*Provider input recommended — declare the accuracy / robustness /
+fairness metrics the system targets and how they are measured.*
+
+---
+
+## 4. Risk management (Article 9) / Gestione del rischio
+
+### 4.1 Classification basis / Base della classificazione
+
+The risk tier above (**{{ tier_label }}**) was produced by AnnexKit's
+deterministic rule engine (ruleset version
+{{ ctx.system.rules_version }}). The engine **never declassifies** —
+once a higher tier triggers, the final tier is that. Triggered rules
+are listed in §1.4.
+
+### 4.2 Article 9 lifecycle / Ciclo Articolo 9
+
+| Step | Description |
+|---|---|
+| (a) Risk identification | *Provider input required — risk identification methodology.* |
+| (b) Risk analysis & estimation | *Provider input required.* |
+| (c) Risk evaluation | *Provider input required.* |
+| (d) Risk mitigation measures | *Provider input required.* |
+| (e) Testing for residual risks | *Provider input required.* |
+
+---
+
+## 5. Description of changes / Storico delle modifiche
+
+{% if ctx.changes -%}
+| Date (UTC) | Action | Details |
+|---|---|---|
+{% for c in ctx.changes -%}
+| {{ c.occurred_at.isoformat() }} | `{{ c.action }}` | {{ c.details }} |
+{% endfor %}
+{% else -%}
+*No declaration changes recorded since the system was first declared.*
+{% endif %}
+
+> Span ingestions are operational telemetry, not lifecycle changes —
+> they are excluded by design and surface in §8 instead.
+
+---
+
+## 6. Harmonised standards applied / Norme armonizzate
+
+*Provider input required — list the harmonised standards (in full or
+in part) the system conforms to.*
+
+Indicative references:
+
+- **EN ISO/IEC 42001** — AI management systems
+- **EN ISO/IEC 23894** — AI risk management
+- **EN ISO/IEC TR 24028** — AI trustworthiness
+- **EN ISO/IEC 5338** — AI engineering
+- **EN ISO/IEC 25059** — Quality model for AI systems
+
+---
+
+## 7. EU declaration of conformity (Article 47) / Dichiarazione di conformità
+
+The Article 47 EU declaration of conformity is a separate legal
+artefact issued by the provider's authorised representative. AnnexKit
+does not generate it — your legal counsel signs it referencing this
+document as evidence of the technical documentation.
+
+---
+
+## 8. Post-market monitoring (Article 72) / Monitoraggio post-mercato
+
+### 8.1 Operational metrics summary / Riepilogo metriche operative
+
+See §3.2 (logging totals) and §3.3 (latency by window).
+
+### 8.2 Error analysis / Analisi degli errori
+
+| | |
+|---|---|
+| **Total errors** | {{ ctx.aggregations.error_count }} |
+| **Error rate (all-time)** | {{ "%.2f%%"|format(ctx.aggregations.error_count * 100.0 / ctx.aggregations.total) if ctx.aggregations.total else "—" }} |
+
+{% if ctx.aggregations.error_breakdown -%}
+**Error breakdown by class**:
+
+| Error class | Count |
+|---|---|
+{% for e in ctx.aggregations.error_breakdown -%}
+| `{{ e.error_class }}` | {{ e.count }} |
+{% endfor %}
+{% else -%}
+*No errors recorded.*
+{% endif %}
+
+### 8.3 Models inventory / Inventario modelli
+
+See §2.2.
+
+### 8.4 Detection of malfunctions and unforeseen risks / Rilevazione anomalie
+
+*Provider input recommended — describe alerting rules, on-call
+procedures, and incident-response thresholds for this system.*
+
+### 8.5 Reporting framework / Quadro di segnalazione
+
+Article 73 requires reporting of serious incidents to the relevant
+market-surveillance authority within 15 days (10 for widespread
+infringements, immediate for fatalities).
+*Provider input required — name the responsible person + reporting channel.*
+
+---
+
+## 9. Information for deployers (Article 13) / Informazioni per i deployer
+
+### 9.1 Capabilities / Capacità
+
+{% if ctx.system.purpose -%}
+The system is designed to: {{ ctx.system.purpose }}.
+{% else -%}
+*See §1.1 — purpose declaration required.*
+{% endif %}
+
+Risk classification: **{{ tier_label }}** under the EU AI Act.
+
+{% if ctx.system.annex_iii_categories %}**High-risk Annex III categories declared**:
+{% for cat in ctx.system.annex_iii_categories %}
+- `{{ cat }}`
+{%- endfor %}
+{% endif %}
+
+### 9.2 Limitations / Limitazioni
+
+The risk classification implies that the deployer must:
+
+{% if tier == "high" -%}
+- Comply with **Article 26** deployer obligations (logging, oversight, monitoring).
+- Conduct a **fundamental rights impact assessment** if applicable (Article 27).
+- Inform end-users that they are subject to the system's output where required.
+{% elif tier == "limited" -%}
+- Comply with **Article 50** transparency obligations.
+- Disclose the AI nature of relevant interactions to end-users.
+{% elif tier == "unacceptable" -%}
+- **STOP** — the system is classified as Article 5 prohibited.
+  Deployment in the EU is not legally permitted.
+{% else -%}
+- Voluntary best-practice oversight is recommended; no specific
+  Article-26 obligations apply at the minimal-risk tier.
+{% endif %}
+
+### 9.3 Performance characteristics / Caratteristiche di prestazione
+
+See §3.3 for latency percentiles by window.
+
+### 9.4 Input data specification / Specifiche dei dati di input
+
+*Provider input required — describe the expected input format,
+validation rules, and any pre-processing performed before model
+inference.*
+
+### 9.5 Output description / Descrizione dell'output
+
+*Provider input required — describe the output format, confidence
+indicators, and any post-processing.*
+
+### 9.6 Transparency triggers (Article 50) / Obblighi di trasparenza
+
+{% if ctx.system.transparency_triggers -%}
+The provider has declared the following Article 50 transparency triggers:
+{% for t in ctx.system.transparency_triggers -%}
+- `{{ t }}`
+{% endfor %}
+Deployers MUST disclose the AI nature of relevant interactions to
+end-users per the provisions of these articles.
+{% else -%}
+*No Article 50 transparency triggers declared.*
+{% endif %}
+
+---
+
+## Appendix A — Compliance gap analysis
+
+The status column shows AnnexKit's auto-population status for each
+Annex IV requirement: **{{ status_icon["auto"] }}** (auto from runtime
+or declaration), **{{ status_icon["partial"] }}** (some data, more needed),
+**{{ status_icon["manual"] }}** (provider/legal-team input required).
+
+| Section | Requirement (EN) | Requisito (IT) | Status | Note |
+|---|---|---|---|---|
+{% for g in ctx.gap_analysis -%}
+| {{ g.section }} | {{ g.requirement_en }} | {{ g.requirement_it }} | **{{ status_icon[g.status] }}** | {{ g.note or "—" }} |
+{% endfor %}
+
+---
+
+## Appendix B — Glossary / Glossario
+
+- **AI Act** — Regulation (EU) 2024/1689 of the European Parliament and
+  of the Council on artificial intelligence.
+- **Annex III** — list of high-risk AI systems by category.
+- **Annex IV** — required content of technical documentation for
+  high-risk AI systems (the structure of this document).
+- **GPAI** — General-Purpose AI model (Article 3(63)). Subject to
+  separate obligations under Chapter V of the Act.
+- **Provider** (Article 3(3)) — the natural or legal person that
+  develops an AI system or has it developed and places it on the
+  market or puts it into service under its own name or trademark.
+- **Deployer** (Article 3(4)) — the natural or legal person using an
+  AI system under its authority. Was previously called "user" in
+  earlier drafts.
+- **Authorised representative** (Article 3(5)) — required for
+  non-EU-established providers (Article 22).
+- **Conformity assessment** (Article 43) — the procedure
+  demonstrating compliance for high-risk systems before market
+  placement.
+- **Post-market monitoring** (Article 72) — provider obligation to
+  systematically collect and analyse data on system performance
+  throughout its lifetime.
+- **Article 5** — prohibited AI practices.
+- **Article 6 + Annex III** — high-risk classification.
+- **Article 9** — risk management system.
+- **Article 12** — record-keeping (logs).
+- **Article 13** — transparency and information for deployers.
+- **Article 14** — human oversight.
+- **Article 26** — deployer obligations for high-risk systems.
+- **Article 27** — fundamental rights impact assessment.
+- **Article 47** — EU declaration of conformity.
+- **Article 50** — transparency obligations for certain AI systems.
+- **Article 72** — post-market monitoring.
+- **Article 73** — serious incident reporting.
+
+---
+
+## Appendix C — Sample evidence (recent spans)
+
+The most recent invocations recorded for this system, included as
+audit anchors. Cross-reference these `trace_id` / `span_id` values in
+the AnnexKit collector for full per-invocation forensics.
+
+{% if ctx.sample_spans -%}
+| Started at (UTC) | trace_id | span_id | Risk tier | Model | Error |
+|---|---|---|---|---|---|
+{% for s in ctx.sample_spans -%}
+| {{ s.started_at.isoformat() }} | `{{ s.trace_id }}` | `{{ s.span_id }}` | {{ s.risk_tier }} | {{ s.model or "—" }} | {{ s.error or "—" }} |
+{% endfor %}
+{% else -%}
+*No spans recorded yet.*
+{% endif %}
+
+---
+
+## Appendix D — Document control & sign-off
+
+| | |
+|---|---|
+| Document ID | `{{ ctx.document_id }}` |
+| Document version | 1 (regenerate to bump) |
+| Generated | {{ ctx.generated_at.isoformat() }} |
+| AnnexKit version | {{ ctx.annexkit_version }} |
+| Generator | https://annexkit.dev |
+| Tenant | {{ ctx.tenant.name }} (`{{ ctx.tenant.slug }}`) |
+| System ID | `{{ ctx.system.system_id }}` |
+| System UUID | `{{ ctx.system.id }}` |
+| Rules version | {{ ctx.system.rules_version }} |
+
+### Signatures / Firme
+
+**Provider's authorised signatory** / Firmatario autorizzato del provider:
+
+- Name / Nome: ________________________________
+- Role / Ruolo: ________________________________
+- Date / Data: ________________________________
+- Signature / Firma: ________________________________
+
+**Compliance officer (optional)** / Responsabile compliance (opzionale):
+
+- Name / Nome: ________________________________
+- Role / Ruolo: ________________________________
+- Date / Data: ________________________________
+- Signature / Firma: ________________________________
+
+---
+
+> **Reminder / Promemoria**: AnnexKit is not a law firm /
+> AnnexKit non è uno studio legale. The classification, evidence
+> aggregations, and citations above are technical artefacts produced by
+> instrumenting the system's runtime via the AnnexKit SDK. Legal
+> interpretation, sign-off, and the related Article 47 EU declaration of
+> conformity are the responsibility of the provider's legal counsel.
+
+— End of document / Fine documento —

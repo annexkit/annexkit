@@ -1,0 +1,32 @@
+# --- Python ------------------------------------------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# --- Node / Next -------------------------------------------------------
+node_modules/
+.next/
+.vercel/
+
+# --- Env & secrets -----------------------------------------------------
+.env
+.env.*
+!.env.example
+
+# --- Editor ------------------------------------------------------------
+.DS_Store
+*.swp
+
+# --- Build artefacts & local data -------------------------------------
+# Generated PDFs land here in dev. Gitignored so the repo stays small.
+backend/generated/
+backend/app/generated/
+
+# direnv / local Makefile config
+.envrc
+.makefile.local

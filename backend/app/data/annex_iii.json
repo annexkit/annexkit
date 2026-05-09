@@ -1,0 +1,289 @@
+{
+  "version": "1.0.0",
+  "regulation": "Regulation (EU) 2024/1689 (AI Act) + L. 132/2025 (Italy)",
+  "regulation_refs": {
+    "prohibited": "Art. 5",
+    "high_risk": "Annex III",
+    "transparency": "Art. 50",
+    "gpai": "Title VIII-bis (Art. 51 et seq.)"
+  },
+  "_comment": "Source of truth for the CUORE risk engine. The engine is purely deterministic: every classification can be reproduced from {answers, this file}. Add new rules here, not in Python. Keep every entry bilingual (it/en) — the questionnaire uses *_it, the Annex IV doc uses *_en.",
+
+  "prohibited_practices": [
+    {
+      "id": "art5_subliminal",
+      "article": "Art. 5(1)(a)",
+      "name_it": "Tecniche subliminali o manipolative",
+      "name_en": "Subliminal or manipulative techniques",
+      "description_it": "Sistemi che impiegano tecniche subliminali, intenzionalmente manipolative o ingannevoli per distorcere il comportamento di una persona causandole, o rischiando di causarle, un danno significativo.",
+      "question_it": "Il sistema utilizza tecniche subliminali, manipolative o ingannevoli per influenzare il comportamento degli utenti?"
+    },
+    {
+      "id": "art5_vulnerabilities",
+      "article": "Art. 5(1)(b)",
+      "name_it": "Sfruttamento di vulnerabilità",
+      "name_en": "Exploiting vulnerabilities",
+      "description_it": "Sistemi che sfruttano vulnerabilità dovute a età, disabilità o situazione socio-economica per distorcere il comportamento.",
+      "question_it": "Il sistema sfrutta vulnerabilità dovute all'età, a disabilità o a condizioni socio-economiche degli utenti?"
+    },
+    {
+      "id": "art5_social_scoring",
+      "article": "Art. 5(1)(c)",
+      "name_it": "Social scoring",
+      "name_en": "Social scoring",
+      "description_it": "Valutazione o classificazione di persone fisiche basata su comportamenti o caratteristiche sociali, con trattamento pregiudizievole in contesti non correlati.",
+      "question_it": "Il sistema assegna punteggi sociali a persone basandosi sul loro comportamento o caratteristiche, con conseguenze pregiudizievoli?"
+    },
+    {
+      "id": "art5_crime_prediction",
+      "article": "Art. 5(1)(d)",
+      "name_it": "Valutazione del rischio criminale basata solo su profilazione",
+      "name_en": "Crime risk prediction from profiling alone",
+      "description_it": "Valutazione del rischio che una persona commetta reato basata unicamente su profilazione o tratti della personalità, senza indicatori oggettivi verificabili.",
+      "question_it": "Il sistema predice il rischio che una persona commetta un reato basandosi solo su profilazione o tratti della personalità?"
+    },
+    {
+      "id": "art5_facial_scraping",
+      "article": "Art. 5(1)(e)",
+      "name_it": "Scraping non mirato di immagini facciali",
+      "name_en": "Untargeted facial image scraping",
+      "description_it": "Creazione o espansione di database di riconoscimento facciale tramite scraping non mirato da internet o videosorveglianza.",
+      "question_it": "Il sistema raccoglie immagini facciali da internet o videocamere in modo non mirato per costruire o espandere database biometrici?"
+    },
+    {
+      "id": "art5_emotion_workplace",
+      "article": "Art. 5(1)(f)",
+      "name_it": "Riconoscimento emozioni sul luogo di lavoro o a scuola",
+      "name_en": "Emotion recognition at work or school",
+      "description_it": "Inferenza delle emozioni nel contesto lavorativo o scolastico (eccetto usi medici o di sicurezza).",
+      "question_it": "Il sistema inferisce le emozioni di dipendenti o studenti, al di fuori di usi medici o di sicurezza?"
+    },
+    {
+      "id": "art5_biometric_categorisation",
+      "article": "Art. 5(1)(g)",
+      "name_it": "Categorizzazione biometrica su attributi sensibili",
+      "name_en": "Biometric categorisation on sensitive attributes",
+      "description_it": "Categorizzazione sulla base di dati biometrici per dedurre origine razziale, opinioni politiche, appartenenza sindacale, convinzioni religiose, vita sessuale o orientamento.",
+      "question_it": "Il sistema usa dati biometrici per dedurre razza, opinioni politiche, religione, orientamento sessuale o vita privata?"
+    },
+    {
+      "id": "art5_realtime_rbi",
+      "article": "Art. 5(1)(h)",
+      "name_it": "Identificazione biometrica remota in tempo reale in spazi pubblici",
+      "name_en": "Real-time remote biometric ID in public spaces",
+      "description_it": "Uso di sistemi di identificazione biometrica remota 'in tempo reale' in spazi accessibili al pubblico per law enforcement (salvo eccezioni tassative autorizzate).",
+      "question_it": "Il sistema identifica in tempo reale persone tramite biometria in spazi pubblici per finalità di law enforcement?"
+    }
+  ],
+
+  "high_risk_categories": [
+    {
+      "id": "annex3_1_biometrics",
+      "annex_ref": "Annex III, §1",
+      "name_it": "Biometria (ove consentita)",
+      "name_en": "Biometrics (where not prohibited)",
+      "description_it": "Identificazione biometrica remota, categorizzazione biometrica e riconoscimento emozioni — nei contesti non vietati dall'Art. 5.",
+      "use_cases": [
+        {
+          "id": "annex3_1_remote_id",
+          "question_it": "Il sistema esegue identificazione biometrica remota (non in tempo reale)?"
+        },
+        {
+          "id": "annex3_1_categorisation",
+          "question_it": "Il sistema categorizza persone in base a dati biometrici (non per attributi sensibili vietati)?"
+        },
+        {
+          "id": "annex3_1_emotion",
+          "question_it": "Il sistema riconosce le emozioni in contesti consentiti (es. medico, sicurezza)?"
+        }
+      ]
+    },
+    {
+      "id": "annex3_2_critical_infra",
+      "annex_ref": "Annex III, §2",
+      "name_it": "Infrastrutture critiche",
+      "name_en": "Critical infrastructure",
+      "description_it": "Componenti di sicurezza di infrastrutture digitali critiche, traffico stradale, fornitura di acqua, gas, riscaldamento o energia.",
+      "use_cases": [
+        {
+          "id": "annex3_2_safety",
+          "question_it": "Il sistema è un componente di sicurezza di un'infrastruttura critica (energia, acqua, trasporti, gas, telco)?"
+        }
+      ]
+    },
+    {
+      "id": "annex3_3_education",
+      "annex_ref": "Annex III, §3",
+      "name_it": "Istruzione e formazione professionale",
+      "name_en": "Education and vocational training",
+      "description_it": "Accesso, ammissione, assegnazione, valutazione esiti di apprendimento, monitoraggio comportamenti durante esami.",
+      "use_cases": [
+        {
+          "id": "annex3_3_admission",
+          "question_it": "Il sistema decide o aiuta a decidere l'ammissione o l'assegnazione ad istituti d'istruzione o formazione?"
+        },
+        {
+          "id": "annex3_3_evaluation",
+          "question_it": "Il sistema valuta i risultati di apprendimento o il livello educativo appropriato per una persona?"
+        },
+        {
+          "id": "annex3_3_exam_monitor",
+          "question_it": "Il sistema monitora o rileva comportamenti vietati durante esami?"
+        }
+      ]
+    },
+    {
+      "id": "annex3_4_employment",
+      "annex_ref": "Annex III, §4",
+      "name_it": "Occupazione, gestione dei lavoratori",
+      "name_en": "Employment and workers management",
+      "description_it": "Reclutamento, selezione, promozione, cessazione, assegnazione compiti, monitoraggio prestazioni dei lavoratori.",
+      "use_cases": [
+        {
+          "id": "annex3_4_recruitment",
+          "question_it": "Il sistema è usato per pubblicare offerte, filtrare candidature o valutare candidati?"
+        },
+        {
+          "id": "annex3_4_promotion",
+          "question_it": "Il sistema prende o supporta decisioni su promozioni o cessazioni di rapporti di lavoro?"
+        },
+        {
+          "id": "annex3_4_task_allocation",
+          "question_it": "Il sistema assegna compiti sulla base di tratti comportamentali o caratteristiche personali?"
+        },
+        {
+          "id": "annex3_4_monitoring",
+          "question_it": "Il sistema monitora o valuta le prestazioni di lavoratori?"
+        }
+      ]
+    },
+    {
+      "id": "annex3_5_essential_services",
+      "annex_ref": "Annex III, §5",
+      "name_it": "Servizi essenziali (pubblici e privati)",
+      "name_en": "Essential services",
+      "description_it": "Benefici pubblici, credit scoring (esclusa la frode), assicurazioni vita/salute, dispatch dei servizi di emergenza.",
+      "use_cases": [
+        {
+          "id": "annex3_5_public_benefits",
+          "question_it": "Il sistema valuta l'ammissibilità a prestazioni o servizi di assistenza pubblica?"
+        },
+        {
+          "id": "annex3_5_credit",
+          "question_it": "Il sistema valuta l'affidabilità creditizia di persone fisiche (escluso il rilevamento di frodi)?"
+        },
+        {
+          "id": "annex3_5_insurance",
+          "question_it": "Il sistema determina premi o rischi per assicurazioni vita o sanitarie?"
+        },
+        {
+          "id": "annex3_5_emergency",
+          "question_it": "Il sistema classifica o assegna priorità a chiamate di emergenza?"
+        }
+      ]
+    },
+    {
+      "id": "annex3_6_law_enforcement",
+      "annex_ref": "Annex III, §6",
+      "name_it": "Applicazione della legge",
+      "name_en": "Law enforcement",
+      "description_it": "Valutazione del rischio individuale, poligrafi, valutazione prove, polizia predittiva, profilazione.",
+      "use_cases": [
+        {
+          "id": "annex3_6_risk_assessment",
+          "question_it": "Il sistema valuta il rischio che una persona diventi vittima o autore di un reato?"
+        },
+        {
+          "id": "annex3_6_polygraph",
+          "question_it": "Il sistema funge da poligrafo o strumento analogo?"
+        },
+        {
+          "id": "annex3_6_evidence",
+          "question_it": "Il sistema valuta l'affidabilità delle prove nelle indagini?"
+        },
+        {
+          "id": "annex3_6_predictive_policing",
+          "question_it": "Il sistema predice reati o recidive sulla base di profilazione personale?"
+        }
+      ]
+    },
+    {
+      "id": "annex3_7_migration",
+      "annex_ref": "Annex III, §7",
+      "name_it": "Migrazione, asilo, controllo frontiere",
+      "name_en": "Migration, asylum, border control",
+      "description_it": "Poligrafi, valutazione rischi, esame domande (visti, asilo, residenza), rilevamento persone ai confini.",
+      "use_cases": [
+        {
+          "id": "annex3_7_risk_assessment",
+          "question_it": "Il sistema valuta rischi di sicurezza, irregolarità o salute di persone migranti o richiedenti asilo?"
+        },
+        {
+          "id": "annex3_7_applications",
+          "question_it": "Il sistema esamina domande di visto, asilo o permesso di soggiorno?"
+        }
+      ]
+    },
+    {
+      "id": "annex3_8_justice",
+      "annex_ref": "Annex III, §8",
+      "name_it": "Giustizia e processi democratici",
+      "name_en": "Justice and democratic processes",
+      "description_it": "Ricerca e interpretazione di fatti o norme da parte di autorità giudiziarie; influenza sugli esiti di elezioni o referendum.",
+      "use_cases": [
+        {
+          "id": "annex3_8_judicial",
+          "question_it": "Il sistema assiste autorità giudiziarie nella ricerca o interpretazione di fatti o nell'applicazione del diritto?"
+        },
+        {
+          "id": "annex3_8_elections",
+          "question_it": "Il sistema è destinato a influenzare l'esito di elezioni, referendum o il comportamento di voto?"
+        }
+      ]
+    }
+  ],
+
+  "transparency_triggers": [
+    {
+      "id": "art50_chat_interaction",
+      "article": "Art. 50(1)",
+      "name_it": "Interazione diretta con persone",
+      "name_en": "Direct interaction with humans",
+      "description_it": "Sistemi destinati a interagire direttamente con persone (chatbot, assistenti virtuali) devono informare l'utente di stare dialogando con un'AI.",
+      "question_it": "Il sistema interagisce direttamente con persone fisiche (chatbot, assistente vocale, supporto automatico)?"
+    },
+    {
+      "id": "art50_synthetic_content",
+      "article": "Art. 50(2)",
+      "name_it": "Contenuti sintetici generati da AI",
+      "name_en": "AI-generated synthetic content",
+      "description_it": "I provider di sistemi che generano contenuti sintetici (audio, immagini, video, testo) devono assicurare che siano riconoscibili come AI-generated.",
+      "question_it": "Il sistema genera contenuti sintetici (testo, audio, immagini, video) che devono essere etichettati come AI-generated?"
+    },
+    {
+      "id": "art50_emotion_biometric",
+      "article": "Art. 50(3)",
+      "name_it": "Riconoscimento emozioni o categorizzazione biometrica",
+      "name_en": "Emotion recognition / biometric categorisation",
+      "description_it": "Gli utilizzatori di sistemi di riconoscimento emozioni o categorizzazione biometrica (nei contesti consentiti) devono informare le persone esposte.",
+      "question_it": "Il sistema fa riconoscimento emozioni o categorizzazione biometrica in contesti consentiti?"
+    },
+    {
+      "id": "art50_deepfake",
+      "article": "Art. 50(4)",
+      "name_it": "Deepfake",
+      "name_en": "Deepfakes",
+      "description_it": "Chi utilizza sistemi AI per generare o manipolare contenuti (deepfake) deve etichettarli come artificiali.",
+      "question_it": "Il sistema genera o manipola contenuti audio/immagine/video in modo da costituire un deepfake?"
+    }
+  ],
+
+  "gpai": {
+    "id": "gpai_marker",
+    "article": "Art. 51 et seq.",
+    "name_it": "Modello di AI general-purpose (GPAI)",
+    "name_en": "General-purpose AI (GPAI) model",
+    "description_it": "I modelli AI a scopo generale (LLM, modelli multimodali di larga scala) sono soggetti a obblighi di trasparenza; quelli con rischio sistemico hanno requisiti rafforzati (Titolo VIII-bis).",
+    "question_it": "Il sistema si basa su un modello AI general-purpose (es. LLM, modello multimodale di larga scala)?"
+  }
+}

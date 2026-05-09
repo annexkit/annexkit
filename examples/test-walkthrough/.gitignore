@@ -1,0 +1,9 @@
+.env
+.venv/
+out/*.pdf
+out/*.md
+out/*.html
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
