@@ -33,6 +33,7 @@ const SECTIONS: FooterSection[] = [
     heading: "Product",
     links: [
       { label: "Pricing", href: "/pricing" },
+      { label: "Sample trust page", href: "/trust/acme-saas" },
       {
         label: "Quickstart",
         href: "https://github.com/annexkit/annexkit#quickstart",
