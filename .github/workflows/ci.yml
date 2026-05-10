@@ -91,10 +91,14 @@ jobs:
           --health-retries 10
 
     env:
-      ENV: test
+      # Settings.env is a Literal["dev", "staging", "prod"]; "dev" is the
+      # right tag for CI runs (no prod hardening checks, no .env file).
+      ENV: dev
       SECRET_KEY: ci-only-not-a-real-secret-${{ github.run_id }}
       DATABASE_URL: postgresql+asyncpg://annexkit:annexkit@localhost:5432/annexkit_test
       DOCUMENT_STORAGE_PATH: /tmp/annexkit-docs
+      # Document storage path must exist before tests try to write Annex IV
+      # PDFs into it; created as a step below to keep this block declarative.
 
     steps:
       - uses: actions/checkout@v4
@@ -113,6 +117,9 @@ jobs:
 
       - name: Format check
         run: uv run ruff format --check .
+
+      - name: Create document storage path
+        run: mkdir -p "$DOCUMENT_STORAGE_PATH"
 
       - name: Apply migrations
         run: uv run alembic upgrade head
