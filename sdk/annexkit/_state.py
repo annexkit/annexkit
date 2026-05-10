@@ -10,7 +10,8 @@ from __future__ import annotations
 
 import logging
 import threading
-from typing import Any, Final
+from importlib.metadata import PackageNotFoundError, version
+from typing import Any
 
 from annexkit.config import Config
 from annexkit.exporters.base import Exporter
@@ -20,9 +21,17 @@ from annexkit.schema import Span
 
 logger = logging.getLogger("annexkit")
 
-#: Bumped on every release. Stamped into every span as ``sdk_version``
-#: so the collector can flag spans coming from old SDKs.
-SDK_VERSION: Final = "0.1.0"
+#: Stamped into every span as ``sdk_version`` so the collector can flag
+#: spans coming from old SDKs. Read from the installed package metadata
+#: at import time, so a bump in ``pyproject.toml`` is the single source
+#: of truth — no parallel constant to keep in sync. Fallback only fires
+#: in editable / source-tree dev where the package isn't really
+#: installed; the ``+dev`` local-version segment makes that case
+#: visually obvious if it ever leaks into a span.
+try:
+    SDK_VERSION = version("annexkit")
+except PackageNotFoundError:
+    SDK_VERSION = "0.0.0+dev"
 
 # ---------------------------------------------------------------------------
 # Singletons
