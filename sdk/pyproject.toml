@@ -1,6 +1,6 @@
 [project]
 name = "annexkit"
-version = "0.1.1"
+version = "0.1.2"
 description = "EU AI Act compliance pipeline for developers — Python SDK"
 readme = "README.md"
 requires-python = ">=3.10"

@@ -48,6 +48,26 @@ Targeted for the next minor (v0.2.0) — see
   to `trace_id`, `span_id`, `parent_span_id` (hex tokens — already
   satisfied by `uuid.uuid4().hex`).
 
+## [0.1.2] — 2026-05-10
+
+### Fixed
+
+- **`annexkit.__version__` now matches the installed package version.**
+  v0.1.1 shipped with a hardcoded `SDK_VERSION = "0.1.0"` constant in
+  `_state.py` while `pyproject.toml` already said `0.1.1`. The two had
+  drifted because they were two parallel sources of truth.
+- Replaced the constant with a runtime read of the package metadata
+  via `importlib.metadata.version("annexkit")`. From now on
+  `pyproject.toml` is the only place to bump versions; `__version__`
+  follows. Source-tree (uninstalled) imports fall back to
+  `0.0.0+dev` so the dev case is visually obvious.
+
+### Tests
+
+- `test_version_exposed` no longer pins an exact version string;
+  asserts SemVer-ish regex instead, so future bumps don't break the
+  test suite.
+
 ## [0.1.1] — 2026-05-10
 
 PyPI listing polish — no code changes, no behaviour changes. The
