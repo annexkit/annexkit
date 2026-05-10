@@ -113,9 +113,7 @@ class RealMistralClient:
         """Fail fast if the API key is missing. Copilot routes call this
         before any network work so the 503 lands before audit writes."""
         if self._client is None:
-            raise MistralNotConfiguredError(
-                "MISTRAL_API_KEY is not set. Copilot is disabled."
-            )
+            raise MistralNotConfiguredError("MISTRAL_API_KEY is not set. Copilot is disabled.")
 
     # ---- API --------------------------------------------------------------
     async def embed(self, texts: list[str]) -> list[list[float]]:
@@ -143,9 +141,7 @@ class RealMistralClient:
         # Translate our tiny dataclass into the SDK's dict shape. Doing
         # it here keeps `ChatMessage` SDK-free so tests can build them
         # without importing `mistralai`.
-        payload: list[dict[str, Any]] = [
-            {"role": m.role, "content": m.content} for m in messages
-        ]
+        payload: list[dict[str, Any]] = [{"role": m.role, "content": m.content} for m in messages]
         resp = await self._client.chat.complete_async(
             model=self._settings.mistral_chat_model,
             messages=payload,

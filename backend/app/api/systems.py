@@ -50,9 +50,7 @@ async def upsert_system(
     session: SessionDep,
 ) -> AISystemRead:
     try:
-        row = await ai_system_service.upsert(
-            session, tenant_id=tenant.id, payload=payload
-        )
+        row = await ai_system_service.upsert(session, tenant_id=tenant.id, payload=payload)
     except (
         UnknownAnnexIIICategoryError,
         UnknownProhibitedRuleError,

@@ -85,8 +85,7 @@ def _load() -> AnnexRules:
             name_en=c["name_en"],
             description_it=c["description_it"],
             use_cases=tuple(
-                HighRiskUseCase(id=u["id"], question_it=u["question_it"])
-                for u in c["use_cases"]
+                HighRiskUseCase(id=u["id"], question_it=u["question_it"]) for u in c["use_cases"]
             ),
         )
         for c in raw["high_risk_categories"]
@@ -97,9 +96,7 @@ def _load() -> AnnexRules:
         regulation=raw["regulation"],
         prohibited_practices=tuple(_parse_rule(p) for p in raw["prohibited_practices"]),
         high_risk_categories=categories,
-        transparency_triggers=tuple(
-            _parse_rule(t) for t in raw["transparency_triggers"]
-        ),
+        transparency_triggers=tuple(_parse_rule(t) for t in raw["transparency_triggers"]),
         gpai=_parse_rule(raw["gpai"]),
         raw=raw,
     )

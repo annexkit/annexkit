@@ -42,9 +42,7 @@ async def test_ingest_creates_span_and_audit_in_one_transaction(
     db_session.add(tenant)
     await db_session.flush()
 
-    span = await span_service.ingest(
-        db_session, tenant_id=tenant.id, payload=_payload()
-    )
+    span = await span_service.ingest(db_session, tenant_id=tenant.id, payload=_payload())
     await db_session.commit()
 
     # Span row written.

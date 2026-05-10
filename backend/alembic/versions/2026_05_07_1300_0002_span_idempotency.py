@@ -37,6 +37,4 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.drop_constraint(
-        "uq_spans_tenant_trace_span", "spans", type_="unique"
-    )
+    op.drop_constraint("uq_spans_tenant_trace_span", "spans", type_="unique")

@@ -97,9 +97,7 @@ class SpanHandle:
 
     def set_error(self, exc: BaseException | str) -> None:
         if isinstance(exc, BaseException):
-            self._span.error = (
-                f"{exc.__class__.__module__}.{exc.__class__.__qualname__}: {exc!s}"
-            )
+            self._span.error = f"{exc.__class__.__module__}.{exc.__class__.__qualname__}: {exc!s}"
         else:
             self._span.error = str(exc)
 
@@ -141,9 +139,7 @@ def session(
     finally:
         span.ended_at = datetime.now(UTC)
         if span.started_at and span.ended_at:
-            span.latency_ms = int(
-                (span.ended_at - span.started_at).total_seconds() * 1000
-            )
+            span.latency_ms = int((span.ended_at - span.started_at).total_seconds() * 1000)
         try:
             _state.export(span)
         except Exception:

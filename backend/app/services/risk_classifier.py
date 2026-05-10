@@ -81,20 +81,17 @@ def classify_declaration(
     bad = [c for c in annex_iii_categories if c not in valid_categories]
     if bad:
         raise UnknownAnnexIIICategoryError(
-            f"Unknown Annex III category id(s): {bad}. "
-            f"Allowed: {sorted(valid_categories)}"
+            f"Unknown Annex III category id(s): {bad}. Allowed: {sorted(valid_categories)}"
         )
     bad = [r for r in prohibited_practices if r not in valid_prohibited]
     if bad:
         raise UnknownProhibitedRuleError(
-            f"Unknown prohibited-practice id(s): {bad}. "
-            f"Allowed: {sorted(valid_prohibited)}"
+            f"Unknown prohibited-practice id(s): {bad}. Allowed: {sorted(valid_prohibited)}"
         )
     bad = [r for r in transparency_triggers if r not in valid_transparency]
     if bad:
         raise UnknownTransparencyTriggerError(
-            f"Unknown transparency-trigger id(s): {bad}. "
-            f"Allowed: {sorted(valid_transparency)}"
+            f"Unknown transparency-trigger id(s): {bad}. Allowed: {sorted(valid_transparency)}"
         )
 
     answers: dict[str, bool] = {}

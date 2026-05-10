@@ -143,9 +143,7 @@ def _try_get_signature(fn: Callable[..., Any]) -> inspect.Signature | None:
         return None
 
 
-def _bound_args(
-    signature: inspect.Signature | None, args: tuple, kwargs: dict
-) -> dict[str, Any]:
+def _bound_args(signature: inspect.Signature | None, args: tuple, kwargs: dict) -> dict[str, Any]:
     """Best-effort {param_name: value} mapping for hashing. Never raises."""
     if signature is None:
         return {"args": list(args), "kwargs": dict(kwargs)}
@@ -185,14 +183,10 @@ def _record_output(span: Span, result: Any) -> None:
 
 
 def _record_error(span: Span, exc: BaseException) -> None:
-    span.error = (
-        f"{exc.__class__.__module__}.{exc.__class__.__qualname__}: {exc!s}"
-    )
+    span.error = f"{exc.__class__.__module__}.{exc.__class__.__qualname__}: {exc!s}"
 
 
 def _close_span(span: Span) -> None:
     span.ended_at = datetime.now(UTC)
     if span.started_at and span.ended_at:
-        span.latency_ms = int(
-            (span.ended_at - span.started_at).total_seconds() * 1000
-        )
+        span.latency_ms = int((span.ended_at - span.started_at).total_seconds() * 1000)

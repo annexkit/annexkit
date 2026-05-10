@@ -34,9 +34,7 @@ async def test_put_creates_classified_high_risk(
     assert body["system_id"] == "hr-screener"
     assert body["risk_tier"] == "high"
     assert body["rules_version"]
-    assert any(
-        r["rule_id"] == "annex3_4_employment" for r in body["reasoning"]
-    )
+    assert any(r["rule_id"] == "annex3_4_employment" for r in body["reasoning"])
 
     rows = (await db_session.execute(select(AISystem))).scalars().all()
     assert len(rows) == 1
@@ -185,9 +183,7 @@ async def test_put_writes_audit_log(
     )
     assert update_resp.status_code == 200
 
-    audits = (
-        await db_session.execute(select(AuditLog).order_by(AuditLog.id))
-    ).scalars().all()
+    audits = (await db_session.execute(select(AuditLog).order_by(AuditLog.id))).scalars().all()
     actions = [a.action for a in audits]
     assert "ai_system.created" in actions
     assert "ai_system.updated" in actions

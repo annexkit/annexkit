@@ -50,22 +50,18 @@ _PUBLIC_PROVIDER_FIELDS: frozenset[str] = frozenset(
 )
 
 
-async def get_tenant_by_slug(
-    session: AsyncSession, slug: str
-) -> Tenant | None:
-    return (
-        await session.execute(select(Tenant).where(Tenant.slug == slug))
-    ).scalar_one_or_none()
+async def get_tenant_by_slug(session: AsyncSession, slug: str) -> Tenant | None:
+    return (await session.execute(select(Tenant).where(Tenant.slug == slug))).scalar_one_or_none()
 
 
 async def overview(
     session: AsyncSession, tenant: Tenant, *, annexkit_version: str
 ) -> TrustOverview:
     rows = (
-        await session.execute(
-            select(AISystem.risk_tier).where(AISystem.tenant_id == tenant.id)
-        )
-    ).scalars().all()
+        (await session.execute(select(AISystem.risk_tier).where(AISystem.tenant_id == tenant.id)))
+        .scalars()
+        .all()
+    )
     counter: Counter[str] = Counter(rows)
     return TrustOverview(
         tenant=PublicTenant(name=tenant.name, slug=tenant.slug),
@@ -86,12 +82,16 @@ async def list_systems(
     session: AsyncSession, tenant: Tenant, *, annexkit_version: str
 ) -> TrustSystemsResponse:
     rows = (
-        await session.execute(
-            select(AISystem)
-            .where(AISystem.tenant_id == tenant.id)
-            .order_by(AISystem.system_id.asc())
+        (
+            await session.execute(
+                select(AISystem)
+                .where(AISystem.tenant_id == tenant.id)
+                .order_by(AISystem.system_id.asc())
+            )
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
     return TrustSystemsResponse(
         tenant=PublicTenant(name=tenant.name, slug=tenant.slug),
         systems=[
@@ -143,9 +143,7 @@ async def get_system(
             classified_at=row.classified_at,
             created_at=row.created_at,
             updated_at=row.updated_at,
-            provider_info=PublicProviderInfo(
-                **redact_provider_info(row.provider_info or {})
-            ),
+            provider_info=PublicProviderInfo(**redact_provider_info(row.provider_info or {})),
         ),
         annexkit_version=annexkit_version,
         as_of=datetime.now(UTC),

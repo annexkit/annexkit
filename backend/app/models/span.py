@@ -72,23 +72,15 @@ class Span(Base):
 
     # ---- System ---------------------------------------------------------
     system_id: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
-    deployment: Mapped[str] = mapped_column(
-        String(50), nullable=False, default="prod"
-    )
+    deployment: Mapped[str] = mapped_column(String(50), nullable=False, default="prod")
 
     # ---- AI Act metadata ------------------------------------------------
-    risk_tier: Mapped[str] = mapped_column(
-        String(20), nullable=False, default="auto"
-    )
+    risk_tier: Mapped[str] = mapped_column(String(20), nullable=False, default="auto")
     purpose: Mapped[str | None] = mapped_column(String(500), nullable=True)
 
     # ---- Timing ---------------------------------------------------------
-    started_at: Mapped[datetime] = mapped_column(
-        TIMESTAMP(timezone=True), nullable=False
-    )
-    ended_at: Mapped[datetime | None] = mapped_column(
-        TIMESTAMP(timezone=True), nullable=True
-    )
+    started_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False)
+    ended_at: Mapped[datetime | None] = mapped_column(TIMESTAMP(timezone=True), nullable=True)
     latency_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
     # ---- Model ----------------------------------------------------------
@@ -131,9 +123,7 @@ class Span(Base):
 
     # ---- SDK provenance ------------------------------------------------
     sdk_version: Mapped[str] = mapped_column(String(20), nullable=False)
-    sdk_lang: Mapped[str] = mapped_column(
-        String(20), nullable=False, default="python"
-    )
+    sdk_lang: Mapped[str] = mapped_column(String(20), nullable=False, default="python")
 
     # ---- Server-side ----------------------------------------------------
     received_at: Mapped[datetime] = created_at_column()

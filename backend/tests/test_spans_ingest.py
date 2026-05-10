@@ -184,9 +184,7 @@ async def test_ingest_updates_last_used_at(
 ) -> None:
     _, plaintext = authenticated_tenant
 
-    api_key_before = (
-        await db_session.execute(select(ApiKey))
-    ).scalar_one()
+    api_key_before = (await db_session.execute(select(ApiKey))).scalar_one()
     assert api_key_before.last_used_at is None
 
     resp = await client.post(

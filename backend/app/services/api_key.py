@@ -93,7 +93,7 @@ def looks_like_api_key(value: str) -> bool:
     """
     if not value.startswith(_KEY_PREFIX):
         return False
-    suffix = value[len(_KEY_PREFIX):]
+    suffix = value[len(_KEY_PREFIX) :]
     if len(suffix) != _KEY_SUFFIX_LEN:
         return False
     return all(c in _KEY_ALPHABET for c in suffix)

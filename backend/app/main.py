@@ -61,20 +61,13 @@ def _assert_production_hardening(s: Settings) -> None:
 
     if not s.cors_origins or "*" in s.cors_origins:
         problems.append(
-            "cors_origins must be a concrete list of HTTPS frontends in "
-            "prod — no wildcards."
+            "cors_origins must be a concrete list of HTTPS frontends in prod — no wildcards."
         )
     elif any(not o.startswith("https://") for o in s.cors_origins):
-        problems.append(
-            "cors_origins must all use https:// in prod — "
-            f"got {s.cors_origins!r}."
-        )
+        problems.append(f"cors_origins must all use https:// in prod — got {s.cors_origins!r}.")
 
     if problems:
-        raise RuntimeError(
-            "Production hardening checks failed:\n  - "
-            + "\n  - ".join(problems)
-        )
+        raise RuntimeError("Production hardening checks failed:\n  - " + "\n  - ".join(problems))
 
 
 class RequestIdMiddleware(BaseHTTPMiddleware):

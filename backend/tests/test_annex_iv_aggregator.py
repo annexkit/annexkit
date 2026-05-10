@@ -143,9 +143,9 @@ async def test_aggregations_count_models_sources_errors(
     assert aggs.first_span_at is not None
     assert aggs.first_span_at.replace(tzinfo=None) == base.replace(tzinfo=None)
     assert aggs.last_span_at is not None
-    assert aggs.last_span_at.replace(tzinfo=None) == (
-        base + timedelta(seconds=3)
-    ).replace(tzinfo=None)
+    assert aggs.last_span_at.replace(tzinfo=None) == (base + timedelta(seconds=3)).replace(
+        tzinfo=None
+    )
 
     # Top model = gpt-4o with 3 invocations.
     assert aggs.models[0].name == "gpt-4o"

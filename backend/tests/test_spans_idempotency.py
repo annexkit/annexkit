@@ -72,8 +72,8 @@ async def test_duplicate_post_is_idempotent(
 
     # Only ONE audit log entry — the dup ingest must not pollute the trail.
     audits = (
-        await db_session.execute(
-            select(AuditLog).where(AuditLog.action == "span.ingested")
-        )
-    ).scalars().all()
+        (await db_session.execute(select(AuditLog).where(AuditLog.action == "span.ingested")))
+        .scalars()
+        .all()
+    )
     assert len(audits) == 1

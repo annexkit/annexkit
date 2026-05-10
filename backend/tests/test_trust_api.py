@@ -172,9 +172,7 @@ async def test_provider_info_redaction(
     )
     await db_session.commit()
 
-    resp = await client.get(
-        f"/api/v1/trust/{tenant.slug}/systems/hr-screener"
-    )
+    resp = await client.get(f"/api/v1/trust/{tenant.slug}/systems/hr-screener")
     assert resp.status_code == 200
     pi = resp.json()["system"]["provider_info"]
 

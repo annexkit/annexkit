@@ -114,8 +114,7 @@ def _build_exporter(cfg: Config) -> Exporter:
     if cfg.exporter == "http":
         if not cfg.api_key:
             logger.warning(
-                "ANNEXKIT_EXPORTER=http but ANNEXKIT_API_KEY is not set; "
-                "falling back to stdout."
+                "ANNEXKIT_EXPORTER=http but ANNEXKIT_API_KEY is not set; falling back to stdout."
             )
             return StdoutExporter()
         return HttpExporter(api_key=cfg.api_key, collector_url=cfg.collector_url)

@@ -88,9 +88,7 @@ def upgrade() -> None:
             server_default=sa.func.now(),
             nullable=False,
         ),
-        sa.UniqueConstraint(
-            "tenant_id", "system_id", name="uq_ai_systems_tenant_system"
-        ),
+        sa.UniqueConstraint("tenant_id", "system_id", name="uq_ai_systems_tenant_system"),
     )
     op.create_index("ix_ai_systems_tenant_id", "ai_systems", ["tenant_id"])
     op.create_index("ix_ai_systems_system_id", "ai_systems", ["system_id"])

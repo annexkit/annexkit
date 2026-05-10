@@ -168,16 +168,12 @@ async def test_list_returns_only_callers_systems(
         headers={"Authorization": f"Bearer {key_b}"},
     )
 
-    resp_a = await client.get(
-        "/api/v1/systems", headers={"Authorization": f"Bearer {key_a}"}
-    )
+    resp_a = await client.get("/api/v1/systems", headers={"Authorization": f"Bearer {key_a}"})
     assert resp_a.status_code == 200
     a_systems = {s["system_id"] for s in resp_a.json()["systems"]}
     assert a_systems == {"a-bot"}
 
-    resp_b = await client.get(
-        "/api/v1/systems", headers={"Authorization": f"Bearer {key_b}"}
-    )
+    resp_b = await client.get("/api/v1/systems", headers={"Authorization": f"Bearer {key_b}"})
     assert resp_b.status_code == 200
     b_systems = {s["system_id"] for s in resp_b.json()["systems"]}
     assert b_systems == {"b-bot"}
@@ -247,9 +243,7 @@ async def test_404s_are_opaque_no_information_leak(
     """All trust-page 404s share the same body — an attacker can't
     differentiate ``slug doesn't exist`` from ``slug exists, system
     doesn't``."""
-    resp_unknown_slug = await client.get(
-        "/api/v1/trust/this-slug-does-not-exist"
-    )
+    resp_unknown_slug = await client.get("/api/v1/trust/this-slug-does-not-exist")
     assert resp_unknown_slug.status_code == 404
     assert resp_unknown_slug.json() == {"detail": "Not found"}
 
@@ -273,7 +267,7 @@ async def test_invalid_system_id_charset_rejected(
     for bad in [
         "../../etc/passwd",
         "system with spaces",
-        "system\"with-quotes",
+        'system"with-quotes',
         "system\\backslash",
         "system\x00null",
     ]:

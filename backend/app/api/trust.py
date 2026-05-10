@@ -48,9 +48,7 @@ async def get_overview(slug: str, session: SessionDep) -> TrustOverview:
     tenant = await trust_service.get_tenant_by_slug(session, slug)
     if tenant is None:
         raise _not_found()
-    return await trust_service.overview(
-        session, tenant, annexkit_version=settings.app_version
-    )
+    return await trust_service.overview(session, tenant, annexkit_version=settings.app_version)
 
 
 @router.get(
@@ -62,9 +60,7 @@ async def list_systems(slug: str, session: SessionDep) -> TrustSystemsResponse:
     tenant = await trust_service.get_tenant_by_slug(session, slug)
     if tenant is None:
         raise _not_found()
-    return await trust_service.list_systems(
-        session, tenant, annexkit_version=settings.app_version
-    )
+    return await trust_service.list_systems(session, tenant, annexkit_version=settings.app_version)
 
 
 @router.get(
@@ -77,9 +73,7 @@ async def list_systems(slug: str, session: SessionDep) -> TrustSystemsResponse:
         "operational telemetry is not exposed."
     ),
 )
-async def get_system(
-    slug: str, system_id: str, session: SessionDep
-) -> TrustSystemDetailResponse:
+async def get_system(slug: str, system_id: str, session: SessionDep) -> TrustSystemDetailResponse:
     tenant = await trust_service.get_tenant_by_slug(session, slug)
     if tenant is None:
         raise _not_found()
@@ -93,6 +87,4 @@ async def get_system(
 
 def _not_found() -> HTTPException:
     """Single opaque 404 — see module docstring."""
-    return HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND, detail="Not found"
-    )
+    return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not found")

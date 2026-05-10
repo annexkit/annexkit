@@ -39,9 +39,7 @@ class Source(BaseModel):
         ...,
         description="Source URI, e.g. 'kb://policies/credit-001' or 'https://...'.",
     )
-    hash: str | None = Field(
-        default=None, description="SHA-256 (or other) of the source content."
-    )
+    hash: str | None = Field(default=None, description="SHA-256 (or other) of the source content.")
     version: str | None = Field(
         default=None, description="Version tag, commit hash, or document revision."
     )
@@ -97,13 +95,9 @@ class Span(BaseModel):
     model_version: str | None = None
 
     # ---- Privacy-preserving I/O -----------------------------------------
-    input_hash: str | None = Field(
-        default=None, description="SHA-256 hex of serialised input."
-    )
+    input_hash: str | None = Field(default=None, description="SHA-256 hex of serialised input.")
     input_chars: int | None = None
-    output_hash: str | None = Field(
-        default=None, description="SHA-256 hex of serialised output."
-    )
+    output_hash: str | None = Field(default=None, description="SHA-256 hex of serialised output.")
     output_chars: int | None = None
 
     # ---- Retrieval grounding --------------------------------------------

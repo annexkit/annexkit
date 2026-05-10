@@ -78,9 +78,7 @@ async def gather(
     now = now or datetime.now(UTC)
     document_id = uuid.uuid4()
 
-    span_rows = await _fetch_spans(
-        session, tenant_id=tenant.id, system_id=system.system_id
-    )
+    span_rows = await _fetch_spans(session, tenant_id=tenant.id, system_id=system.system_id)
 
     aggregations = _aggregate(span_rows, now=now)
     sample_spans = _sample_spans(span_rows)
@@ -116,13 +114,17 @@ async def _fetch_spans(
     session: AsyncSession, *, tenant_id: uuid.UUID, system_id: str
 ) -> list[Span]:
     rows = (
-        await session.execute(
-            select(Span)
-            .where(Span.tenant_id == tenant_id)
-            .where(Span.system_id == system_id)
-            .order_by(Span.started_at.asc())
+        (
+            await session.execute(
+                select(Span)
+                .where(Span.tenant_id == tenant_id)
+                .where(Span.system_id == system_id)
+                .order_by(Span.started_at.asc())
+            )
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
     return list(rows)
 
 
@@ -133,15 +135,19 @@ async def _collect_changes(
     system_db_id: uuid.UUID,
 ) -> list[ChangeEvent]:
     rows = (
-        await session.execute(
-            select(AuditLog)
-            .where(AuditLog.tenant_id == tenant_id)
-            .where(AuditLog.entity_type == "ai_system")
-            .where(AuditLog.entity_id == system_db_id)
-            .where(AuditLog.action.in_(["ai_system.created", "ai_system.updated"]))
-            .order_by(AuditLog.created_at.asc())
+        (
+            await session.execute(
+                select(AuditLog)
+                .where(AuditLog.tenant_id == tenant_id)
+                .where(AuditLog.entity_type == "ai_system")
+                .where(AuditLog.entity_id == system_db_id)
+                .where(AuditLog.action.in_(["ai_system.created", "ai_system.updated"]))
+                .order_by(AuditLog.created_at.asc())
+            )
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
     return [
         ChangeEvent(
             occurred_at=r.created_at,
@@ -255,18 +261,14 @@ def _aggregate(spans: list[Span], *, now: datetime) -> SpanAggregations:
             slice_spans = [s for s in spans if _strip_tz(s.started_at) >= cutoff]
         slice_total = len(slice_spans)
         slice_errors = sum(1 for s in slice_spans if s.error is not None)
-        latency_values = [
-            s.latency_ms for s in slice_spans if s.latency_ms is not None
-        ]
+        latency_values = [s.latency_ms for s in slice_spans if s.latency_ms is not None]
         windows.append(
             WindowStats(
                 window=name,  # type: ignore[arg-type]
                 total=slice_total,
                 error_count=slice_errors,
                 error_rate_pct=(
-                    round(slice_errors * 100.0 / slice_total, 2)
-                    if slice_total
-                    else None
+                    round(slice_errors * 100.0 / slice_total, 2) if slice_total else None
                 ),
                 latency=_latency_stats(latency_values),
             )
@@ -344,9 +346,7 @@ def _sample_spans(spans: list[Span]) -> list[SampleSpanRef]:
     ]
 
 
-def _model_label(
-    provider: str | None, name: str | None, version: str | None
-) -> str | None:
+def _model_label(provider: str | None, name: str | None, version: str | None) -> str | None:
     parts = [p for p in (provider, name, version) if p]
     return "/".join(parts) if parts else None
 
@@ -374,9 +374,7 @@ def _system_snapshot(system: AISystem) -> AISystemSnapshot:
 # ---------------------------------------------------------------------------
 # Gap analysis
 # ---------------------------------------------------------------------------
-def _gap_analysis(
-    system: AISystemSnapshot, aggregations: SpanAggregations
-) -> list[GapItem]:
+def _gap_analysis(system: AISystemSnapshot, aggregations: SpanAggregations) -> list[GapItem]:
     """Map every Annex IV requirement to its evidence-completeness status.
 
     The gap section is one of the most useful surfaces for the user —
@@ -385,7 +383,8 @@ def _gap_analysis(
     """
     pi = system.provider_info
     has_some_provider = any(
-        getattr(pi, f) for f in (
+        getattr(pi, f)
+        for f in (
             "legal_name",
             "address",
             "country",
@@ -425,9 +424,7 @@ def _gap_analysis(
     elif has_some_provider:
         provider_status = "partial"
         missing = [
-            f
-            for f in ("legal_name", "address", "country", "contact_email")
-            if not getattr(pi, f)
+            f for f in ("legal_name", "address", "country", "contact_email") if not getattr(pi, f)
         ]
         provider_note = f"Missing: {', '.join(missing)}."
     else:
@@ -489,9 +486,7 @@ def _gap_analysis(
         "Article 14 — Human oversight",
         "Articolo 14 — Sorveglianza umana",
         "auto" if aggregations.user_roles else "partial",
-        None
-        if aggregations.user_roles
-        else "Populate user_role on tracked invocations.",
+        None if aggregations.user_roles else "Populate user_role on tracked invocations.",
     )
     add(
         "§4",

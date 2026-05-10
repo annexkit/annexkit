@@ -52,16 +52,12 @@ class AuditLog(Base):
     # Tenant that owns the event. Not a FK because we want the log to
     # survive even if a tenant row is (in theory) deleted. Index for
     # per-tenant queries.
-    tenant_id: Mapped[uuid.UUID] = mapped_column(
-        Uuid(as_uuid=True), nullable=False, index=True
-    )
+    tenant_id: Mapped[uuid.UUID] = mapped_column(Uuid(as_uuid=True), nullable=False, index=True)
 
     # Actor — also not a FK for the same survivability reason. Currently
     # always None for SDK-driven spans (the actor is "tenant API key");
     # populated once dashboard auth lands in M4.
-    user_id: Mapped[uuid.UUID | None] = mapped_column(
-        Uuid(as_uuid=True), nullable=True
-    )
+    user_id: Mapped[uuid.UUID | None] = mapped_column(Uuid(as_uuid=True), nullable=True)
 
     # Dotted-string convention: `<resource>.<verb>` e.g.
     # ``span.ingested``, ``api_key.revoked``, ``annex_iv.generated``.
@@ -72,9 +68,7 @@ class AuditLog(Base):
     # Polymorphic subject: action acts on an entity of `entity_type` with
     # primary key `entity_id`. Allows joining to any of our domain tables.
     entity_type: Mapped[str | None] = mapped_column(String(50), nullable=True)
-    entity_id: Mapped[uuid.UUID | None] = mapped_column(
-        Uuid(as_uuid=True), nullable=True
-    )
+    entity_id: Mapped[uuid.UUID | None] = mapped_column(Uuid(as_uuid=True), nullable=True)
 
     # Full payload of the change. Serialises whatever the service wrote:
     # the create payload, the diff on update, the whole classification

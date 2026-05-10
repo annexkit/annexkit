@@ -80,9 +80,7 @@ async def test_markdown_default_format(
     headers = {"Authorization": f"Bearer {plaintext}"}
     await _declare_high_risk(client, headers)
 
-    resp = await client.get(
-        "/api/v1/systems/hr-screener/annex-iv", headers=headers
-    )
+    resp = await client.get("/api/v1/systems/hr-screener/annex-iv", headers=headers)
     assert resp.status_code == 200
     assert resp.headers["content-type"].startswith("text/markdown")
     assert resp.headers["X-Document-Id"]
@@ -127,9 +125,7 @@ async def test_markdown_includes_aggregations_after_ingest(
             headers=headers,
         )
 
-    resp = await client.get(
-        "/api/v1/systems/hr-screener/annex-iv", headers=headers
-    )
+    resp = await client.get("/api/v1/systems/hr-screener/annex-iv", headers=headers)
     assert resp.status_code == 200
     body = resp.text
     # Total invocations row should reflect the 2 ingested spans.
@@ -152,17 +148,15 @@ async def test_audit_log_records_generation(
     headers = {"Authorization": f"Bearer {plaintext}"}
     await _declare_high_risk(client, headers)
 
-    resp = await client.get(
-        "/api/v1/systems/hr-screener/annex-iv", headers=headers
-    )
+    resp = await client.get("/api/v1/systems/hr-screener/annex-iv", headers=headers)
     assert resp.status_code == 200
     document_id = resp.headers["X-Document-Id"]
 
     audits = (
-        await db_session.execute(
-            select(AuditLog).where(AuditLog.action == "annex_iv.generated")
-        )
-    ).scalars().all()
+        (await db_session.execute(select(AuditLog).where(AuditLog.action == "annex_iv.generated")))
+        .scalars()
+        .all()
+    )
     assert len(audits) == 1
     assert audits[0].details["document_id"] == document_id
     assert audits[0].details["format"] == "md"
@@ -196,9 +190,7 @@ async def test_pdf_format(
     headers = {"Authorization": f"Bearer {plaintext}"}
     await _declare_high_risk(client, headers)
 
-    resp = await client.get(
-        "/api/v1/systems/hr-screener/annex-iv?format=pdf", headers=headers
-    )
+    resp = await client.get("/api/v1/systems/hr-screener/annex-iv?format=pdf", headers=headers)
     assert resp.status_code == 200
     assert resp.headers["content-type"] == "application/pdf"
     # PDFs start with "%PDF-".
@@ -215,9 +207,7 @@ async def test_unknown_format_returns_422(
     headers = {"Authorization": f"Bearer {plaintext}"}
     await _declare_high_risk(client, headers)
 
-    resp = await client.get(
-        "/api/v1/systems/hr-screener/annex-iv?format=xml", headers=headers
-    )
+    resp = await client.get("/api/v1/systems/hr-screener/annex-iv?format=xml", headers=headers)
     assert resp.status_code == 422
 
 

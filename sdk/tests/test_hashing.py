@@ -31,10 +31,7 @@ def test_hash_text_idempotent() -> None:
 
 def test_hash_text_known_vector() -> None:
     # SHA-256 of "hello" UTF-8.
-    assert (
-        hash_text("hello")
-        == "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824"
-    )
+    assert hash_text("hello") == "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824"
 
 
 def test_serialize_dict_order_independent() -> None:

@@ -31,9 +31,7 @@ class ProviderInfo(BaseModel):
     legal_name: str | None = Field(
         default=None, max_length=200, description="Provider's legal entity name."
     )
-    address: str | None = Field(
-        default=None, max_length=500, description="Registered address."
-    )
+    address: str | None = Field(default=None, max_length=500, description="Registered address.")
     country: str | None = Field(
         default=None,
         max_length=2,
@@ -56,8 +54,7 @@ class ProviderInfo(BaseModel):
         default=None,
         max_length=50,
         description=(
-            "The AI system's own version (e.g. 'v2.4.1'). Distinct "
-            "from AnnexKit's rules_version."
+            "The AI system's own version (e.g. 'v2.4.1'). Distinct from AnnexKit's rules_version."
         ),
     )
     software_environment: str | None = Field(
@@ -72,17 +69,13 @@ class ProviderInfo(BaseModel):
         default=None,
         max_length=500,
         description=(
-            "Free-form description of intended hardware "
-            "(e.g. 'AWS c7i.large, 8 vCPU, 16 GB RAM')."
+            "Free-form description of intended hardware (e.g. 'AWS c7i.large, 8 vCPU, 16 GB RAM')."
         ),
     )
     validation_methods: str | None = Field(
         default=None,
         max_length=2000,
-        description=(
-            "Annex IV §2(e) — methodology for validation + testing. "
-            "Free-form prose."
-        ),
+        description=("Annex IV §2(e) — methodology for validation + testing. Free-form prose."),
     )
     notes: str | None = Field(
         default=None,

@@ -43,15 +43,9 @@ class IngestSpan(BaseModel):
     # Identity — hex-shaped tokens (the SDK generates them via
     # ``uuid.uuid4().hex``). Pattern enforces shape so a bogus client
     # can't inject control chars or weird unicode into the audit trail.
-    trace_id: str = Field(
-        ..., min_length=1, max_length=64, pattern=r"^[A-Za-z0-9]+$"
-    )
-    span_id: str = Field(
-        ..., min_length=1, max_length=32, pattern=r"^[A-Za-z0-9]+$"
-    )
-    parent_span_id: str | None = Field(
-        default=None, max_length=32, pattern=r"^[A-Za-z0-9]+$"
-    )
+    trace_id: str = Field(..., min_length=1, max_length=64, pattern=r"^[A-Za-z0-9]+$")
+    span_id: str = Field(..., min_length=1, max_length=32, pattern=r"^[A-Za-z0-9]+$")
+    parent_span_id: str | None = Field(default=None, max_length=32, pattern=r"^[A-Za-z0-9]+$")
 
     # System
     # Restricted charset so ``system_id`` is safe in Content-Disposition
@@ -63,9 +57,7 @@ class IngestSpan(BaseModel):
         max_length=100,
         pattern=r"^[A-Za-z0-9._-]+$",
     )
-    deployment: str = Field(
-        default="prod", max_length=50, pattern=r"^[A-Za-z0-9._-]+$"
-    )
+    deployment: str = Field(default="prod", max_length=50, pattern=r"^[A-Za-z0-9._-]+$")
 
     # AI Act
     risk_tier: RiskTier = "auto"
@@ -112,4 +104,6 @@ class IngestResponse(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     id: uuid.UUID = Field(..., description="Server-side primary key of the persisted span.")
-    received_at: datetime = Field(..., description="UTC timestamp when the collector received the span.")
+    received_at: datetime = Field(
+        ..., description="UTC timestamp when the collector received the span."
+    )

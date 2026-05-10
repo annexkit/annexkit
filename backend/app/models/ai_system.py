@@ -106,9 +106,7 @@ class AISystem(Base):
         nullable=False,
         default=list,
     )
-    classified_at: Mapped[datetime] = mapped_column(
-        TIMESTAMP(timezone=True), nullable=False
-    )
+    classified_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), nullable=False)
 
     created_at: Mapped[datetime] = created_at_column()
     updated_at: Mapped[datetime] = updated_at_column()

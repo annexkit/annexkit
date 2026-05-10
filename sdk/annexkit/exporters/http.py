@@ -65,8 +65,7 @@ class HttpExporter(Exporter):
             )
             if resp.status_code >= 400:
                 logger.warning(
-                    "AnnexKit collector rejected span (system_id=%s): "
-                    "HTTP %d %s",
+                    "AnnexKit collector rejected span (system_id=%s): HTTP %d %s",
                     span.system_id,
                     resp.status_code,
                     resp.text[:200],

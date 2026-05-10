@@ -47,12 +47,14 @@ async def list_for_tenant(
     tenant_id: uuid.UUID,
 ) -> list[AISystem]:
     rows = (
-        await session.execute(
-            select(AISystem)
-            .where(AISystem.tenant_id == tenant_id)
-            .order_by(AISystem.system_id)
+        (
+            await session.execute(
+                select(AISystem).where(AISystem.tenant_id == tenant_id).order_by(AISystem.system_id)
+            )
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
     return list(rows)
 
 
@@ -75,9 +77,7 @@ async def upsert(
         is_gpai=payload.is_gpai,
     )
 
-    existing = await get_by_system_id(
-        session, tenant_id=tenant_id, system_id=payload.system_id
-    )
+    existing = await get_by_system_id(session, tenant_id=tenant_id, system_id=payload.system_id)
     classified_at = datetime.now(UTC)
 
     provider_info_dict = payload.provider_info.model_dump(exclude_none=True)

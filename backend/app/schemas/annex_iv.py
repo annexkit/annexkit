@@ -228,7 +228,5 @@ class AnnexIVContext(BaseModel):
 
     executive_summary: str = Field(
         default="",
-        description=(
-            "Auto-generated 2-3 sentence summary that opens the document."
-        ),
+        description=("Auto-generated 2-3 sentence summary that opens the document."),
     )

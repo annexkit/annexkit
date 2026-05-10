@@ -38,9 +38,7 @@ class Tenant(Base):
     # URL slug — kebab-case, unique across the whole DB. Used to
     # construct trust-center URLs like
     # ``https://<slug>.annexkit.eu/trust``.
-    slug: Mapped[str] = mapped_column(
-        String(50), nullable=False, unique=True, index=True
-    )
+    slug: Mapped[str] = mapped_column(String(50), nullable=False, unique=True, index=True)
 
     created_at: Mapped[datetime] = created_at_column()
     updated_at: Mapped[datetime] = updated_at_column()
@@ -79,22 +77,16 @@ class ApiKey(Base):
     # Unique because two collisions would mean a (vanishingly unlikely)
     # SHA-256 collision *plus* same secret. The unique index also makes
     # the auth lookup an O(1) B-tree probe.
-    key_hash: Mapped[str] = mapped_column(
-        String(64), nullable=False, unique=True, index=True
-    )
+    key_hash: Mapped[str] = mapped_column(String(64), nullable=False, unique=True, index=True)
 
     # Best-effort timestamp of last successful auth. Updated in the
     # auth dependency. Nullable: a freshly generated key has no usage yet.
-    last_used_at: Mapped[datetime | None] = mapped_column(
-        TIMESTAMP(timezone=True), nullable=True
-    )
+    last_used_at: Mapped[datetime | None] = mapped_column(TIMESTAMP(timezone=True), nullable=True)
 
     # When non-null, this key is revoked and auth must reject it.
     # We don't delete revoked keys — keeping them lets us trace
     # "which key signed which span" for forensic queries.
-    revoked_at: Mapped[datetime | None] = mapped_column(
-        TIMESTAMP(timezone=True), nullable=True
-    )
+    revoked_at: Mapped[datetime | None] = mapped_column(TIMESTAMP(timezone=True), nullable=True)
 
     created_at: Mapped[datetime] = created_at_column()
     updated_at: Mapped[datetime] = updated_at_column()
