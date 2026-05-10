@@ -44,10 +44,15 @@ class HttpExporter(Exporter):
         self._client = client or httpx.Client(timeout=timeout)
         # Headers are applied per-request (not on the client) so a
         # caller-supplied client doesn't need to pre-configure them.
+        # User-Agent reads from the package metadata (same source as
+        # SDK_VERSION) so the bumped pyproject.toml propagates here too.
+        # Imported lazily to avoid an import cycle (_state imports this module).
+        from annexkit._state import SDK_VERSION
+
         self._headers = {
             "Authorization": f"Bearer {api_key}",
             "X-AnnexKit-Api-Key": api_key,
-            "User-Agent": "annexkit-python/0.1.0",
+            "User-Agent": f"annexkit-python/{SDK_VERSION}",
             "Content-Type": "application/json",
         }
 

@@ -108,24 +108,27 @@ def classify(answers: dict[str, bool], is_gpai: bool = False) -> Verdict:
     # chatbot that neither admits nor evaluates). Report the *category* of
     # each triggered use case — it's the shape regulators and auditors think
     # in, not the micro-question id.
-    high_risk_hits: list[ReasonEntry] = []
-    for category in ANNEX.high_risk_categories:
-        if any(answers.get(uc.id) is True for uc in category.use_cases):
-            high_risk_hits.append(
-                ReasonEntry(
-                    rule_id=category.id,
-                    rule_type="high_risk",
-                    article=category.annex_ref,
-                    name_it=category.name_it,
-                    name_en=category.name_en,
-                )
-            )
+    #
+    # Built as a tuple comprehension (not a list-then-cast) so the result is
+    # immutable from construction: nothing in this function can mutate it
+    # before it leaves on a Verdict, and the type system enforces it.
+    high_risk_hits = tuple(
+        ReasonEntry(
+            rule_id=category.id,
+            rule_type="high_risk",
+            article=category.annex_ref,
+            name_it=category.name_it,
+            name_en=category.name_en,
+        )
+        for category in ANNEX.high_risk_categories
+        if any(answers.get(uc.id) is True for uc in category.use_cases)
+    )
     if high_risk_hits:
         return Verdict(
             tier="high",
             is_gpai=is_gpai,
             rules_version=ANNEX.version,
-            reasons=tuple(high_risk_hits),
+            reasons=high_risk_hits,
         )
 
     # -- Step 3: transparency (Art. 50) -------------------------------------

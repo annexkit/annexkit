@@ -24,7 +24,7 @@ from collections.abc import AsyncGenerator, Awaitable, Callable
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy import text
@@ -97,6 +97,44 @@ class RequestIdMiddleware(BaseHTTPMiddleware):
         return response
 
 
+class ErrorLoggingMiddleware(BaseHTTPMiddleware):
+    """Log unhandled exceptions server-side; return a sanitised 500.
+
+    FastAPI's default behaviour returns a generic 500 to the client (no
+    leak), but it does NOT log a stack trace anywhere — so a real
+    incident is invisible until a customer reports. This middleware
+    closes that gap by emitting `logger.exception` with the request_id
+    and the route, then letting the exception bubble to FastAPI's
+    default handler so the client still gets the canonical 500 body.
+
+    HTTPException (4xx/5xx the route raised on purpose) is NOT caught —
+    those carry their intended status and don't need an incident log.
+    """
+
+    async def dispatch(
+        self,
+        request: Request,
+        call_next: Callable[[Request], Awaitable[Response]],
+    ) -> Response:
+        try:
+            return await call_next(request)
+        except HTTPException:
+            # Intentional 4xx/5xx from the route — let FastAPI handle it
+            # without logging an incident.
+            raise
+        except Exception:
+            request_id = getattr(request.state, "request_id", "unknown")
+            logger.exception(
+                "Unhandled exception in route %s %s (request_id=%s)",
+                request.method,
+                request.url.path,
+                request_id,
+            )
+            # Re-raise so FastAPI's default 500 handler responds with the
+            # canonical body. The client never sees the stack trace.
+            raise
+
+
 class BodySizeLimitMiddleware(BaseHTTPMiddleware):
     """Reject requests whose declared Content-Length exceeds the cap.
 
@@ -165,6 +203,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.add_middleware(RequestIdMiddleware)
+# Error logging sits between RequestId and BodySizeLimit so the request_id
+# is already on request.state when an exception lands in the logs.
+app.add_middleware(ErrorLoggingMiddleware)
 app.add_middleware(BodySizeLimitMiddleware, max_bytes=MAX_REQUEST_BODY_BYTES)
 
 app.include_router(api_router, prefix="/api/v1")

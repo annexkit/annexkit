@@ -87,6 +87,11 @@ export function ThemeToggle({ className }: { className?: string }) {
       type="button"
       variant="ghost"
       size="icon"
+      role="switch"
+      // aria-checked tracks the *resolved* dark/light state — for screen
+      // readers that's what matters (is the page currently dark?), not
+      // whether the user picked "system" abstractly.
+      aria-checked={theme === "dark"}
       aria-label={label}
       title={label}
       onClick={() => setTheme(NEXT[theme])}
