@@ -19,6 +19,7 @@ import { Hero } from "@/components/landing/hero";
 import { HowItWorks } from "@/components/landing/how-it-works";
 import { PricingTeaser } from "@/components/landing/pricing-teaser";
 import { Stakes } from "@/components/landing/stakes";
+import { TrustPreview } from "@/components/landing/trust-preview";
 
 // Regenerate the page every hour so the AI Act countdown in <Stakes>
 // scales naturally as days pass. ISR, not full dynamic SSR — the page
@@ -34,6 +35,7 @@ export default function HomePage() {
       <Stakes />
       <HowItWorks />
       <Architecture />
+      <TrustPreview />
       <FeatureGrid />
       <Comparison />
       <PricingTeaser />
