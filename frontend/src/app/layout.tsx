@@ -73,7 +73,7 @@ export const metadata: Metadata = {
   description:
     "One decorator on your inference call. Audit-ready Annex IV " +
     "documentation under EU Regulation 2024/1689, generated from your " +
-    "runtime telemetry. Open-source, EU-hosted, sub-€100/month.",
+    "runtime telemetry. Open-source, EU-hosted, founder-led early access.",
   applicationName: "AnnexKit",
   keywords: [
     "EU AI Act",
@@ -104,7 +104,7 @@ export const metadata: Metadata = {
     title: "AnnexKit — EU AI Act compliance pipeline for developers",
     description:
       "Audit-ready Annex IV docs from your LLM telemetry. Open-source, " +
-      "EU-hosted, sub-€100/month.",
+      "EU-hosted, in early access.",
   },
   robots: {
     index: true,

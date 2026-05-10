@@ -53,7 +53,7 @@ export function Hero() {
             </Button>
           </div>
           <p className="pt-2 text-xs text-muted-foreground">
-            Open-source · EU-hosted · sub-€100/month starting tier
+            Open-source · EU-hosted · in early access
           </p>
         </div>
 

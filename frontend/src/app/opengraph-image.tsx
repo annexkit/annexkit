@@ -117,7 +117,7 @@ export default async function OpenGraphImage() {
             }}
           >
             One decorator on your inference call. Open-source, EU-hosted,
-            sub-€100/month.
+            in early access.
           </p>
         </div>
 
