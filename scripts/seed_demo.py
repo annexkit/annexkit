@@ -72,7 +72,7 @@ DEMO_SYSTEMS: list[AISystemDeclaration] = [
         ),
         annex_iii_categories=[],
         prohibited_practices=[],
-        transparency_triggers=["chat_interaction"],
+        transparency_triggers=["art50_chat_interaction"],
         is_gpai=False,
         provider_info=ProviderInfo(
             legal_name="Acme SaaS S.r.l. (demo)",
@@ -97,7 +97,7 @@ DEMO_SYSTEMS: list[AISystemDeclaration] = [
             "sentence-transformers + a fine-tuned ranking head. Surfaces "
             "the top-20 candidates per role for a recruiter to review."
         ),
-        annex_iii_categories=["employment_workers_management"],
+        annex_iii_categories=["annex3_4_employment"],
         prohibited_practices=[],
         transparency_triggers=[],
         is_gpai=False,
@@ -130,9 +130,9 @@ DEMO_SYSTEMS: list[AISystemDeclaration] = [
             "in the €10K-€100K range. Outputs an indicative tier; final "
             "decision always rests with a human credit officer."
         ),
-        annex_iii_categories=["essential_services"],
+        annex_iii_categories=["annex3_5_essential_services"],
         prohibited_practices=[],
-        transparency_triggers=["chat_interaction"],
+        transparency_triggers=["art50_chat_interaction"],
         is_gpai=False,
         provider_info=ProviderInfo(
             legal_name="Acme SaaS S.r.l. (demo)",
