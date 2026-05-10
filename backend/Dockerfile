@@ -6,7 +6,7 @@
 # the Annex IV PDF renderer.
 # --------------------------------------------------------------------------
 
-FROM python:3.13-slim-bookworm AS base
+FROM python:3.14-slim-bookworm AS base
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
