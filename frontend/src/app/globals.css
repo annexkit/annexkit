@@ -1,11 +1,68 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
-/*
- * Tailwind 4 theme tokens — risk-tier colours used by the RiskBadge
- * component. Matched to the palette used in the Annex IV PDF cover
- * page so the trust page and the audit document feel like one product.
- */
-@theme {
+@custom-variant dark (&:is(.dark *));
+
+/* ==========================================================================
+   AnnexKit design system.
+
+   Positioning: developer-tool first, dark-mode canonical. Sentry / PostHog /
+   Linear / Vercel are the reference points — the kind of product that looks
+   credible to an engineer skimming the homepage at 11pm.
+
+   Palette: deep blue-ink canvas (oklch hue 260) with a single electric-cobalt
+   accent at hue 250. The 10° hue gap keeps the cobalt distinct from the
+   "limited risk" tier-blue used on RiskBadge (#1d6b8c, hue ~225) so the two
+   never read as the same colour even when adjacent.
+
+   The four risk-tier swatches (unacceptable / high / limited / minimal) are
+   preserved at the bottom of the file — they're matched to the Annex IV PDF
+   cover so the trust page and the audit document feel like one product.
+
+   Everything is OKLCH: perceptually uniform, survives blending without
+   going grey, renders correctly on HDR displays.
+   ========================================================================== */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-geist-sans);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+
+  --radius-sm: calc(var(--radius) * 0.55);
+  --radius-md: calc(var(--radius) * 0.75);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.85);
+  --radius-3xl: calc(var(--radius) * 2.3);
+
+  /* Bespoke brand tokens — used by hand-built marketing components only.
+     shadcn primitives stick to --primary/--secondary so the palette
+     stays predictable. */
+  --color-brand-cobalt: var(--brand-cobalt);
+  --color-brand-cobalt-bright: var(--brand-cobalt-bright);
+  --color-brand-ink: var(--brand-ink);
+  --color-brand-fog: var(--brand-fog);
+
+  /* Risk-tier palette — preserved from the Annex IV PDF, used by RiskBadge
+     and any future status indicator. Never reuse these as primary brand. */
   --color-tier-unacceptable: #b00020;
   --color-tier-unacceptable-bg: #fde7ea;
   --color-tier-high: #c75c00;
@@ -14,18 +71,227 @@
   --color-tier-limited-bg: #e0eef5;
   --color-tier-minimal: #1f8a4c;
   --color-tier-minimal-bg: #e0f3e7;
-  --color-tier-auto: #555;
-  --color-tier-auto-bg: #eee;
+  --color-tier-auto: #555555;
+  --color-tier-auto-bg: #eeeeee;
 }
 
-html, body {
-  height: 100%;
+:root {
+  /* ---- Light mode — supported, but secondary citizen --------------------
+     A near-white canvas with a faint cool tint. Foreground inks slightly
+     blue-cool to read as "engineering doc", not "office Word file". */
+  --background: oklch(0.99 0.005 250);
+  --foreground: oklch(0.18 0.025 260);
+
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.18 0.025 260);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.18 0.025 260);
+
+  /* Primary — cobalt. Saturated enough to act as a CTA on a white field
+     without going carnival-blue. */
+  --primary: oklch(0.55 0.2 250);
+  --primary-foreground: oklch(0.99 0 0);
+
+  --secondary: oklch(0.965 0.008 250);
+  --secondary-foreground: oklch(0.22 0.04 260);
+  --muted: oklch(0.965 0.008 250);
+  --muted-foreground: oklch(0.5 0.018 260);
+
+  --accent: oklch(0.95 0.04 250);
+  --accent-foreground: oklch(0.4 0.18 250);
+
+  --destructive: oklch(0.555 0.218 27);
+  --border: oklch(0.92 0.01 250);
+  --input: oklch(0.92 0.01 250);
+  --ring: oklch(0.6 0.18 250);
+
+  /* Tighter than Konformia (0.75) — radius 0.5rem reads more "Linear /
+     Vercel CLI" than "premium SaaS". Subtle but it shapes the whole feel. */
+  --radius: 0.5rem;
+
+  /* Brand tokens. */
+  --brand-cobalt: oklch(0.55 0.2 250);
+  --brand-cobalt-bright: oklch(0.65 0.2 250);
+  --brand-ink: oklch(0.13 0.025 260);
+  --brand-fog: oklch(0.965 0.008 250);
 }
 
-body {
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  background: #fafafa;
-  color: #1a1a1a;
+.dark {
+  /* ---- Dark mode — canonical -------------------------------------------
+     Deep blue-ink canvas. Bg is a hair lighter than pure black so cards
+     can lift visually with their shadow + border. */
+  --background: oklch(0.13 0.025 260);
+  --foreground: oklch(0.96 0.005 250);
+
+  --card: oklch(0.165 0.028 260);
+  --card-foreground: oklch(0.96 0.005 250);
+  --popover: oklch(0.165 0.028 260);
+  --popover-foreground: oklch(0.96 0.005 250);
+
+  /* Primary — cobalt brightened so it pops against the dark canvas. */
+  --primary: oklch(0.7 0.2 250);
+  --primary-foreground: oklch(0.13 0.025 260);
+
+  --secondary: oklch(0.21 0.025 260);
+  --secondary-foreground: oklch(0.96 0.005 250);
+  --muted: oklch(0.21 0.025 260);
+  --muted-foreground: oklch(0.7 0.018 260);
+
+  --accent: oklch(0.27 0.06 250);
+  --accent-foreground: oklch(0.85 0.18 250);
+
+  --destructive: oklch(0.7 0.18 22);
+  --border: oklch(1 0 0 / 9%);
+  --input: oklch(1 0 0 / 14%);
+  --ring: oklch(0.7 0.18 250);
+
+  --brand-cobalt: oklch(0.7 0.2 250);
+  --brand-cobalt-bright: oklch(0.78 0.18 250);
+  --brand-ink: oklch(0.96 0.005 250);
+  --brand-fog: oklch(0.21 0.025 260);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "ss01", "cv11";
+  }
+  html {
+    @apply font-sans;
+  }
+
+  /* Editorial heading scale — tighter tracking, heavier weight. The single
+     biggest "looks designed" lever vs. default Tailwind type. */
+  h1, h2, h3, h4 {
+    font-feature-settings: "ss01", "cv11";
+    letter-spacing: -0.018em;
+  }
+  h1 { letter-spacing: -0.028em; }
+
+  /* Refined focus ring — high contrast, no jarring blue blob. */
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring/60 ring-offset-2 ring-offset-background;
+  }
+
+  /* Text selection in the brand cobalt — small detail that ties the app
+     together when a user copy/pastes a code snippet. */
+  ::selection {
+    background: oklch(0.7 0.2 250 / 35%);
+    color: oklch(0.96 0.005 250);
+  }
+}
+
+/* ==========================================================================
+   Utility recipes.
+   Each one captures a recurring pattern so we don't drift into 14 slightly-
+   different card shadows across the app. Compose, don't fork.
+   ========================================================================== */
+
+@layer utilities {
+  /* Surface card — hairline shadow + cool border. Use as the base for any
+     premium card (pricing, feature grid, hero mockup). */
+  .surface-card {
+    @apply rounded-lg bg-card text-card-foreground;
+    box-shadow:
+      0 1px 0 0 oklch(0 0 0 / 4%),
+      0 1px 3px -1px oklch(0 0 0 / 6%),
+      0 6px 24px -12px oklch(0 0 0 / 8%);
+    border: 1px solid oklch(0 0 0 / 6%);
+  }
+  .dark .surface-card {
+    box-shadow:
+      0 1px 0 0 oklch(0 0 0 / 30%),
+      0 6px 24px -12px oklch(0 0 0 / 60%);
+    border: 1px solid oklch(1 0 0 / 7%);
+  }
+
+  /* Hover lift — pairs with .surface-card on clickable surfaces. */
+  .surface-hoverable {
+    @apply transition-all duration-200;
+  }
+  .surface-hoverable:hover {
+    transform: translateY(-1px);
+    box-shadow:
+      0 1px 0 0 oklch(0 0 0 / 4%),
+      0 4px 8px -2px oklch(0 0 0 / 8%),
+      0 12px 28px -10px oklch(0 0 0 / 14%);
+    border-color: oklch(0 0 0 / 10%);
+  }
+  .dark .surface-hoverable:hover {
+    border-color: oklch(1 0 0 / 14%);
+    box-shadow:
+      0 1px 0 0 oklch(0 0 0 / 40%),
+      0 4px 8px -2px oklch(0 0 0 / 30%),
+      0 12px 28px -10px oklch(0 0 0 / 70%);
+  }
+
+  /* Brand wash — radial cobalt-on-ink gradient. Hero + final CTA use this
+     to telegraph "AI inside" without resorting to clipart. */
+  .brand-wash {
+    background:
+      radial-gradient(
+        circle at 110% -10%,
+        oklch(0.7 0.2 250 / 18%) 0,
+        transparent 55%
+      ),
+      radial-gradient(
+        circle at -10% 120%,
+        oklch(0.55 0.2 250 / 14%) 0,
+        transparent 55%
+      ),
+      var(--brand-fog);
+  }
+  .dark .brand-wash {
+    background:
+      radial-gradient(
+        circle at 110% -10%,
+        oklch(0.7 0.2 250 / 22%) 0,
+        transparent 55%
+      ),
+      radial-gradient(
+        circle at -10% 120%,
+        oklch(0.55 0.2 250 / 18%) 0,
+        transparent 55%
+      ),
+      var(--brand-fog);
+  }
+
+  /* Grid background — dev-tool empty-state texture. Reads as "code IDE"
+     more than "marketing landing"; pair with a brand-wash for warmth. */
+  .surface-grid {
+    background-image:
+      linear-gradient(to right, oklch(0 0 0 / 5%) 1px, transparent 1px),
+      linear-gradient(to bottom, oklch(0 0 0 / 5%) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .dark .surface-grid {
+    background-image:
+      linear-gradient(to right, oklch(1 0 0 / 5%) 1px, transparent 1px),
+      linear-gradient(to bottom, oklch(1 0 0 / 5%) 1px, transparent 1px);
+  }
+
+  /* Tabular display numerics — used for stats / KPIs / pricing. */
+  .display-num {
+    font-feature-settings: "ss01", "tnum", "cv11";
+    letter-spacing: -0.04em;
+  }
+
+  /* Eyebrow — small uppercase label above a heading. Repeating section
+     rhythm cue. */
+  .eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground;
+  }
+
+  /* Inline code — used inside marketing copy. Slightly tinted so it
+     reads as "live thing you can use", not just `<code>`. */
+  .inline-code {
+    @apply rounded-[5px] bg-secondary px-1.5 py-0.5 font-mono text-[0.875em] text-foreground;
+    border: 1px solid oklch(0 0 0 / 5%);
+  }
+  .dark .inline-code {
+    border-color: oklch(1 0 0 / 7%);
+  }
 }
