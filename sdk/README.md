@@ -1,11 +1,16 @@
-# annexkit — EU AI Act compliance pipeline for developers
+# annexkit
 
-> One decorator. Audit-ready evidence. EU-hosted.
+> EU AI Act compliance pipeline — Python SDK.
 
-`pip install annexkit` and the SDK turns every LLM invocation in your
-codebase into Article 12 audit log entries plus an Annex IV
-technical-documentation feed for the EU AI Act
-(Reg. 2024/1689).
+[![PyPI version](https://img.shields.io/pypi/v/annexkit.svg?style=flat-square&color=3d7aff)](https://pypi.org/project/annexkit/)
+[![Python versions](https://img.shields.io/pypi/pyversions/annexkit.svg?style=flat-square)](https://pypi.org/project/annexkit/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/annexkit/annexkit/blob/main/sdk/LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/annexkit/annexkit?style=flat-square&color=3d7aff)](https://github.com/annexkit/annexkit)
+
+One decorator on your LLM call. Audit-ready **Annex IV** technical
+documentation under
+[Reg. (EU) 2024/1689](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689)
+out the other end.
 
 ```python
 from annexkit import track
@@ -16,56 +21,35 @@ from annexkit import track
     purpose="answer customer questions on shipping and returns",
 )
 def chat(user_msg: str, user_role: str = "customer") -> str:
-    return openai.chat.completions.create(...).choices[0].message.content
+    return openai.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": user_msg}],
+    ).choices[0].message.content
 ```
 
-## What gets recorded
+That decorator:
 
-Every call captures, by default:
+- emits a **span** on every call (Article 12 logging),
+- ships it to the collector — or your own exporter,
+- feeds the system's **Annex IV** technical documentation, generated
+  on demand at the collector.
 
-| Field | What it holds |
-|---|---|
-| `system_id` / `deployment` | Stable identifiers you choose |
-| `risk_tier` / `purpose` | AI Act metadata for Annex IV §1 + §4 |
-| `started_at` / `ended_at` / `latency_ms` | Timing in UTC |
-| `input_hash` / `output_hash` | SHA-256 hex (privacy-preserving) |
-| `input_chars` / `output_chars` | Char count of serialised payloads |
-| `model_provider` / `model_name` / `model_version` | When set explicitly |
-| `sources[]` | Retrieval provenance for RAG |
-| `user_role` | Article 13/14 oversight context |
-| `error` | `<module>.<class>: <message>` on exception |
-| `metadata` | Free-form `dict` |
-| `sdk_version` / `sdk_lang` | Provenance |
+Inputs and outputs are SHA-256 hashed before they leave your host.
+Plaintext logging is opt-in.
 
-**Plaintext content is never logged by default.** Hashes only — that's
-the privacy-by-default invariant
-(see [`../CLAUDE.md`](../CLAUDE.md) non-negotiable #7).
+---
 
 ## Install
 
-> **Pre-PyPI**: AnnexKit is in active MVP development. The PyPI listing
-> goes live at v1.0 (Day 7 of the MVP roadmap). For now install from
-> source:
-
 ```bash
-git clone https://github.com/annexkit/annexkit
-cd annexkit/sdk
-uv sync          # or: pip install -e .
+pip install annexkit
 ```
 
-When the package lands on PyPI:
-
-```bash
-pip install annexkit            # coming at v1.0
-# or
-uv add annexkit
-```
-
-Python ≥ 3.10. Only two runtime deps: `httpx` and `pydantic`.
+Python ≥ 3.10. Two runtime deps: `httpx` and `pydantic`.
 
 ## Quickstart
 
-### 1. Decorate sync functions
+### 1. Decorate
 
 ```python
 from annexkit import track
@@ -75,7 +59,33 @@ def screen(applicant: dict) -> str:
     return llm.classify(applicant)
 ```
 
-### 2. Decorate async functions
+Sync or async — the decorator auto-detects. Same API, no flag.
+
+### 2. Two modes — stdout in dev, HTTP in prod
+
+**Without an API key**, AnnexKit prints one JSON span per call to
+**stderr**. Perfect for local dev, log shipping, or `jq` exploration:
+
+```text
+{"system_id":"loan-screener","trace_id":"...","input_hash":"2cf24dba...","latency_ms":523,...}
+```
+
+**With `ANNEXKIT_API_KEY` set**, the same span is POSTed to the
+collector:
+
+```bash
+export ANNEXKIT_API_KEY=ak_xxxxx
+export ANNEXKIT_COLLECTOR_URL=https://collector.annexkit.dev
+```
+
+Or programmatically:
+
+```python
+import annexkit
+annexkit.configure(api_key="ak_xxxxx", deployment="staging")
+```
+
+### 3. Async — same API
 
 ```python
 @track(system_id="async-classifier")
@@ -83,9 +93,7 @@ async def classify(ticket_id: str, body: str) -> str:
     return await llm.acomplete(body)
 ```
 
-The decorator auto-detects sync vs async — same API, no flag needed.
-
-### 3. Multi-step blocks via the context manager
+### 4. Multi-step via context manager
 
 ```python
 import annexkit
@@ -104,60 +112,38 @@ with annexkit.session(
 ```
 
 `annexkit.session(...)` is the right shape when you can't decorate a
-single function (notebook cells, agent loops, orchestration scripts).
+single function — notebook cells, agent loops, orchestration scripts.
 
-### 4. Configure via env or code
+## What gets recorded
 
-```bash
-export ANNEXKIT_API_KEY=ak_xxxxx
-export ANNEXKIT_COLLECTOR_URL=https://collector.annexkit.dev
-export ANNEXKIT_DEPLOYMENT=prod
-```
+| Field | What it holds |
+|---|---|
+| `system_id` / `deployment` | Stable identifiers you choose |
+| `risk_tier` / `purpose` | AI Act metadata for Annex IV |
+| `started_at` / `ended_at` / `latency_ms` | Timing in UTC |
+| `input_hash` / `output_hash` | SHA-256 hex (privacy-preserving) |
+| `input_chars` / `output_chars` | Char counts of payloads |
+| `model_provider` / `model_name` / `model_version` | When set explicitly |
+| `sources[]` | Retrieval provenance for RAG |
+| `user_role` | Article 13 / 14 oversight context |
+| `error` | `<module>.<class>: <message>` on exception |
+| `metadata` | Free-form `dict` for adapter authors |
+| `sdk_version` / `sdk_lang` | Provenance |
 
-Or programmatically:
+Plaintext payloads are never logged by default — privacy-by-default
+is wired into the SDK, not a config flag.
 
-```python
-import annexkit
-annexkit.configure(api_key="ak_xxxxx", deployment="staging")
-```
+## Configuration
 
 | Env var | Default | Purpose |
 |---|---|---|
 | `ANNEXKIT_API_KEY` | unset | When set, switches to HTTP exporter |
 | `ANNEXKIT_COLLECTOR_URL` | `https://collector.annexkit.dev` | Collector endpoint |
-| `ANNEXKIT_EXPORTER` | `auto` | `auto`/`stdout`/`http`/`noop` |
-| `ANNEXKIT_DISABLED` | `0` | Set `1` to disable tracking globally |
+| `ANNEXKIT_EXPORTER` | `auto` | `auto` / `stdout` / `http` / `noop` |
+| `ANNEXKIT_DISABLED` | `0` | Set to `1` to disable tracking globally |
 | `ANNEXKIT_DEPLOYMENT` | `prod` | Default deployment label for spans |
 
-### 5. Stdout in dev, HTTP in prod
-
-With no API key, AnnexKit prints one JSON span per line to **stderr** —
-perfect for testing, log shipping, or `jq` exploration:
-
-```text
-{"system_id":"customer-support-bot","trace_id":"...","input_hash":"2cf24dba...",...}
-```
-
-Set `ANNEXKIT_API_KEY` and the same span is POSTed to the collector
-instead.
-
-## Examples
-
-Runnable examples in [`examples/`](examples/):
-
-```bash
-cd sdk
-uv sync
-uv run python examples/basic_chatbot.py
-uv run python examples/async_handler.py
-uv run python examples/with_session.py
-```
-
-Each prints span JSON on stderr — no API keys required.
-
 ## Custom exporters
-
-Subclass `annexkit.exporters.Exporter` and pass an instance:
 
 ```python
 from annexkit.exporters import Exporter
@@ -171,17 +157,17 @@ import annexkit
 annexkit.configure(exporter=MyExporter())
 ```
 
-The base class never raises from `export()` — your subclass shouldn't
-either. Catching and logging exporter failures is the contract.
+Subclasses must never raise from `export()` — catch and log inside.
+That's the contract; the base class will never raise either.
 
 ## Public API
 
 ```python
 from annexkit import (
-    track,             # decorator
+    track,             # decorator (sync + async)
     session,           # context manager
     configure,         # runtime override
-    flush, shutdown,   # lifecycle
+    flush, shutdown,   # lifecycle helpers
     Span, Source,      # data types
     SpanHandle,        # session yield type
     __version__,
@@ -191,12 +177,12 @@ from annexkit.exporters import Exporter, StdoutExporter, HttpExporter
 
 ## Testing your code with AnnexKit
 
-The SDK ships a `CollectingExporter` pattern in
-[`tests/conftest.py`](tests/conftest.py) you can copy into your own test
-suite to assert on emitted spans without hitting the network:
+A common pattern: a `CollectingExporter` that captures spans into a
+list, so your tests can assert on what was emitted without hitting the
+network.
 
 ```python
-from annexkit.exporters.base import Exporter
+from annexkit.exporters import Exporter
 
 class CollectingExporter(Exporter):
     def __init__(self) -> None:
@@ -204,8 +190,6 @@ class CollectingExporter(Exporter):
     def export(self, span):
         self.spans.append(span)
 ```
-
-Then:
 
 ```python
 def test_my_handler():
@@ -217,20 +201,54 @@ def test_my_handler():
 
 ## Status
 
-**v0.1.0 (Day 2 of MVP)** — sync + async decorator, session manager,
-stdout + HTTP exporters, config via env or code, 40+ unit tests.
-The collector ingest endpoint (`POST /api/v1/spans`) lands in Day 3 of
-the MVP — until then the HTTP exporter has nothing real to talk to.
-Track progress in [`../README.md`](../README.md).
+`v0.1.x` — sync + async decorator, session manager, stdout + HTTP
+exporters, config via env or code. 48 unit tests with
+`httpx.MockTransport` for hermetic HTTP coverage (zero real network
+in CI).
 
-See [CHANGELOG.md](CHANGELOG.md) for version history.
+The hosted collector at
+[annexkit.dev](https://annexkit.dev) is in **early access**. The
+self-host path (`docker compose up` against the
+[repo](https://github.com/annexkit/annexkit)) is available today
+under AGPL-3.0.
+
+## Roadmap (v0.2)
+
+- Mistral advisor for ambiguous declarations (hard guardrail: never
+  declassifies a system the rules engine flagged)
+- LangChain + LlamaIndex auto-instrumentation
+  (`annexkit.auto_instrument(["langchain"])`)
+- TypeScript / JavaScript SDK (`@annexkit/node`) — same wire format,
+  same env-var conventions
+- Async HTTP exporter (`httpx.AsyncClient`)
+- Span batching + retry on transient failure
+- OpenTelemetry GenAI semconv compliance — emit OTel-native spans
+  alongside the AnnexKit-specific extensions
+
+Full
+[CHANGELOG](https://github.com/annexkit/annexkit/blob/main/sdk/CHANGELOG.md).
+
+## Links
+
+- 🌐 Website: <https://annexkit.dev>
+- 📦 PyPI: <https://pypi.org/project/annexkit/>
+- 💻 Source: <https://github.com/annexkit/annexkit>
+- 🐛 Issues: <https://github.com/annexkit/annexkit/issues>
+- 📜 EU AI Act (Reg. 2024/1689): [eur-lex.europa.eu](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32024R1689)
+- 📨 Contact: <founder@annexkit.dev>
 
 ## License
 
-MIT — see [`LICENSE`](LICENSE).
+MIT — see
+[LICENSE](https://github.com/annexkit/annexkit/blob/main/sdk/LICENSE).
+
+The hosted collector and trust-center frontend are AGPL-3.0; the SDK
+is MIT so you can drop it into any codebase without copyleft concerns.
+Same dual-licence arrangement Sentry, PostHog, and MinIO use.
 
 ## Disclaimer
 
-AnnexKit is not a law firm. The Annex IV documents and risk
-classifications it produces are technical evidence; interpretation is
-the responsibility of your legal team or external counsel.
+AnnexKit is not a law firm; AnnexKit non è uno studio legale. The
+Annex IV documents and risk classifications it produces are technical
+artefacts; legal interpretation is the responsibility of your legal
+team or external counsel.

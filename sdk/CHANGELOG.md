@@ -48,6 +48,23 @@ Targeted for the next minor (v0.2.0) — see
   to `trace_id`, `span_id`, `parent_span_id` (hex tokens — already
   satisfied by `uuid.uuid4().hex`).
 
+## [0.1.1] — 2026-05-10
+
+PyPI listing polish — no code changes, no behaviour changes. The
+0.1.0 listing still ships and is fully compatible.
+
+### Changed
+
+- **README rewritten for the PyPI page.** Drops repo-relative links
+  (`../CLAUDE.md`, `../README.md` etc. that 404 on PyPI), adds
+  shields.io badges (PyPI version, Python versions, license, GitHub
+  stars), updates the status section from "Day 2 of MVP" to
+  `v0.1.x` early access, leads with concrete value before the field
+  table, adds a "Links" section in dev-tool convention.
+- **Author email** updated from `hello@annexkit.dev` to
+  `founder@annexkit.dev` to match the email aliases configured on
+  Cloudflare Email Routing.
+
 ## [0.1.0] — 2026-05-07
 
 First functional release. Day 2 of the MVP roadmap (see
