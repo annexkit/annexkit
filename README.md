@@ -151,7 +151,6 @@ tiers.
 | [`backend/`](backend/) | FastAPI collector + Annex IV API + trust API. | AGPL-3.0 |
 | [`frontend/`](frontend/) | Next.js 16 trust-center pages. | AGPL-3.0 |
 | [`examples/`](examples/) | Runnable end-to-end demos. | MIT |
-| [`docs/`](docs/) | Reference documentation. | — |
 
 [`AGENTS.md`](AGENTS.md) documents the project shape and the seven
 architectural non-negotiables that PRs are reviewed against.

@@ -25,7 +25,7 @@ plan + 12-month roadmap.
 backend/
 ├── app/
 │   ├── api/         FastAPI route modules (thin controllers)
-│   ├── data/        Static datasets (annex_iii.json — Konformia legacy, do not edit casually)
+│   ├── data/        Static datasets (annex_iii.json — regulatory ruleset, do not edit casually)
 │   ├── models/      SQLAlchemy ORM (audit_log is APPEND-ONLY)
 │   ├── services/    Business logic (risk_engine, annex, mistral_client, ...)
 │   ├── schemas/     Pydantic request/response shapes

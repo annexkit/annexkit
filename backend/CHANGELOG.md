@@ -24,7 +24,7 @@ release-notes-equivalent.
 
 - Repository structure: `backend/` + `sdk/` + `frontend/` (added M3) +
   `examples/` + `docs/`.
-- Reused-from-Konformia non-negotiables (the regulatory invariants):
+- Regulatory invariants in place from the first commit:
   `risk_engine.py` deterministic classifier, `audit_log.py` model
   + INSERT-only service, `annex_iii.json` rule dataset, EU-hosted
   `mistral_client.py`, async SQLAlchemy 2.0 setup.

@@ -2,9 +2,9 @@
 format (Annex III categories declared directly, rather than via
 question/answer pairs).
 
-The underlying engine is verbatim Konformia code: deterministic, never
-declassifies. This module's only job is to translate the
-``ai_systems`` row into the engine's input dict.
+The underlying engine is deterministic and never declassifies. This
+module's only job is to translate the ``ai_systems`` row into the
+engine's input dict.
 
 The engine's contract:
     classify(answers: dict[question_id, bool], is_gpai: bool) -> Verdict

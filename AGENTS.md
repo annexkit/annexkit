@@ -44,8 +44,8 @@ lawyer. Not a DPO. A developer.
 
 ## Non-negotiables
 
-These are inherited from Konformia for a reason — they encode hard-won
-regulatory + audit invariants. Do NOT relax them without a documented PR.
+These encode hard-won regulatory + audit invariants. Do NOT relax them
+without a documented PR.
 
 1. **Risk Engine is deterministic.** Classification logic is rules driven
    by `backend/app/data/annex_iii.json`. LLMs only advise on ambiguous
@@ -114,11 +114,3 @@ sprint checkpoint updates that section.
 - OpenAPI/Swagger: `http://localhost:8033/docs` once `make up` is running.
 - SDK quickstart: see `sdk/README.md`.
 
-## Origin: relation to Konformia
-
-AnnexKit is a developer-first reframing of the regulatory machinery built
-in [Konformia](https://github.com/mykaelTTP/Konformia). The risk engine,
-the audit log invariants, the Mistral client, and `annex_iii.json` are
-copied verbatim because they are non-negotiables. Everything else is new.
-Konformia continues as an Italian consumer dashboard powered by AnnexKit
-once the SDK ships (M9 in `docs/ANNEXKIT_PLAN.md`).

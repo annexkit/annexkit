@@ -4,11 +4,11 @@
  *
  * Default on first visit
  * ----------------------
- * "system" — opposite of Konformia. AnnexKit's marketing surface is
- * designed dark-first (it's a developer tool, not a marketing site for
- * a CFO), so following the OS preference produces the right first
- * impression for the typical visitor (engineers run their machines
- * dark) without forcing it on the minority who keep light.
+ * "system". AnnexKit's marketing surface is designed dark-first (it's a
+ * developer tool, not a B2B SaaS marketing site), so following the OS
+ * preference produces the right first impression for the typical visitor
+ * (engineers run their machines dark) without forcing it on the minority
+ * who keep light.
  *
  * How the look actually changes
  * -----------------------------
