@@ -43,6 +43,7 @@ export default function TermsPage() {
       <LegalShell
         title="Terms of service"
         updated="2026-05-10"
+        preLaunch
         summary={
           <>
             <strong>Plain-English summary:</strong> use AnnexKit

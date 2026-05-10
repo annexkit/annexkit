@@ -35,6 +35,9 @@ interface LegalShellProps {
   summary?: React.ReactNode;
   /** Sections in document order. */
   sections: SectionDef[];
+  /** When true, renders a prominent "pre-launch placeholder" banner above
+   * the summary so visitors don't take the bracketed values literally. */
+  preLaunch?: boolean;
   children: React.ReactNode;
 }
 
@@ -43,6 +46,7 @@ export function LegalShell({
   updated,
   summary,
   sections,
+  preLaunch = false,
   children,
 }: LegalShellProps) {
   const formattedDate = useMemo(
@@ -72,6 +76,7 @@ export function LegalShell({
 
       <div className="mt-12 grid gap-12 lg:grid-cols-[1fr_220px]">
         <article className="legal-prose space-y-10">
+          {preLaunch && <PreLaunchNotice />}
           {summary && (
             <section className="surface-card border-l-2 border-l-[var(--brand-cobalt)] p-5 text-sm leading-relaxed text-muted-foreground">
               {summary}
@@ -99,6 +104,49 @@ export function LegalShell({
         </aside>
       </div>
     </div>
+  );
+}
+
+/**
+ * Pre-launch banner — shown on legal pages until the company is
+ * formally registered. Communicates honestly that the document is
+ * scaffolding rather than letting visitors squint at literal
+ * "[LEGAL NAME]" / "[VAT]" placeholders inline.
+ *
+ * Once the VAT registration lands, set preLaunch={false} on each
+ * legal page and grep for "[" in src/app/{privacy,terms,imprint}/
+ * to find the values to replace.
+ */
+function PreLaunchNotice() {
+  return (
+    <aside
+      role="note"
+      className="rounded-lg border border-amber-300/50 bg-amber-50/60 p-5 text-sm leading-relaxed text-amber-950 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-100"
+    >
+      <p>
+        <strong className="font-semibold">
+          Pre-launch placeholder.
+        </strong>{" "}
+        AnnexKit is in early access ahead of formal company registration.
+        Bracketed values like <code className="font-mono text-xs">[LEGAL NAME]</code>{" "}
+        or <code className="font-mono text-xs">[VAT]</code> are stand-ins
+        — they&rsquo;ll be replaced with the registered details before
+        we accept paying customers. The structure of this document
+        reflects our intended policy and is binding on the founder
+        operating the early-access programme today, but does not yet
+        bind a registered legal entity.
+      </p>
+      <p className="mt-2">
+        Questions in the meantime →{" "}
+        <a
+          href="mailto:founder@annexkit.dev"
+          className="font-medium underline underline-offset-4"
+        >
+          founder@annexkit.dev
+        </a>
+        .
+      </p>
+    </aside>
   );
 }
 
