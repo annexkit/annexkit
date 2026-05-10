@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { ChevronRight } from "lucide-react";
 
 import { BackendUnavailable } from "@/components/BackendUnavailable";
 import { Disclaimer } from "@/components/Disclaimer";
@@ -78,110 +79,105 @@ export default async function TrustOverviewPage({ params }: PageProps) {
   }
 
   return (
-    <div className="space-y-10">
-      <header className="space-y-3">
-        <div className="text-sm uppercase tracking-widest text-neutral-500">
-          AnnexKit trust page
-        </div>
-        <h1 className="text-3xl font-bold tracking-tight text-neutral-900">
-          {overview.tenant.name}
-        </h1>
-        <p className="text-sm text-neutral-500">
-          Slug:{" "}
-          <code className="rounded bg-neutral-100 px-1 py-0.5">
-            {overview.tenant.slug}
-          </code>{" "}
-          · As of{" "}
-          <time dateTime={overview.as_of}>
-            {formatDateTime(overview.as_of)}
-          </time>
-        </p>
-      </header>
-
-      <section className="rounded border border-neutral-200 bg-white p-6">
-        <div className="flex flex-wrap items-baseline justify-between gap-4">
-          <div>
-            <div className="text-sm text-neutral-500">
-              Total declared AI systems
-            </div>
-            <div className="text-3xl font-semibold text-neutral-900">
-              {overview.total_systems}
-            </div>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {TIER_ORDER.filter((t) => overview.by_tier[t] > 0).map((t) => (
-              <span key={t} className="flex items-center gap-2">
-                <RiskBadge tier={t} size="sm" />
-                <span className="text-sm font-semibold text-neutral-900">
-                  ×{overview.by_tier[t]}
-                </span>
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="space-y-4">
-        <h2 className="text-xl font-semibold text-neutral-900">
-          Declared AI systems
-        </h2>
-        {list.systems.length === 0 ? (
-          <p className="text-neutral-500">
-            No AI systems declared yet for this tenant.
+    <div className="mx-auto max-w-4xl px-6 py-14">
+      <div className="space-y-12">
+        <header className="space-y-4">
+          <span className="eyebrow">AnnexKit trust page</span>
+          <h1 className="text-balance text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+            {overview.tenant.name}
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Slug: <code className="inline-code">{overview.tenant.slug}</code>{" "}
+            · As of{" "}
+            <time dateTime={overview.as_of}>
+              {formatDateTime(overview.as_of)}
+            </time>
           </p>
-        ) : (
-          <ul className="space-y-3">
-            {list.systems.map((s) => (
-              <li
-                key={s.system_id}
-                className="rounded border border-neutral-200 bg-white p-5 hover:border-neutral-400"
-              >
-                <Link
-                  href={`/trust/${overview.tenant.slug}/systems/${encodeURIComponent(s.system_id)}`}
-                  className="block"
-                >
-                  <div className="flex flex-wrap items-baseline justify-between gap-3">
-                    <div className="font-mono text-sm text-neutral-900">
-                      {s.system_id}
-                    </div>
-                    <RiskBadge tier={s.risk_tier} size="sm" />
-                  </div>
-                  {s.purpose && (
-                    <p className="mt-2 text-sm text-neutral-700">
-                      {s.purpose}
-                    </p>
-                  )}
-                  <div className="mt-3 flex flex-wrap gap-2 text-xs text-neutral-500">
-                    {s.is_gpai && (
-                      <span className="rounded bg-neutral-100 px-2 py-0.5">
-                        GPAI
-                      </span>
-                    )}
-                    {s.annex_iii_categories.map((c) => (
-                      <span
-                        key={c}
-                        className="rounded bg-neutral-100 px-2 py-0.5"
-                      >
-                        Annex III: {c}
-                      </span>
-                    ))}
-                    {s.transparency_triggers.map((c) => (
-                      <span
-                        key={c}
-                        className="rounded bg-neutral-100 px-2 py-0.5"
-                      >
-                        Article 50: {c}
-                      </span>
-                    ))}
-                  </div>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+        </header>
 
-      <Disclaimer />
+        <section className="surface-card p-6">
+          <div className="flex flex-wrap items-baseline justify-between gap-4">
+            <div>
+              <div className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                Total declared AI systems
+              </div>
+              <div className="display-num mt-1 text-4xl font-bold text-foreground">
+                {overview.total_systems}
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              {TIER_ORDER.filter((t) => overview.by_tier[t] > 0).map((t) => (
+                <span key={t} className="flex items-center gap-2">
+                  <RiskBadge tier={t} size="sm" />
+                  <span className="text-sm font-semibold text-foreground">
+                    ×{overview.by_tier[t]}
+                  </span>
+                </span>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="space-y-4">
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+            Declared AI systems
+          </h2>
+          {list.systems.length === 0 ? (
+            <p className="text-muted-foreground">
+              No AI systems declared yet for this tenant.
+            </p>
+          ) : (
+            <ul className="space-y-3">
+              {list.systems.map((s) => (
+                <li key={s.system_id}>
+                  <Link
+                    href={`/trust/${overview.tenant.slug}/systems/${encodeURIComponent(s.system_id)}`}
+                    className="surface-card surface-hoverable group block p-5"
+                  >
+                    <div className="flex flex-wrap items-baseline justify-between gap-3">
+                      <div className="flex items-center gap-2 font-mono text-sm text-foreground">
+                        <span>{s.system_id}</span>
+                        <ChevronRight className="size-3.5 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+                      </div>
+                      <RiskBadge tier={s.risk_tier} size="sm" />
+                    </div>
+                    {s.purpose && (
+                      <p className="mt-2 text-sm text-muted-foreground">
+                        {s.purpose}
+                      </p>
+                    )}
+                    <div className="mt-3 flex flex-wrap gap-2 text-xs">
+                      {s.is_gpai && (
+                        <span className="rounded-md bg-secondary px-2 py-0.5 font-medium text-foreground/80">
+                          GPAI
+                        </span>
+                      )}
+                      {s.annex_iii_categories.map((c) => (
+                        <span
+                          key={c}
+                          className="rounded-md bg-secondary px-2 py-0.5 font-medium text-foreground/80"
+                        >
+                          Annex III: {c}
+                        </span>
+                      ))}
+                      {s.transparency_triggers.map((c) => (
+                        <span
+                          key={c}
+                          className="rounded-md bg-secondary px-2 py-0.5 font-medium text-foreground/80"
+                        >
+                          Article 50: {c}
+                        </span>
+                      ))}
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        <Disclaimer />
+      </div>
     </div>
   );
 }
