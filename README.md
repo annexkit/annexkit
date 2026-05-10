@@ -60,6 +60,9 @@ to the collector.
 
 ### 3. Run the demo
 
+**First-time setup: ~2 minutes** from `git clone` to a downloadable
+PDF.
+
 ```bash
 git clone https://github.com/annexkit/annexkit
 cd annexkit

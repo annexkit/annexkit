@@ -18,9 +18,38 @@ node_modules/
 .env.*
 !.env.example
 
-# --- Editor ------------------------------------------------------------
+# --- Editor / IDE -------------------------------------------------------
 .DS_Store
 *.swp
+*.swo
+*~
+
+# JetBrains (PyCharm, WebStorm, IntelliJ)
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# VS Code (allow committed extensions/settings; ignore local override)
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.shared.json
+
+# Vim
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+
+# Emacs
+\#*\#
+.\#*
+
+# Python tooling
+pyvenv.cfg
+.python-version
+
+# Node tooling
+.eslintcache
+.cache/
 
 # --- Build artefacts & local data -------------------------------------
 # Generated PDFs land here in dev. Gitignored so the repo stays small.

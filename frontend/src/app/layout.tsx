@@ -125,6 +125,54 @@ export const viewport: Viewport = {
   ],
 };
 
+// Schema.org JSON-LD — declared at root so every page inherits the
+// Organization + SoftwareApplication metadata. Google + Bing use this for
+// the knowledge panel and rich-result snippets; LinkedIn / Slack / X
+// prefer OpenGraph (already set above) but some surfaces fall back here.
+const STRUCTURED_DATA = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${SITE_ORIGIN}#org`,
+      name: "AnnexKit",
+      url: SITE_ORIGIN,
+      logo: `${SITE_ORIGIN}/icon`,
+      sameAs: [
+        "https://github.com/annexkit/annexkit",
+        "https://pypi.org/project/annexkit/",
+      ],
+      contactPoint: {
+        "@type": "ContactPoint",
+        email: "founder@annexkit.dev",
+        contactType: "customer support",
+        areaServed: "EU",
+        availableLanguage: ["en", "it"],
+      },
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": `${SITE_ORIGIN}#sdk`,
+      name: "AnnexKit",
+      operatingSystem: "Linux, macOS, Windows",
+      applicationCategory: "DeveloperApplication",
+      applicationSubCategory: "AI Compliance / Observability",
+      url: SITE_ORIGIN,
+      downloadUrl: "https://pypi.org/project/annexkit/",
+      softwareVersion: "0.1.x",
+      offers: {
+        "@type": "AggregateOffer",
+        priceCurrency: "EUR",
+        lowPrice: "49",
+        highPrice: "5000",
+        offerCount: "3",
+      },
+      author: { "@id": `${SITE_ORIGIN}#org` },
+      publisher: { "@id": `${SITE_ORIGIN}#org` },
+    },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -140,11 +188,29 @@ export default function RootLayout({
       <head>
         {/* Must be the first thing in <head> so it runs before any paint. */}
         <script dangerouslySetInnerHTML={{ __html: THEME_NO_FLASH_SCRIPT }} />
+        {/* Schema.org structured data — picked up by Google for rich
+            results, Bing for the entity card, and LLM crawlers for
+            grounding. Uses one big @graph so the Organization and
+            SoftwareApplication entities cross-reference cleanly. */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(STRUCTURED_DATA) }}
+        />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
+        {/* Skip link — keyboard users can jump straight to main content
+            past the sticky header. Visually hidden until focused. */}
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-primary-foreground focus:shadow-lg"
+        >
+          Skip to content
+        </a>
         <ThemeProvider>
           <SiteHeader />
-          <main className="flex-1">{children}</main>
+          <main id="main" className="flex-1">
+            {children}
+          </main>
           <SiteFooter />
         </ThemeProvider>
       </body>

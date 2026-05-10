@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from annexkit import track
+from annexkit import __version__, track
 from annexkit._hashing import hash_value
 
 
@@ -25,7 +25,7 @@ def test_basic_capture(collector) -> None:
     assert span.output_hash == hash_value("hello world")
     assert span.latency_ms is not None
     assert span.latency_ms >= 0
-    assert span.sdk_version == "0.1.0"
+    assert span.sdk_version == __version__
 
 
 def test_kwargs_captured(collector) -> None:

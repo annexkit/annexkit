@@ -1,0 +1,148 @@
+# =========================================================================
+# CI — runs on every push to main and every pull request.
+#
+# Three matrix-style jobs (independent, parallel):
+#   - sdk      : Python SDK on PyPI. Lint + format + test.
+#   - backend  : FastAPI + Postgres collector. Lint + format + test against
+#                a real Postgres service container so the audit-log trigger
+#                and the cross-tenant invariants are exercised end-to-end.
+#   - frontend : Next.js 16 trust-center. Typecheck + production build so
+#                a regression in TS or in a server-component import lands
+#                as a PR check, not as a 500 in production.
+#
+# What is *not* here yet (worth knowing):
+#   - Docker image push to a registry — not needed pre-1.0; we still pull
+#     from `git pull && docker compose up --build` on the VPS.
+#   - PyPI publish — handled manually until the v0.2 cycle.
+#   - Cross-tenant integration tests against the deployed staging
+#     environment — staging doesn't exist yet.
+# =========================================================================
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# Cancel in-progress runs of the same workflow + ref pair so a fresh push
+# doesn't queue behind an earlier one.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Jobs run with read-only token permissions by default. Each job
+# elevates only what it needs.
+permissions:
+  contents: read
+
+jobs:
+  sdk:
+    name: SDK · Python
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: sdk
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: sdk/uv.lock
+
+      - name: Sync deps
+        run: uv sync --frozen
+
+      - name: Lint
+        run: uv run ruff check .
+
+      - name: Format check
+        run: uv run ruff format --check .
+
+      - name: Test
+        run: uv run pytest -v --tb=short
+
+  backend:
+    name: Backend · FastAPI
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: backend
+
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: annexkit
+          POSTGRES_PASSWORD: annexkit
+          POSTGRES_DB: annexkit_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U annexkit"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      ENV: test
+      SECRET_KEY: ci-only-not-a-real-secret-${{ github.run_id }}
+      DATABASE_URL: postgresql+asyncpg://annexkit:annexkit@localhost:5432/annexkit_test
+      DOCUMENT_STORAGE_PATH: /tmp/annexkit-docs
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+
+      - name: Sync deps
+        run: uv sync --frozen
+
+      - name: Lint
+        run: uv run ruff check .
+
+      - name: Format check
+        run: uv run ruff format --check .
+
+      - name: Apply migrations
+        run: uv run alembic upgrade head
+
+      - name: Test
+        run: uv run pytest -v --tb=short
+
+  frontend:
+    name: Frontend · Next.js
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: "1"

@@ -194,9 +194,93 @@ const FAQS: { q: string; a: string | React.ReactNode }[] = [
   },
 ];
 
+/**
+ * Plain-text mirror of FAQS for the Schema.org FAQPage block — Google's
+ * rich-result format requires `acceptedAnswer.text` as a string.
+ *
+ * Kept as a parallel constant rather than a derived projection because
+ * extracting plaintext from React children at render time is fragile
+ * (would need react-dom/server, which adds bundle weight). When you
+ * edit FAQS above, mirror the change here in the same commit.
+ */
+const FAQ_LDJSON: { q: string; a: string }[] = [
+  {
+    q: "Which AI Act articles does AnnexKit actually cover?",
+    a:
+      "Article 11 (technical documentation), Article 12 (logging), Article 13 " +
+      "(transparency to deployers), Article 50 (chatbot-style disclosure " +
+      "obligations), Article 72 (post-market monitoring), and the full Annex " +
+      "III + Annex IV mappings. Articles 9 (risk management) and 14 (human " +
+      "oversight) are partially covered — they require organisational evidence " +
+      "the SDK can't infer from spans.",
+  },
+  {
+    q: "Can I self-host?",
+    a:
+      "Yes — the collector and trust frontend ship under AGPL-3.0. A complete " +
+      "production docker-compose.prod.yml is in the repo; you bring Postgres " +
+      "16 + a domain, you get the same product that runs on annexkit.dev.",
+  },
+  {
+    q: "Where is the data stored? Do you see my prompts in plaintext?",
+    a:
+      "The collector runs on Hetzner Falkenstein (Germany). LLM advisor calls " +
+      "go through Mistral La Plateforme in Paris. By default the SDK SHA-256 " +
+      "hashes prompts and outputs before they leave your host — we never see " +
+      "plaintext unless you opt in.",
+  },
+  {
+    q: "Can I cancel anytime?",
+    a:
+      "Yes. Pro and Team are month-to-month — cancel from the customer " +
+      "dashboard, the next month doesn't bill. Generated Annex IV PDFs and " +
+      "the audit-log export are yours to keep regardless of subscription " +
+      "state. Enterprise is a yearly term billed in advance; refund pro-rata " +
+      "if you cancel mid-year.",
+  },
+  {
+    q: "Free trial? Free tier?",
+    a:
+      "Self-host is the de-facto free tier — clone the repo, run docker " +
+      "compose up, you have the full product. The hosted tiers don't have a " +
+      "time-bound free trial, but the first month is refundable on request.",
+  },
+  {
+    q: "DPA, Standard Contractual Clauses, procurement docs?",
+    a:
+      "Enterprise tier includes a DPA + SCC pack ready for your CISO to " +
+      "review. Pro and Team tiers can request the DPA at signup; we send a " +
+      "per-tenant signed copy within 24h. We're an Italian company, " +
+      "registered in the EU, no third-country transfers for hosted customer " +
+      "data.",
+  },
+];
+
+const FAQ_STRUCTURED_DATA = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQ_LDJSON.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.a,
+    },
+  })),
+};
+
 export default function PricingPage() {
   return (
     <>
+      {/* Schema.org FAQPage — gives the /pricing FAQ a chance at Google
+          rich-result snippets. The plain-text mirror lives in FAQ_LDJSON
+          above. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(FAQ_STRUCTURED_DATA),
+        }}
+      />
       <PricingHero />
       <TierGrid />
       <FAQ />
