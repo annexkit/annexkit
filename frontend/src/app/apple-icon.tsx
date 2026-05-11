@@ -3,8 +3,8 @@
  *
  * Apple devices add a rounded mask + drop shadow + glossy highlight on
  * top of whatever you ship, so we render a flat square and let Safari
- * apply its house style. Slightly more padding than the favicon so the
- * monogram still reads after Apple's mask carves the corners.
+ * apply its house style. More padding than the favicon so the monogram
+ * still reads after Apple's mask carves the corners.
  */
 
 import { ImageResponse } from "next/og";
@@ -19,21 +19,57 @@ export default function AppleIcon() {
         style={{
           width: "100%",
           height: "100%",
+          background: "#0a0d14",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#0a0d14",
+          position: "relative",
         }}
       >
-        <svg width="120" height="120" viewBox="0 0 64 64">
-          <g fill="#ffffff">
-            <path d="M 24 14 L 6 52 H 14 L 30 18 Z" />
-            <path d="M 40 14 L 58 52 H 50 L 34 18 Z" />
-            <path d="M 24 14 L 40 14 L 38 22 L 26 22 Z" />
-            <rect x="18" y="34" width="28" height="5" rx="1" />
-          </g>
-          <circle cx="55" cy="48" r="6" fill="#3d7aff" />
-        </svg>
+        {/* 'a' — large, dominant */}
+        <div
+          style={{
+            position: "absolute",
+            left: 28,
+            top: 18,
+            fontSize: 160,
+            fontWeight: 900,
+            color: "#ffffff",
+            letterSpacing: "-0.04em",
+            lineHeight: 1,
+            display: "flex",
+          }}
+        >
+          a
+        </div>
+        {/* 'iv' — italic serif superscript, cobalt */}
+        <div
+          style={{
+            position: "absolute",
+            right: 22,
+            top: 22,
+            fontSize: 56,
+            fontWeight: 700,
+            fontStyle: "italic",
+            color: "#3d7aff",
+            lineHeight: 1,
+            display: "flex",
+          }}
+        >
+          iv
+        </div>
+        {/* Cobalt underline */}
+        <div
+          style={{
+            position: "absolute",
+            right: 22,
+            top: 82,
+            width: 40,
+            height: 5,
+            background: "#3d7aff",
+            borderRadius: 2,
+          }}
+        />
       </div>
     ),
     { ...size },

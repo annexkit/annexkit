@@ -3,29 +3,42 @@
  * juggling files.
  *
  * Brand insight: "AnnexKit" → a *kit* for delivering *Annex IV* technical
- * documentation. The mark leans into the developer-tool half of the
- * positioning — a bold "A" letterform, with a small cobalt dot anchored
- * at the right diagonal. The dot reads as a "live signal" (telemetry,
- * AI, span emission) and ties the entire app to the cobalt accent. The
- * wordmark is lowercase to read as "developer tool" rather than
- * "consultancy SaaS".
+ * documentation. The monogram leans into that with two letterforms:
  *
- *   - <LogoMark>      : icon-only (16-200 px). Use for favicons, sidebar
- *                       collapsed states, app-icon contexts.
- *   - <LogoWordmark>  : "annexkit" with subtle cobalt-tinted "a". Use
- *                       when the icon would be redundant (footer copy).
- *   - <LogoLockup>    : mark + wordmark side-by-side. Default for headers
- *                       and any place we want full brand presence.
+ *   - lowercase 'a' (the initial of AnnexKit, matches the cobalt-tinted
+ *     leading 'a' in the wordmark — same letter, same colour cue)
+ *   - small italic serif 'iv' superscript in cobalt, with a cobalt
+ *     underline — reads as a citation/footnote reference to the literal
+ *     output of the product: Annex IV technical documentation
  *
- * The mark itself ships in 3 variants selectable via a `variant` prop:
- *   - "monogram" — bold A + cobalt span dot (recommended, default).
- *   - "bracket"  — bracket-framed A; signals "code / kit container".
- *   - "seal"     — rounded-square sigillo with A inside; signals "audit-grade".
+ * A regulator or compliance officer who has read the AI Act sees the
+ * "iv" and knows what AnnexKit is in 0.3 seconds. A developer reads it
+ * as a clean lowercase wordmark.
  *
- * Colour: the A strokes use `currentColor` so the mark inherits the
- * surrounding text colour (light/dark theme flips for free). The cobalt
- * accent is hard-coded to the brand token so it stays legible against
- * any background.
+ *   - <LogoMark>     : icon-only (16-200 px). Favicons, sidebar collapsed,
+ *                      app-icon contexts.
+ *   - <LogoWordmark> : "annexkit" with the leading 'a' in cobalt. Use
+ *                      when the icon would be redundant (footer copy).
+ *   - <LogoLockup>   : mark + wordmark side-by-side. Default for headers.
+ *
+ * The mark itself ships in three variants selectable via a `variant` prop:
+ *   - "monogram" — lowercase 'a' + iv superscript with cobalt underline.
+ *                  Recommended, default.
+ *   - "bracket"  — same letterform inside `[ ]` brackets; signals
+ *                  "code container / kit".
+ *   - "seal"     — same letterform inside a rounded-square frame;
+ *                  signals "audit-grade stamp".
+ *
+ * Colour: the 'a' uses `currentColor` so it inherits the surrounding
+ * text colour (light/dark theme flips for free). The cobalt accent
+ * (the 'iv', its underline, the seal accent) is hard-coded to the
+ * brand token so it stays legible against any background.
+ *
+ * Typography note: the 'a' uses the Geist Sans family that the site
+ * already loads for body text (CSS variable `--font-geist-sans`); the
+ * 'iv' uses a system serif (Georgia / 'New York' / 'Iowan Old Style')
+ * so the contrast between sans + italic-serif is preserved everywhere.
+ * Fallback chains keep the mark legible if a font is missing.
  */
 
 import * as React from "react";
@@ -42,6 +55,14 @@ interface LogoProps extends React.SVGProps<SVGSVGElement> {
   /** Optional aria label override. */
   title?: string;
 }
+
+// CSS chains shared by every variant — keep them in one place so the
+// mark looks identical across MonogramMark / BracketMark / SealMark.
+const SANS_STACK =
+  "var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Geist', " +
+  "Inter, system-ui, 'Segoe UI', Roboto, sans-serif";
+const SERIF_STACK =
+  "'New York', Georgia, 'Iowan Old Style', 'Cambria', 'Times New Roman', serif";
 
 // ---------------------------------------------------------------------------
 // Mark — icon-only
@@ -60,8 +81,56 @@ export function LogoMark({
   return <MonogramMark size={size} title={title} className={className} {...props} />;
 }
 
+/* The lowercase 'a' + 'iv' superscript + cobalt underline.
+ * Extracted so all three variants render the same core letterform. */
+function CoreLetterform({
+  scale = 1,
+  offsetX = 0,
+  offsetY = 0,
+}: {
+  scale?: number;
+  offsetX?: number;
+  offsetY?: number;
+}) {
+  return (
+    <g transform={`translate(${offsetX} ${offsetY}) scale(${scale})`}>
+      {/* 'a' — bold sans lowercase, current text colour */}
+      <text
+        x={14}
+        y={54}
+        style={{
+          fontFamily: SANS_STACK,
+          fontWeight: 900,
+          fontSize: 52,
+          letterSpacing: "-0.025em",
+        }}
+        fill="currentColor"
+      >
+        a
+      </text>
+      {/* 'iv' — italic serif, cobalt, superscript position */}
+      <text
+        x={46}
+        y={28}
+        style={{
+          fontFamily: SERIF_STACK,
+          fontStyle: "italic",
+          fontWeight: 700,
+          fontSize: 20,
+        }}
+        fill="var(--brand-cobalt)"
+      >
+        iv
+      </text>
+      {/* Cobalt underline beneath the 'iv' — the citation-mark cue.
+          Sits 2px under the iv baseline so it reads as a footnote ref. */}
+      <rect x={46} y={30} width={14} height={2} rx={1} fill="var(--brand-cobalt)" />
+    </g>
+  );
+}
+
 // ---------------------------------------------------------------------------
-// Variant A: bold A monogram + cobalt span dot (recommended, default)
+// Variant A: lowercase 'a' + iv with cobalt underline (recommended, default)
 // ---------------------------------------------------------------------------
 function MonogramMark({
   size = 28,
@@ -80,29 +149,13 @@ function MonogramMark({
       {...props}
     >
       <title>{title}</title>
-      {/* Bold "A" letterform — geometric, sans-serif. Built as 3 filled
-          shapes so it stays crisp at favicon sizes (no anti-aliased
-          curves that smear at 16px). Coordinates picked on a 64-grid. */}
-      <g fill="currentColor">
-        {/* Left diagonal stroke */}
-        <path d="M 24 14 L 6 52 H 14 L 30 18 Z" />
-        {/* Right diagonal stroke */}
-        <path d="M 40 14 L 58 52 H 50 L 34 18 Z" />
-        {/* Bridge (apex / top) — joins the two diagonals into a closed A */}
-        <path d="M 24 14 L 40 14 L 38 22 L 26 22 Z" />
-        {/* Crossbar — slightly above mid-height for a designed feel */}
-        <rect x="18" y="34" width="28" height="5" rx="1" />
-      </g>
-      {/* Cobalt span dot — anchored bottom-right of the bounding box.
-          Reads as "live telemetry / AI signal", ties the mark to the
-          brand accent. Always cobalt regardless of theme. */}
-      <circle cx="55" cy="48" r="5" fill="var(--brand-cobalt)" />
+      <CoreLetterform />
     </svg>
   );
 }
 
 // ---------------------------------------------------------------------------
-// Variant B: bracket-framed A — "code container / kit"
+// Variant B: bracket-framed letterform — "code container / kit"
 // ---------------------------------------------------------------------------
 function BracketMark({
   size = 28,
@@ -123,7 +176,7 @@ function BracketMark({
       <title>{title}</title>
       {/* Left bracket */}
       <path
-        d="M 18 10 H 8 V 54 H 18"
+        d="M 14 10 H 6 V 54 H 14"
         fill="none"
         stroke="currentColor"
         strokeWidth="4"
@@ -132,25 +185,21 @@ function BracketMark({
       />
       {/* Right bracket */}
       <path
-        d="M 46 10 H 56 V 54 H 46"
+        d="M 50 10 H 58 V 54 H 50"
         fill="none"
         stroke="currentColor"
         strokeWidth="4"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      {/* A inside the brackets — slightly compressed so it fits */}
-      <g fill="currentColor">
-        <path d="M 28 18 L 20 48 H 26 L 27.5 42 H 36.5 L 38 48 H 44 L 36 18 Z M 29 36 L 35 36 L 32 24 Z" />
-      </g>
-      {/* Cobalt crossbar accent */}
-      <rect x="28" y="34" width="8" height="3" rx="0.5" fill="var(--brand-cobalt)" />
+      {/* Letterform compressed slightly to fit inside the brackets */}
+      <CoreLetterform scale={0.78} offsetX={8} offsetY={6} />
     </svg>
   );
 }
 
 // ---------------------------------------------------------------------------
-// Variant C: rounded-square seal with A inside — "audit-grade stamp"
+// Variant C: rounded-square seal — "audit-grade stamp"
 // ---------------------------------------------------------------------------
 function SealMark({
   size = 28,
@@ -180,21 +229,17 @@ function SealMark({
         stroke="currentColor"
         strokeWidth="3"
       />
-      {/* A inside */}
-      <g fill="currentColor">
-        <path d="M 32 16 L 18 48 H 24 L 26 42 H 38 L 40 48 H 46 L 32 16 Z M 28 36 L 36 36 L 32 24 Z" />
-      </g>
-      {/* Cobalt dot — bottom-right corner of the A, like a verification stamp */}
-      <circle cx="44" cy="46" r="3" fill="var(--brand-cobalt)" />
+      {/* Letterform sized to fit inside the seal with a bit of breathing room */}
+      <CoreLetterform scale={0.82} offsetX={6} offsetY={4} />
     </svg>
   );
 }
 
 // ---------------------------------------------------------------------------
 // Wordmark — text-only "annexkit" with the leading "a" subtly tinted in
-// the cobalt accent so the dual identity (annex + kit) stays visible
-// even without the icon. Lowercase reads as "developer tool" (cf. vercel,
-// linear, stripe wordmarks).
+// the cobalt accent so the lowercase 'a' echoes the one in the
+// monogram. Lowercase reads as "developer tool" (cf. vercel, linear,
+// stripe wordmarks).
 // ---------------------------------------------------------------------------
 interface WordmarkProps {
   size?: "sm" | "md" | "lg";

@@ -1,12 +1,14 @@
 /**
  * Browser favicon — generated at request time so the brand monogram
- * stays in sync with the rest of the design system. Next.js renders the
- * <ImageResponse> JSX through @vercel/og (satori + resvg) into a PNG that
- * browsers tab-icon and bookmark-icon happily.
+ * stays in sync with the rest of the design system. Next.js renders
+ * the JSX through @vercel/og (satori + resvg) into a PNG that
+ * browsers happily tab-icon and bookmark.
  *
  * Sized at 32×32: the canonical favicon. Browsers downscale to 16×16
- * for the address bar; the geometry is kept simple enough to survive
- * that downscale without smudging.
+ * for the address bar; the geometry stays simple enough to survive
+ * that downscale — at the smallest size you'll mainly read the white
+ * 'a' on a dark square, with the cobalt 'iv' superscript just enough
+ * to register as a brand cue.
  */
 
 import { ImageResponse } from "next/og";
@@ -21,25 +23,62 @@ export default function Icon() {
         style={{
           width: "100%",
           height: "100%",
+          background: "#0a0d14",
+          borderRadius: 6,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#0a0d14",
-          borderRadius: 6,
           position: "relative",
         }}
       >
-        {/* Bold A glyph, drawn proportional to a 32-px box so the
-            shape stays readable when the browser scales to 16. */}
-        <svg width="22" height="22" viewBox="0 0 64 64">
-          <g fill="#ffffff">
-            <path d="M 24 14 L 6 52 H 14 L 30 18 Z" />
-            <path d="M 40 14 L 58 52 H 50 L 34 18 Z" />
-            <path d="M 24 14 L 40 14 L 38 22 L 26 22 Z" />
-            <rect x="18" y="34" width="28" height="5" rx="1" />
-          </g>
-          <circle cx="55" cy="48" r="6" fill="#3d7aff" />
-        </svg>
+        {/* Lowercase 'a' — the dominant glyph. Sized so it nearly fills
+            the height; satori uses its built-in geometric sans, which
+            produces a clean single-storey 'a'. */}
+        <div
+          style={{
+            position: "absolute",
+            left: 5,
+            top: 0,
+            fontSize: 30,
+            fontWeight: 900,
+            color: "#ffffff",
+            letterSpacing: "-0.03em",
+            lineHeight: 1,
+            display: "flex",
+          }}
+        >
+          a
+        </div>
+        {/* Cobalt 'iv' superscript — italic, top-right corner. At 32px
+            this becomes very small but still readable as a cobalt
+            accent shape; on retina it resolves to the iv letterforms. */}
+        <div
+          style={{
+            position: "absolute",
+            right: 3,
+            top: 2,
+            fontSize: 11,
+            fontWeight: 700,
+            fontStyle: "italic",
+            color: "#3d7aff",
+            lineHeight: 1,
+            display: "flex",
+          }}
+        >
+          iv
+        </div>
+        {/* Cobalt underline below the 'iv' — the citation cue. */}
+        <div
+          style={{
+            position: "absolute",
+            right: 3,
+            top: 14,
+            width: 9,
+            height: 1.5,
+            background: "#3d7aff",
+            borderRadius: 1,
+          }}
+        />
       </div>
     ),
     { ...size },

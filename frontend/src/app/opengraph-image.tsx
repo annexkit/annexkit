@@ -53,18 +53,62 @@ export default async function OpenGraphImage() {
           style={{
             display: "flex",
             alignItems: "center",
-            gap: 16,
+            gap: 18,
           }}
         >
-          <svg width="64" height="64" viewBox="0 0 64 64">
-            <g fill="#ffffff">
-              <path d="M 24 14 L 6 52 H 14 L 30 18 Z" />
-              <path d="M 40 14 L 58 52 H 50 L 34 18 Z" />
-              <path d="M 24 14 L 40 14 L 38 22 L 26 22 Z" />
-              <rect x="18" y="34" width="28" height="5" rx="1" />
-            </g>
-            <circle cx="55" cy="48" r="6" fill="#3d7aff" />
-          </svg>
+          {/* Monogram — lowercase 'a' + italic serif 'iv' superscript
+              with cobalt underline. satori renders via <div> rather
+              than <svg><text>, so we compose it absolutely-positioned. */}
+          <div
+            style={{
+              position: "relative",
+              width: 80,
+              height: 64,
+              display: "flex",
+            }}
+          >
+            <span
+              style={{
+                position: "absolute",
+                left: 0,
+                top: -6,
+                fontSize: 76,
+                fontWeight: 900,
+                color: "#ffffff",
+                letterSpacing: "-0.04em",
+                lineHeight: 1,
+                display: "flex",
+              }}
+            >
+              a
+            </span>
+            <span
+              style={{
+                position: "absolute",
+                right: 0,
+                top: 0,
+                fontSize: 26,
+                fontWeight: 700,
+                fontStyle: "italic",
+                color: "#3d7aff",
+                lineHeight: 1,
+                display: "flex",
+              }}
+            >
+              iv
+            </span>
+            <div
+              style={{
+                position: "absolute",
+                right: 0,
+                top: 28,
+                width: 18,
+                height: 2.5,
+                background: "#3d7aff",
+                borderRadius: 1.5,
+              }}
+            />
+          </div>
           <span
             style={{
               fontSize: 32,
