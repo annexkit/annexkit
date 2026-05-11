@@ -34,15 +34,20 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export default async function OpenGraphImage() {
-  // Italic serif for the 'iv' superscript — satori needs the actual TTF
-  // passed via the `fonts:` option, otherwise fontStyle: italic is
-  // silently ignored. See app/icon.tsx for the wider rationale.
+  // Two fonts: Inter for everything sans (title, eyebrow, tagline,
+  // wordmark, 'a' in the monogram), EB Garamond Bold Italic for the
+  // 'iv' superscript only. Without both, satori would use EB Garamond
+  // as the lone fallback for every glyph and render the entire card in
+  // italic serif — which is NOT what we want; only the 'iv' should
+  // read as a citation.
   //
   // readFile (not fetch) — Turbopack doesn't yet implement
   // fetch(new URL(..., import.meta.url)) for local files at build time.
-  const ebGaramondItalic = await readFile(
-    new URL("./_fonts/EBGaramond-BoldItalic.ttf", import.meta.url),
-  );
+  const [interBold, interRegular, ebGaramondItalic] = await Promise.all([
+    readFile(new URL("./_fonts/Inter-Bold.ttf", import.meta.url)),
+    readFile(new URL("./_fonts/Inter-Regular.ttf", import.meta.url)),
+    readFile(new URL("./_fonts/EBGaramond-BoldItalic.ttf", import.meta.url)),
+  ]);
 
   return new ImageResponse(
     (
@@ -59,7 +64,11 @@ export default async function OpenGraphImage() {
             "radial-gradient(circle at 0% 100%, rgba(61,122,255,0.18) 0%, transparent 55%)",
           ].join(", "),
           padding: "72px 80px",
-          fontFamily: "sans-serif",
+          // Inter is registered as the only non-italic font in the
+          // satori `fonts:` array below; this fontFamily declaration
+          // cascades to every nested element except the 'iv' span
+          // which explicitly overrides to EB Garamond.
+          fontFamily: "Inter",
           color: "#f5f7fb",
         }}
       >
@@ -215,6 +224,18 @@ export default async function OpenGraphImage() {
     {
       ...size,
       fonts: [
+        {
+          name: "Inter",
+          data: interBold,
+          weight: 700,
+          style: "normal",
+        },
+        {
+          name: "Inter",
+          data: interRegular,
+          weight: 400,
+          style: "normal",
+        },
         {
           name: "EB Garamond",
           data: ebGaramondItalic,

@@ -6,8 +6,8 @@
  * apply its house style. More padding than the favicon so the monogram
  * still reads after Apple's mask carves the corners.
  *
- * See app/icon.tsx for the font-loading rationale (satori needs the
- * italic serif TTF passed explicitly via the `fonts:` option).
+ * See app/icon.tsx for the two-font rationale (Inter for 'a',
+ * EB Garamond Italic for 'iv').
  */
 
 import { readFile } from "node:fs/promises";
@@ -18,11 +18,10 @@ export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
 
 export default async function AppleIcon() {
-  // readFile (not fetch) — Turbopack doesn't yet implement
-  // fetch(new URL(..., import.meta.url)) for local files at build time.
-  const ebGaramondItalic = await readFile(
-    new URL("./_fonts/EBGaramond-BoldItalic.ttf", import.meta.url),
-  );
+  const [interBold, ebGaramondItalic] = await Promise.all([
+    readFile(new URL("./_fonts/Inter-Bold.ttf", import.meta.url)),
+    readFile(new URL("./_fonts/EBGaramond-BoldItalic.ttf", import.meta.url)),
+  ]);
 
   return new ImageResponse(
     (
@@ -37,14 +36,15 @@ export default async function AppleIcon() {
           position: "relative",
         }}
       >
-        {/* 'a' — large, dominant, satori default sans */}
+        {/* 'a' — large dominant glyph, Inter Bold */}
         <div
           style={{
             position: "absolute",
             left: 28,
             top: 18,
+            fontFamily: "Inter",
             fontSize: 160,
-            fontWeight: 900,
+            fontWeight: 700,
             color: "#ffffff",
             letterSpacing: "-0.04em",
             lineHeight: 1,
@@ -59,10 +59,10 @@ export default async function AppleIcon() {
             position: "absolute",
             right: 22,
             top: 22,
+            fontFamily: "EB Garamond",
+            fontStyle: "italic",
             fontSize: 56,
             fontWeight: 700,
-            fontStyle: "italic",
-            fontFamily: "EB Garamond",
             color: "#3d7aff",
             lineHeight: 1,
             display: "flex",
@@ -87,6 +87,12 @@ export default async function AppleIcon() {
     {
       ...size,
       fonts: [
+        {
+          name: "Inter",
+          data: interBold,
+          weight: 700,
+          style: "normal",
+        },
         {
           name: "EB Garamond",
           data: ebGaramondItalic,

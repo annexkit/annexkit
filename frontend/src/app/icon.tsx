@@ -5,19 +5,14 @@
  * browsers tab-icon and bookmark.
  *
  * Sized at 32×32: the canonical favicon. Browsers downscale to 16×16
- * for the address bar. At the smallest size you'll mainly read the
- * white 'a' on a dark square; the cobalt 'iv' superscript is just
- * enough pixels to register as a brand cue.
+ * for the address bar.
  *
- * Font loading
- * ------------
- * satori (the rasteriser behind next/og) doesn't honour `fontStyle:
- * italic` or `fontFamily: "<some serif>"` unless you pass the actual
- * font file via the `fonts:` option. Without that, every glyph
- * renders in its default sans, which collapses the visual contrast
- * between the bold sans 'a' and the italic serif 'iv'. We load
- * EB Garamond Bold Italic (open-source, OFL) for the 'iv' so the
- * citation cue lands the way it does on the live site.
+ * Two fonts are passed to satori:
+ *   - Inter Bold (700, normal)         : the 'a' glyph
+ *   - EB Garamond Bold Italic (700)    : the 'iv' superscript only
+ * Both bundled as TTF in app/_fonts/. Without an explicit sans font,
+ * satori falls back to its single registered font for EVERYTHING — so
+ * before this two-font setup, the 'a' was inheriting EB Garamond too.
  */
 
 import { readFile } from "node:fs/promises";
@@ -30,9 +25,10 @@ export const contentType = "image/png";
 export default async function Icon() {
   // readFile (not fetch) — Turbopack doesn't yet implement
   // fetch(new URL(..., import.meta.url)) for local files at build time.
-  const ebGaramondItalic = await readFile(
-    new URL("./_fonts/EBGaramond-BoldItalic.ttf", import.meta.url),
-  );
+  const [interBold, ebGaramondItalic] = await Promise.all([
+    readFile(new URL("./_fonts/Inter-Bold.ttf", import.meta.url)),
+    readFile(new URL("./_fonts/EBGaramond-BoldItalic.ttf", import.meta.url)),
+  ]);
 
   return new ImageResponse(
     (
@@ -48,14 +44,15 @@ export default async function Icon() {
           position: "relative",
         }}
       >
-        {/* Lowercase 'a' — dominant glyph in satori's default sans. */}
+        {/* Lowercase 'a' — dominant glyph, Inter Bold */}
         <div
           style={{
             position: "absolute",
             left: 5,
             top: 0,
+            fontFamily: "Inter",
             fontSize: 30,
-            fontWeight: 900,
+            fontWeight: 700,
             color: "#ffffff",
             letterSpacing: "-0.03em",
             lineHeight: 1,
@@ -64,16 +61,16 @@ export default async function Icon() {
         >
           a
         </div>
-        {/* 'iv' — italic serif via the loaded EB Garamond font. */}
+        {/* 'iv' — italic serif via the loaded EB Garamond font */}
         <div
           style={{
             position: "absolute",
             right: 3,
             top: 2,
+            fontFamily: "EB Garamond",
+            fontStyle: "italic",
             fontSize: 11,
             fontWeight: 700,
-            fontStyle: "italic",
-            fontFamily: "EB Garamond",
             color: "#3d7aff",
             lineHeight: 1,
             display: "flex",
@@ -81,7 +78,7 @@ export default async function Icon() {
         >
           iv
         </div>
-        {/* Cobalt underline below 'iv' — the citation cue. */}
+        {/* Cobalt underline below 'iv' — the citation cue */}
         <div
           style={{
             position: "absolute",
@@ -98,6 +95,12 @@ export default async function Icon() {
     {
       ...size,
       fonts: [
+        {
+          name: "Inter",
+          data: interBold,
+          weight: 700,
+          style: "normal",
+        },
         {
           name: "EB Garamond",
           data: ebGaramondItalic,
