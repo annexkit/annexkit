@@ -83,28 +83,33 @@ without a documented PR.
 ```
 AnnexKit/
 ├── README.md              Public-facing overview + quickstart
-├── CLAUDE.md              You are here
+├── AGENTS.md              You are here — project brief + non-negotiables
+├── CONTRIBUTING.md        How to open a PR, what we will / won't merge
+├── SECURITY.md            Vulnerability disclosure policy
 ├── Makefile               `make help` lists everything
-├── docker-compose.yml     Dev stack (db + collector backend)
+├── docker-compose.yml     Dev stack (db + collector backend + frontend)
 ├── .env.example           Copy to `.env` before `make up`
-├── docs/
-│   └── ANNEXKIT_PLAN.md   Strategic plan + 12-month roadmap
+├── .github/               GitHub Actions CI, Dependabot, PR template
 ├── sdk/                   Python SDK (publishable package `annexkit`)
-└── backend/               FastAPI collector + Annex IV API
+├── backend/               FastAPI collector + Annex IV API
+├── frontend/              Next.js 16 public trust center
+├── examples/              Runnable end-to-end demos
+└── scripts/               Operational scripts (tenant seeding, etc.)
 ```
 
-## Sprint plan
+## Roadmap
 
-Driven by `docs/ANNEXKIT_PLAN.md` Section 7 (MVP Day 1-7) and Section 8
-(12-month roadmap). Status tracked in `README.md` under **Roadmap**. Each
-sprint checkpoint updates that section.
+Tracked in [`README.md`](README.md) under **Roadmap**. Each release
+moves items between "shipped in v0.1.x" and "planned for v0.2".
 
 ## Contracts you inherit
 
 - Commits use **Conventional Commits**: `feat(sdk): add @track decorator`,
-  `fix(backend): handle empty system_id`, `docs(plan): clarify M3 milestone`.
-- PRs must run `make lint` + `make backend-test` + `make sdk-test` green
-  before merge.
+  `fix(backend): handle empty system_id`, `docs(readme): clarify pricing`.
+- PRs must pass CI (lint + test + typecheck for all three subprojects) —
+  enforced by `.github/workflows/ci.yml`.
+- Locally: `make lint` + `make backend-test` + `make sdk-test` green
+  before review.
 - Never skip git hooks (`--no-verify`) or bypass migrations.
 
 ## Useful entry points
