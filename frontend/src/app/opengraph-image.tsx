@@ -15,10 +15,15 @@
  * Constraints to remember (next/og is satori under the hood):
  *   - Inline styles only, no Tailwind
  *   - Limited CSS subset — flex works, grid does not
- *   - All custom fonts must be loaded via fetch + arrayBuffer; we stick
- *     to satori's default "Geist-ish" sans so we don't pay the network
- *     round-trip on every preview render
+ *   - Custom fonts must be loaded via the `fonts:` option as ArrayBuffer
+ *     (we ship EB Garamond Bold Italic for the "iv" superscript so the
+ *     citation cue renders the same as on the live site); the "a" stays
+ *     on satori's default sans
+ *   - Use `readFile` for the font load, not `fetch(new URL(...))` —
+ *     Turbopack doesn't implement local-file fetch yet (Next.js 16)
  */
+
+import { readFile } from "node:fs/promises";
 
 import { ImageResponse } from "next/og";
 
@@ -29,6 +34,16 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 export default async function OpenGraphImage() {
+  // Italic serif for the 'iv' superscript — satori needs the actual TTF
+  // passed via the `fonts:` option, otherwise fontStyle: italic is
+  // silently ignored. See app/icon.tsx for the wider rationale.
+  //
+  // readFile (not fetch) — Turbopack doesn't yet implement
+  // fetch(new URL(..., import.meta.url)) for local files at build time.
+  const ebGaramondItalic = await readFile(
+    new URL("./_fonts/EBGaramond-BoldItalic.ttf", import.meta.url),
+  );
+
   return new ImageResponse(
     (
       <div
@@ -90,6 +105,7 @@ export default async function OpenGraphImage() {
                 fontSize: 26,
                 fontWeight: 700,
                 fontStyle: "italic",
+                fontFamily: "EB Garamond",
                 color: "#3d7aff",
                 lineHeight: 1,
                 display: "flex",
@@ -196,6 +212,16 @@ export default async function OpenGraphImage() {
         </div>
       </div>
     ),
-    { ...size },
+    {
+      ...size,
+      fonts: [
+        {
+          name: "EB Garamond",
+          data: ebGaramondItalic,
+          weight: 700,
+          style: "italic",
+        },
+      ],
+    },
   );
 }

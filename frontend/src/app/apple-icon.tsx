@@ -5,14 +5,25 @@
  * top of whatever you ship, so we render a flat square and let Safari
  * apply its house style. More padding than the favicon so the monogram
  * still reads after Apple's mask carves the corners.
+ *
+ * See app/icon.tsx for the font-loading rationale (satori needs the
+ * italic serif TTF passed explicitly via the `fonts:` option).
  */
+
+import { readFile } from "node:fs/promises";
 
 import { ImageResponse } from "next/og";
 
 export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
 
-export default function AppleIcon() {
+export default async function AppleIcon() {
+  // readFile (not fetch) — Turbopack doesn't yet implement
+  // fetch(new URL(..., import.meta.url)) for local files at build time.
+  const ebGaramondItalic = await readFile(
+    new URL("./_fonts/EBGaramond-BoldItalic.ttf", import.meta.url),
+  );
+
   return new ImageResponse(
     (
       <div
@@ -26,7 +37,7 @@ export default function AppleIcon() {
           position: "relative",
         }}
       >
-        {/* 'a' — large, dominant */}
+        {/* 'a' — large, dominant, satori default sans */}
         <div
           style={{
             position: "absolute",
@@ -42,7 +53,7 @@ export default function AppleIcon() {
         >
           a
         </div>
-        {/* 'iv' — italic serif superscript, cobalt */}
+        {/* 'iv' — italic serif via EB Garamond */}
         <div
           style={{
             position: "absolute",
@@ -51,6 +62,7 @@ export default function AppleIcon() {
             fontSize: 56,
             fontWeight: 700,
             fontStyle: "italic",
+            fontFamily: "EB Garamond",
             color: "#3d7aff",
             lineHeight: 1,
             display: "flex",
@@ -72,6 +84,16 @@ export default function AppleIcon() {
         />
       </div>
     ),
-    { ...size },
+    {
+      ...size,
+      fonts: [
+        {
+          name: "EB Garamond",
+          data: ebGaramondItalic,
+          weight: 700,
+          style: "italic",
+        },
+      ],
+    },
   );
 }

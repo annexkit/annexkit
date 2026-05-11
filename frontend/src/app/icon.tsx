@@ -2,21 +2,38 @@
  * Browser favicon — generated at request time so the brand monogram
  * stays in sync with the rest of the design system. Next.js renders
  * the JSX through @vercel/og (satori + resvg) into a PNG that
- * browsers happily tab-icon and bookmark.
+ * browsers tab-icon and bookmark.
  *
  * Sized at 32×32: the canonical favicon. Browsers downscale to 16×16
- * for the address bar; the geometry stays simple enough to survive
- * that downscale — at the smallest size you'll mainly read the white
- * 'a' on a dark square, with the cobalt 'iv' superscript just enough
- * to register as a brand cue.
+ * for the address bar. At the smallest size you'll mainly read the
+ * white 'a' on a dark square; the cobalt 'iv' superscript is just
+ * enough pixels to register as a brand cue.
+ *
+ * Font loading
+ * ------------
+ * satori (the rasteriser behind next/og) doesn't honour `fontStyle:
+ * italic` or `fontFamily: "<some serif>"` unless you pass the actual
+ * font file via the `fonts:` option. Without that, every glyph
+ * renders in its default sans, which collapses the visual contrast
+ * between the bold sans 'a' and the italic serif 'iv'. We load
+ * EB Garamond Bold Italic (open-source, OFL) for the 'iv' so the
+ * citation cue lands the way it does on the live site.
  */
+
+import { readFile } from "node:fs/promises";
 
 import { ImageResponse } from "next/og";
 
 export const size = { width: 32, height: 32 };
 export const contentType = "image/png";
 
-export default function Icon() {
+export default async function Icon() {
+  // readFile (not fetch) — Turbopack doesn't yet implement
+  // fetch(new URL(..., import.meta.url)) for local files at build time.
+  const ebGaramondItalic = await readFile(
+    new URL("./_fonts/EBGaramond-BoldItalic.ttf", import.meta.url),
+  );
+
   return new ImageResponse(
     (
       <div
@@ -31,9 +48,7 @@ export default function Icon() {
           position: "relative",
         }}
       >
-        {/* Lowercase 'a' — the dominant glyph. Sized so it nearly fills
-            the height; satori uses its built-in geometric sans, which
-            produces a clean single-storey 'a'. */}
+        {/* Lowercase 'a' — dominant glyph in satori's default sans. */}
         <div
           style={{
             position: "absolute",
@@ -49,9 +64,7 @@ export default function Icon() {
         >
           a
         </div>
-        {/* Cobalt 'iv' superscript — italic, top-right corner. At 32px
-            this becomes very small but still readable as a cobalt
-            accent shape; on retina it resolves to the iv letterforms. */}
+        {/* 'iv' — italic serif via the loaded EB Garamond font. */}
         <div
           style={{
             position: "absolute",
@@ -60,6 +73,7 @@ export default function Icon() {
             fontSize: 11,
             fontWeight: 700,
             fontStyle: "italic",
+            fontFamily: "EB Garamond",
             color: "#3d7aff",
             lineHeight: 1,
             display: "flex",
@@ -67,7 +81,7 @@ export default function Icon() {
         >
           iv
         </div>
-        {/* Cobalt underline below the 'iv' — the citation cue. */}
+        {/* Cobalt underline below 'iv' — the citation cue. */}
         <div
           style={{
             position: "absolute",
@@ -81,6 +95,16 @@ export default function Icon() {
         />
       </div>
     ),
-    { ...size },
+    {
+      ...size,
+      fonts: [
+        {
+          name: "EB Garamond",
+          data: ebGaramondItalic,
+          weight: 700,
+          style: "italic",
+        },
+      ],
+    },
   );
 }

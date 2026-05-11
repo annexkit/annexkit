@@ -61,8 +61,12 @@ interface LogoProps extends React.SVGProps<SVGSVGElement> {
 const SANS_STACK =
   "var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Geist', " +
   "Inter, system-ui, 'Segoe UI', Roboto, sans-serif";
+// EB Garamond Bold Italic — loaded as a webfont in app/layout.tsx and
+// exposed via --font-brand-serif. System serifs are the fallback so the
+// mark stays legible if the webfont is still loading.
 const SERIF_STACK =
-  "'New York', Georgia, 'Iowan Old Style', 'Cambria', 'Times New Roman', serif";
+  "var(--font-brand-serif), 'EB Garamond', 'New York', Georgia, " +
+  "'Iowan Old Style', 'Cambria', 'Times New Roman', serif";
 
 // ---------------------------------------------------------------------------
 // Mark — icon-only

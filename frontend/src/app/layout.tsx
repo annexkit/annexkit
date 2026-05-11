@@ -19,6 +19,7 @@
 
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
 import { SiteFooter } from "@/components/site-footer";
@@ -59,6 +60,20 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+});
+
+// EB Garamond Bold Italic — used only by the brand monogram for the
+// stylised "iv" superscript. The same TTF file is also passed to
+// satori in icon.tsx / apple-icon.tsx / opengraph-image.tsx so the
+// inline SVG logo and the rasterised social cards render the same
+// letterform. Scoped via the CSS variable below so it doesn't bleed
+// into body text.
+const ebGaramondItalic = localFont({
+  src: "./_fonts/EBGaramond-BoldItalic.ttf",
+  variable: "--font-brand-serif",
+  weight: "700",
+  style: "italic",
+  display: "swap",
 });
 
 const SITE_ORIGIN =
@@ -179,7 +194,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${ebGaramondItalic.variable} h-full antialiased`}
       // Silences React's hydration warning when the inline script above
       // mutates <html> before React hydrates — that mutation is the whole
       // point of the script, not a bug.
