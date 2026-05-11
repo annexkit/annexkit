@@ -1,73 +1,100 @@
 # =========================================================================
-# Dependabot — weekly security + minor-version PRs across the three
-# subprojects + the workflow files themselves.
+# Dependabot — quiet config for a solo-founder repo.
 #
-# Patch + minor land as PRs, ready for one-click merge after CI is green.
-# Major bumps still go through manual review (no `versioning-strategy`
-# override below — Dependabot's default behaviour for `>=` constraints).
+# - One PR per ecosystem per month, not per package per week.
+# - All patch + minor updates are grouped into that single PR so the
+#   commit history stays clean and CI runs once instead of N times.
+# - Major bumps still open as individual PRs (rare, deserve review).
+# - Security advisories still fire IMMEDIATELY, outside this schedule —
+#   handled by GitHub's built-in "Dependabot security updates" toggle
+#   (Settings -> Code security and analysis). Don't disable that.
+#
+# Result: 6 PRs/month maximum, each with green CI, one-click merge.
 # =========================================================================
 
 version: 2
 updates:
+  # --- Python: SDK ----------------------------------------------------
   - package-ecosystem: pip
     directory: /sdk
     schedule:
-      interval: weekly
+      interval: monthly
       day: monday
       time: "06:00"
       timezone: Europe/Rome
-    open-pull-requests-limit: 5
+    groups:
+      sdk-deps:
+        patterns: ["*"]
+        update-types: [minor, patch]
+    open-pull-requests-limit: 3
     labels: [dependencies, sdk]
     commit-message:
       prefix: "chore(sdk-deps)"
 
+  # --- Python: backend ------------------------------------------------
   - package-ecosystem: pip
     directory: /backend
     schedule:
-      interval: weekly
+      interval: monthly
       day: monday
       time: "06:00"
       timezone: Europe/Rome
-    open-pull-requests-limit: 5
+    groups:
+      backend-deps:
+        patterns: ["*"]
+        update-types: [minor, patch]
+    open-pull-requests-limit: 3
     labels: [dependencies, backend]
     commit-message:
       prefix: "chore(backend-deps)"
 
+  # --- Node: frontend -------------------------------------------------
   - package-ecosystem: npm
     directory: /frontend
     schedule:
-      interval: weekly
+      interval: monthly
       day: monday
       time: "06:00"
       timezone: Europe/Rome
-    open-pull-requests-limit: 5
+    groups:
+      frontend-deps:
+        patterns: ["*"]
+        update-types: [minor, patch]
+    open-pull-requests-limit: 3
     labels: [dependencies, frontend]
     commit-message:
       prefix: "chore(frontend-deps)"
 
+  # --- Docker: backend image -----------------------------------------
   - package-ecosystem: docker
     directory: /backend
     schedule:
-      interval: weekly
-    open-pull-requests-limit: 3
+      interval: monthly
+    open-pull-requests-limit: 2
     labels: [dependencies, docker]
     commit-message:
       prefix: "chore(docker-backend)"
 
+  # --- Docker: frontend image ----------------------------------------
   - package-ecosystem: docker
     directory: /frontend
     schedule:
-      interval: weekly
-    open-pull-requests-limit: 3
+      interval: monthly
+    open-pull-requests-limit: 2
     labels: [dependencies, docker]
     commit-message:
       prefix: "chore(docker-frontend)"
 
+  # --- GitHub Actions versions ---------------------------------------
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: weekly
-    open-pull-requests-limit: 5
+      interval: monthly
+    groups:
+      actions:
+        patterns: ["*"]
+        update-types: [minor, patch]
+    open-pull-requests-limit: 2
     labels: [dependencies, ci]
     commit-message:
       prefix: "chore(actions)"
