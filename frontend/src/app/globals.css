@@ -62,17 +62,20 @@
   --color-brand-fog: var(--brand-fog);
 
   /* Risk-tier palette — preserved from the Annex IV PDF, used by RiskBadge
-     and any future status indicator. Never reuse these as primary brand. */
-  --color-tier-unacceptable: #b00020;
-  --color-tier-unacceptable-bg: #fde7ea;
-  --color-tier-high: #c75c00;
-  --color-tier-high-bg: #fef0e0;
-  --color-tier-limited: #1d6b8c;
-  --color-tier-limited-bg: #e0eef5;
-  --color-tier-minimal: #1f8a4c;
-  --color-tier-minimal-bg: #e0f3e7;
-  --color-tier-auto: #555555;
-  --color-tier-auto-bg: #eeeeee;
+     and any future status indicator. Never reuse these as primary brand.
+     OKLCH (not hex) so chroma values are reusable across the rest of the
+     system without round-trip drift. Each bg pairs with its tier at low
+     chroma + high lightness for badge backgrounds. */
+  --color-tier-unacceptable: oklch(0.45 0.21 27);
+  --color-tier-unacceptable-bg: oklch(0.94 0.02 27);
+  --color-tier-high: oklch(0.62 0.16 50);
+  --color-tier-high-bg: oklch(0.95 0.025 60);
+  --color-tier-limited: oklch(0.5 0.085 230);
+  --color-tier-limited-bg: oklch(0.94 0.018 230);
+  --color-tier-minimal: oklch(0.56 0.13 145);
+  --color-tier-minimal-bg: oklch(0.95 0.02 150);
+  --color-tier-auto: oklch(0.45 0 0);
+  --color-tier-auto-bg: oklch(0.95 0 0);
 }
 
 :root {
@@ -171,9 +174,20 @@
   }
   h1 { letter-spacing: -0.028em; }
 
-  /* Refined focus ring — high contrast, no jarring blue blob. */
+  /* Brand-coloured focus state — "letterpressed" look with two box-
+     shadows instead of an outline ring. The inner ring matches the
+     background colour (acting as a transparent offset spacer), the
+     outer ring uses the brand cobalt. Effect: focus reads as a
+     stamped accent, not a generic blue rectangle.
+     Falls back to a 2px outline for forced-colors mode (Windows
+     high-contrast). */
   :focus-visible {
-    @apply outline-none ring-2 ring-ring/60 ring-offset-2 ring-offset-background;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    box-shadow:
+      0 0 0 2px var(--background),
+      0 0 0 3.5px var(--brand-cobalt);
+    border-radius: var(--radius-sm);
   }
 
   /* Text selection in the brand cobalt — small detail that ties the app

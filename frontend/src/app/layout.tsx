@@ -22,6 +22,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 
+import { CommandPalette } from "@/components/command-palette";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { ThemeProvider, THEME_STORAGE_KEY } from "@/components/theme-provider";
@@ -227,6 +228,9 @@ export default function RootLayout({
             {children}
           </main>
           <SiteFooter />
+          {/* Global ⌘K command palette — mounted last so its overlay
+              z-index sits above every page chrome. */}
+          <CommandPalette />
         </ThemeProvider>
       </body>
     </html>

@@ -27,6 +27,21 @@
 export const BACKEND_URL =
   process.env.BACKEND_URL ?? "http://localhost:8033";
 
+/**
+ * Browser-side API base URL.
+ *
+ * Always relative (`""`). Next.js rewrites in `next.config.ts` proxy
+ * `/api/:path*` to the configured `BACKEND_URL` server-side, so the
+ * browser sees same-origin requests in every environment:
+ *
+ *   - prod          → Caddy routes /api/* to backend container
+ *   - compose dev   → Next.js rewrites /api/* to http://backend:8000
+ *   - host dev      → Next.js rewrites /api/* to http://localhost:8033
+ *
+ * No CORS dance, no NEXT_PUBLIC_API_URL bake-at-build needed.
+ */
+export const CLIENT_API_URL = "";
+
 const REVALIDATE_SECONDS = 60;
 
 /**

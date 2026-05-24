@@ -33,7 +33,7 @@ const SECTIONS: FooterSection[] = [
     heading: "Product",
     links: [
       { label: "Pricing", href: "/pricing" },
-      { label: "Sample trust page", href: "/trust/acme-saas" },
+      { label: "Sample trust page", href: "/trust/velmara-saas" },
       {
         label: "Quickstart",
         href: "https://github.com/annexkit/annexkit#quickstart",
@@ -49,6 +49,15 @@ const SECTIONS: FooterSection[] = [
         href: "https://pypi.org/project/annexkit/",
         external: true,
       },
+    ],
+  },
+  {
+    heading: "Free tools",
+    links: [
+      { label: "All tools", href: "/tools" },
+      { label: "Annex IV generator", href: "/tools/annex-iv-generator" },
+      { label: "Article 12 schema", href: "/tools/logging-schema" },
+      { label: "Live demo", href: "/demo/annex-iv" },
     ],
   },
   {
@@ -94,7 +103,7 @@ export function SiteFooter() {
     <footer className="mt-24 border-t border-border/60">
       <div className="mx-auto max-w-6xl px-6 py-14">
         {/* Top — 4 columns */}
-        <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
+        <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-[1.4fr_1fr_1fr_1fr_1fr]">
           {/* Brand column */}
           <div className="space-y-4">
             <LogoLockup size="md" />

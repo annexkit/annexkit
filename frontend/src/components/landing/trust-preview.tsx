@@ -1,6 +1,6 @@
 /**
  * Trust-page preview — pairs an explainer with a faithful mini-render
- * of the live demo trust page at /trust/acme-saas.
+ * of the live demo trust page at /trust/velmara-saas.
  *
  * The preview is a real Link clickable through to the demo, NOT a
  * decorative SVG. So a visitor who scrolls past skims a small but
@@ -31,7 +31,7 @@ const PREVIEW_SYSTEMS: PreviewSystem[] = [
   { id: "loan-prescreen", tier: "high" },
 ];
 
-const DEMO_SLUG = "acme-saas";
+const DEMO_SLUG = "velmara-saas";
 
 export function TrustPreview() {
   return (
@@ -114,7 +114,7 @@ export function TrustPreview() {
             <div>
               <span className="eyebrow">AnnexKit trust page</span>
               <h3 className="mt-2 text-xl font-bold tracking-tight text-foreground">
-                Acme SaaS S.r.l. (demo)
+                Velmara SaaS S.r.l. (demo)
               </h3>
             </div>
 

@@ -5,12 +5,20 @@
  * Used by page handlers that catch `BackendUnavailableError` from
  * `lib/api.ts`. Avoids leaking the internal `BACKEND_URL` to the end
  * user; gives them an actionable next step instead.
+ *
+ * Pass `pageLabel` so the heading matches the page the user is on
+ * ("Annex IV generator", "Article 12 schema", "Trust page", …).
+ * Defaults to a generic "This page" so omitting it still reads OK.
  */
-export function BackendUnavailable() {
+export function BackendUnavailable({
+  pageLabel = "This page",
+}: {
+  pageLabel?: string;
+}) {
   return (
-    <div className="space-y-6 py-8">
+    <div className="mx-auto w-full max-w-2xl space-y-6 px-6 py-16">
       <h1 className="text-3xl font-bold tracking-tight text-foreground">
-        Trust page temporarily unavailable
+        {pageLabel} is temporarily unavailable
       </h1>
       <p className="text-muted-foreground">
         We couldn&rsquo;t reach the AnnexKit collector right now. The

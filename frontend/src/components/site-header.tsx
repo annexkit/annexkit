@@ -16,15 +16,20 @@
 import Link from "next/link";
 import { ArrowRight, Github } from "lucide-react";
 
+import { CmdKHint } from "@/components/cmd-k-hint";
 import { LogoLockup } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 
+// Product · Tools · Pricing · Resources. Mirrors the footer columns
+// so a visitor can find the same surfaces top or bottom.
 const NAV_LINKS = [
+  { href: "/", label: "Product" },
+  { href: "/tools", label: "Tools" },
   { href: "/pricing", label: "Pricing" },
   {
     href: "https://github.com/annexkit/annexkit#readme",
-    label: "Docs",
+    label: "Resources",
     external: true,
   },
 ] as const;
@@ -67,19 +72,23 @@ export function SiteHeader() {
             ),
           )}
 
-          {/* GitHub: text on >=md, icon-only on smaller screens. */}
+          {/* ⌘K hint — opens the global CommandPalette. Hidden on
+              mobile (no keyboard) to avoid clutter; the icon-only
+              GitHub link stays. */}
+          <CmdKHint className="ml-1 hidden sm:inline-flex" />
+
+          {/* GitHub — icon-only at every size (label lives in ⌘K). */}
           <a
             href="https://github.com/annexkit/annexkit"
             target="_blank"
             rel="noreferrer"
             aria-label="AnnexKit on GitHub"
-            className="inline-flex items-center gap-2 rounded-md px-3 py-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+            className="inline-flex items-center rounded-md px-2.5 py-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
           >
             <Github className="size-4" />
-            <span className="hidden md:inline">GitHub</span>
           </a>
 
-          <ThemeToggle className="ml-1" />
+          <ThemeToggle />
 
           <Button size="sm" asChild className="ml-2 hidden sm:inline-flex">
             <Link href="/pricing">
