@@ -9,7 +9,7 @@ By the end you will have **eight files** in [`out/`](out/):
 
 | File | Persona | Tier | Format |
 |---|---|---|---|
-| `annex-iv-customer-support-bot.pdf` + `.md` | Acme SaaS | Pro $49/mo | LIMITED risk |
+| `annex-iv-customer-support-bot.pdf` + `.md` | Velmara SaaS | Pro $49/mo | LIMITED risk |
 | `annex-iv-cv-screener.pdf` + `.md` | TechHire | Team $199/mo | HIGH (Annex III §4) |
 | `annex-iv-interview-scheduler.pdf` + `.md` | TechHire | Team $199/mo | LIMITED |
 | `annex-iv-loan-prescreen.pdf` + `.md` | Banca Esempio | Enterprise €5K/yr | HIGH (Annex III §5) |
@@ -44,7 +44,7 @@ This seeds a fresh tenant, exports the API key for the duration of
 the run, and executes `walkthrough.py`. You'll see roughly:
 
 ```
-=== Acme SaaS S.r.l. — customer-support chatbot =========
+=== Velmara SaaS S.r.l. — customer-support chatbot =========
   Tier: Pro — $49/month
   ...
   [PUT  /api/v1/systems] customer-support-bot     -> tier LIMITED, rules v1.0.0
@@ -77,7 +77,7 @@ uv run python walkthrough.py
 
 ---
 
-## Persona 1 — Acme SaaS S.r.l. (Pro $49/month)
+## Persona 1 — Velmara SaaS S.r.l. (Pro $49/month)
 
 **Profile**: small SaaS company in Bologna. One LLM-powered customer-
 support chatbot answering shipping, returns, and account questions
@@ -110,7 +110,7 @@ classifier returns **LIMITED** risk.
 - §8.2 Error breakdown: 1 × `openai.APIError` (rate limit).
 - §9.2 Limitations callout: Article 50 disclosure obligation for deployers.
 - Appendix A gap analysis: §2.4 validation methodology = MANUAL
-  (provider input required) — Acme didn't fill it.
+  (provider input required) — Velmara didn't fill it.
 
 ---
 
@@ -212,10 +212,10 @@ Tick each item before considering the test passed:
   - [ ] `out/` contains 4 PDFs and 4 Markdown files.
   - [ ] Every PDF opens cleanly in Preview / Acrobat / Chrome.
   - [ ] Every PDF's cover page shows the correct risk-tier badge
-        (LIMITED for Acme + interview-scheduler, HIGH for cv-screener
+        (LIMITED for Velmara + interview-scheduler, HIGH for cv-screener
         + loan-prescreen).
   - [ ] Every PDF's §3.2 logging table shows the right invocation
-        count (Acme: 6, cv-screener: 4, interview-scheduler: 4,
+        count (Velmara: 6, cv-screener: 4, interview-scheduler: 4,
         loan-prescreen: 8).
   - [ ] The Markdown copies of each PDF contain the same content
         (use `diff` or your eyes — they should be byte-aligned

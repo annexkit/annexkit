@@ -32,7 +32,7 @@ class Tenant(Base):
 
     id: Mapped[uuid.UUID] = uuid_pk()
 
-    # Human-friendly display name (e.g. "Acme Bank Compliance").
+    # Human-friendly display name (e.g. "Velmara Bank Compliance").
     name: Mapped[str] = mapped_column(String(100), nullable=False)
 
     # URL slug — kebab-case, unique across the whole DB. Used to

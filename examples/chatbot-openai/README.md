@@ -132,7 +132,7 @@ The PDF is the headline output. Things to spot:
 |---|---|
 | Cover page | Big **HIGH RISK** badge in red-orange. |
 | Executive summary | Auto-generated paragraph naming the system, the tier, the invocation count, the error rate, and the active/inactive status. |
-| §1.2 Persons responsible | Populated from `provider_info` (Acme... err, "SmallBiz Loans S.r.l.", Milano address, IT, contact email). |
+| §1.2 Persons responsible | Populated from `provider_info` ("SmallBiz Loans S.r.l.", Milano address, IT, contact email). |
 | §1.4 Risk classification | Triggered rules table with both `name_en` and `name_it`. |
 | §2.2 Models in use | The provider/model/version of the spans this demo just ingested. |
 | §2.3 Retrieval sources | Five `kb://policy/*` URIs with citation counts and versions. |

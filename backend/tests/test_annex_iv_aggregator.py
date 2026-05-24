@@ -21,14 +21,14 @@ from app.services import annex_iv_aggregator
 
 
 def _tenant_with_system(session: AsyncSession) -> tuple[Tenant, AISystem]:
-    tenant = Tenant(name="Acme", slug=f"acme-{uuid.uuid4().hex[:6]}")
+    tenant = Tenant(name="Velmara", slug=f"velmara-{uuid.uuid4().hex[:6]}")
     session.add(tenant)
     return tenant, None  # filled below
 
 
 @pytest.mark.asyncio
 async def test_empty_aggregations_when_no_spans(db_session: AsyncSession) -> None:
-    tenant = Tenant(name="Acme", slug="acme-empty")
+    tenant = Tenant(name="Velmara", slug="velmara-empty")
     db_session.add(tenant)
     await db_session.flush()
 
@@ -69,14 +69,14 @@ async def test_empty_aggregations_when_no_spans(db_session: AsyncSession) -> Non
     assert ctx.aggregations.deployments == []
     assert ctx.aggregations.user_roles == []
     assert ctx.system.risk_tier == "high"
-    assert ctx.tenant.name == "Acme"
+    assert ctx.tenant.name == "Velmara"
 
 
 @pytest.mark.asyncio
 async def test_aggregations_count_models_sources_errors(
     db_session: AsyncSession,
 ) -> None:
-    tenant = Tenant(name="Acme", slug="acme-aggs")
+    tenant = Tenant(name="Velmara", slug="velmara-aggs")
     db_session.add(tenant)
     await db_session.flush()
 
@@ -166,7 +166,7 @@ async def test_aggregations_count_models_sources_errors(
 
 @pytest.mark.asyncio
 async def test_changes_pulled_from_audit_log(db_session: AsyncSession) -> None:
-    tenant = Tenant(name="Acme", slug="acme-changes")
+    tenant = Tenant(name="Velmara", slug="velmara-changes")
     db_session.add(tenant)
     await db_session.flush()
 

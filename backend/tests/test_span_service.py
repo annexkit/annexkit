@@ -38,7 +38,7 @@ def _payload() -> IngestSpan:
 async def test_ingest_creates_span_and_audit_in_one_transaction(
     db_session: AsyncSession,
 ) -> None:
-    tenant = Tenant(name="Acme", slug="acme")
+    tenant = Tenant(name="Velmara", slug="velmara")
     db_session.add(tenant)
     await db_session.flush()
 

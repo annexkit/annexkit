@@ -7,7 +7,7 @@ via ``PUT /api/v1/systems``, ingests a handful of synthetic spans via
 both Markdown and PDF form.
 
 Personas:
-  1. Acme SaaS S.r.l. — Pro $49/mo
+  1. Velmara SaaS S.r.l. — Pro $49/mo
      One support chatbot. Article 50 transparency trigger. LIMITED risk.
   2. TechHire S.p.A. — Team $199/mo
      Two systems: cv-screener (HIGH, Annex III §4 employment) +
@@ -91,10 +91,10 @@ def _t(day: int, hour: int = 10, minute: int = 0) -> datetime:
 
 
 PERSONAS: list[Persona] = [
-    # ----- Persona 1: Acme SaaS — Pro $49/mo -------------------------------
+    # ----- Persona 1: Velmara SaaS — Pro $49/mo -------------------------------
     Persona(
-        code="acme",
-        headline="Acme SaaS S.r.l. — customer-support chatbot",
+        code="velmara",
+        headline="Velmara SaaS S.r.l. — customer-support chatbot",
         tier="Pro — $49/month",
         description=(
             "A small SaaS company. One LLM-powered customer-support "
@@ -109,16 +109,16 @@ PERSONAS: list[Persona] = [
                 "purpose": (
                     "Conversational AI assistant that answers customer "
                     "questions about shipping status, returns policy, "
-                    "and account management for Acme SaaS users."
+                    "and account management for Velmara SaaS users."
                 ),
                 "annex_iii_categories": [],
                 "transparency_triggers": ["art50_chat_interaction"],
                 "is_gpai": False,
                 "provider_info": {
-                    "legal_name": "Acme SaaS S.r.l.",
+                    "legal_name": "Velmara SaaS S.r.l.",
                     "address": "Via dell'Indipendenza 22, 40121 Bologna (BO), Italia",
                     "country": "IT",
-                    "contact_email": "compliance@acme-saas.example",
+                    "contact_email": "compliance@velmara-saas.example",
                     "system_version": "v1.2.0",
                     "software_environment": (
                         "Python 3.12, FastAPI 0.110, OpenAI gpt-4o-mini, "

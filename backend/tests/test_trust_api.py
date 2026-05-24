@@ -157,7 +157,7 @@ async def test_provider_info_redaction(
         risk_tier="high",
         provider_info={
             # public-safe
-            "legal_name": "Acme S.r.l.",
+            "legal_name": "Velmara S.r.l.",
             "address": "Via Manzoni 1, Milano, IT",
             "country": "IT",
             "system_version": "v2.4.1",
@@ -165,7 +165,7 @@ async def test_provider_info_redaction(
             "hardware_environment": "AWS c7i.large",
             "authorised_representative": "John Doe Legal",
             # MUST be redacted
-            "contact_email": "private@acme.example",
+            "contact_email": "private@velmara.example",
             "validation_methods": "PRIVATE: holdout test of 5K samples...",
             "notes": "PRIVATE: ranking head fine-tuned monthly...",
         },
@@ -177,7 +177,7 @@ async def test_provider_info_redaction(
     pi = resp.json()["system"]["provider_info"]
 
     # Public fields surface
-    assert pi["legal_name"] == "Acme S.r.l."
+    assert pi["legal_name"] == "Velmara S.r.l."
     assert pi["address"] == "Via Manzoni 1, Milano, IT"
     assert pi["country"] == "IT"
     assert pi["system_version"] == "v2.4.1"
@@ -191,7 +191,7 @@ async def test_provider_info_redaction(
     assert "notes" not in pi
     # And the body must not contain the sensitive values anywhere
     raw = resp.text
-    assert "private@acme.example" not in raw
+    assert "private@velmara.example" not in raw
     assert "holdout test" not in raw
     assert "fine-tuned" not in raw
 

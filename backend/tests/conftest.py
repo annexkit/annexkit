@@ -93,7 +93,7 @@ async def authenticated_tenant(db_session: AsyncSession) -> tuple[Tenant, str]:
     POSTs to a path that legitimately raises (e.g. 401) would also lose
     the seed because the override session rolls back on raise.
     """
-    tenant = Tenant(name="Acme Test", slug="acme-test")
+    tenant = Tenant(name="Velmara Test", slug="velmara-test")
     db_session.add(tenant)
     await db_session.flush()
 
