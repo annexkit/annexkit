@@ -27,7 +27,7 @@ instead.
 Configuration (env vars):
 
   * ``ANNEXKIT_API_KEY`` — enables HTTP exporter when set
-  * ``ANNEXKIT_COLLECTOR_URL`` — default ``https://collector.annexkit.dev``
+  * ``ANNEXKIT_COLLECTOR_URL`` — default ``https://annexkit.dev``
   * ``ANNEXKIT_EXPORTER`` — ``auto|stdout|http|noop`` (default ``auto``)
   * ``ANNEXKIT_DISABLED`` — ``1`` to disable tracking globally
   * ``ANNEXKIT_DEPLOYMENT`` — default deployment label (``"prod"``)

@@ -5,7 +5,7 @@ Two ways to configure:
 1. **Environment variables** (preferred — twelve-factor friendly):
 
        ANNEXKIT_API_KEY=ak_xxxxx           # enables HTTP exporter
-       ANNEXKIT_COLLECTOR_URL=https://...  # default: https://collector.annexkit.dev
+       ANNEXKIT_COLLECTOR_URL=https://...  # default: https://annexkit.dev
        ANNEXKIT_EXPORTER=auto|stdout|http|noop  # default: auto
        ANNEXKIT_DISABLED=1                  # disables tracking globally
        ANNEXKIT_DEPLOYMENT=prod             # default deployment label
@@ -26,7 +26,7 @@ import os
 from dataclasses import dataclass
 from typing import Literal
 
-DEFAULT_COLLECTOR_URL = "https://collector.annexkit.dev"
+DEFAULT_COLLECTOR_URL = "https://annexkit.dev"
 
 ExporterName = Literal["auto", "stdout", "http", "noop"]
 

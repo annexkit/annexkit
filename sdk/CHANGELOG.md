@@ -48,6 +48,25 @@ Targeted for the next minor (v0.2.0) — see
   to `trace_id`, `span_id`, `parent_span_id` (hex tokens — already
   satisfied by `uuid.uuid4().hex`).
 
+## [0.1.3] — 2026-05-23
+
+### Fixed
+
+- **Default `ANNEXKIT_COLLECTOR_URL` now points to `https://annexkit.dev`** —
+  previously the default was `https://collector.annexkit.dev`, but that
+  subdomain was never set up on Cloudflare DNS. Users following the
+  quickstart with just `pip install annexkit` + `ANNEXKIT_API_KEY=...`
+  would silently POST to a host that doesn't resolve. The hosted
+  collector lives at `https://annexkit.dev/api/v1/spans` (no
+  subdomain), so the default now matches reality.
+
+### Migration
+
+If you previously set `ANNEXKIT_COLLECTOR_URL=https://collector.annexkit.dev`
+to work around this, you can now drop that line — the default works
+out of the box. No code changes required if you were already setting
+the URL explicitly.
+
 ## [0.1.2] — 2026-05-10
 
 ### Fixed

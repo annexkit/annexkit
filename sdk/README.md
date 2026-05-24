@@ -75,7 +75,7 @@ collector:
 
 ```bash
 export ANNEXKIT_API_KEY=ak_xxxxx
-export ANNEXKIT_COLLECTOR_URL=https://collector.annexkit.dev
+export ANNEXKIT_COLLECTOR_URL=https://annexkit.dev
 ```
 
 Or programmatically:
@@ -138,7 +138,7 @@ is wired into the SDK, not a config flag.
 | Env var | Default | Purpose |
 |---|---|---|
 | `ANNEXKIT_API_KEY` | unset | When set, switches to HTTP exporter |
-| `ANNEXKIT_COLLECTOR_URL` | `https://collector.annexkit.dev` | Collector endpoint |
+| `ANNEXKIT_COLLECTOR_URL` | `https://annexkit.dev` | Collector endpoint |
 | `ANNEXKIT_EXPORTER` | `auto` | `auto` / `stdout` / `http` / `noop` |
 | `ANNEXKIT_DISABLED` | `0` | Set to `1` to disable tracking globally |
 | `ANNEXKIT_DEPLOYMENT` | `prod` | Default deployment label for spans |
