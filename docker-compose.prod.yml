@@ -1,0 +1,56 @@
+# =========================================================================
+# AnnexKit — production override (Hetzner VPS, co-hosted with Konformia)
+# -------------------------------------------------------------------------
+# This file overlays docker-compose.yml on the production VPS at
+# /home/annexkit/annexkit/. Use it with:
+#
+#     docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+#
+# Three deliberate overrides:
+#
+#   1. db: read credentials from .env (overrides the hardcoded dev defaults
+#      in docker-compose.yml so the first volume init uses real secrets).
+#   2. backend / frontend: drop host port mappings — the Konformia Caddy
+#      stack reverse-proxies via the shared Docker network.
+#   3. networks: join `konformia_default` (created by the Konformia stack)
+#      so Caddy can resolve `annexkit-backend:8000` and
+#      `annexkit-frontend:3000` for `annexkit.dev` / `www.annexkit.dev`.
+#
+# The frontend `HOSTNAME: 0.0.0.0` env keeps Next.js standalone listening
+# on all interfaces (without it, it binds to the container hostname only
+# and fails when Caddy dials over a different Docker network IP — see
+# annexkit-deployment-runbook.md §3.5 on Desktop for the original bug).
+#
+# Caddy itself + the Caddyfile live in the Konformia repo
+# (/home/konformia/Konformia/Caddyfile) — managed there, not here.
+#
+# Deploy from your laptop with `make prod-deploy` (see Makefile).
+# =========================================================================
+
+services:
+  db:
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports: !reset []
+
+  backend:
+    ports: !reset []
+    networks:
+      - default
+      - shared
+
+  frontend:
+    environment:
+      HOSTNAME: 0.0.0.0
+    ports: !reset []
+    networks:
+      - default
+      - shared
+
+networks:
+  default:
+  shared:
+    name: konformia_default
+    external: true

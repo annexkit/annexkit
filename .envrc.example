@@ -1,0 +1,15 @@
+# Local Makefile env — copy to `.envrc` (gitignored) and source it
+# manually, or use `direnv` to auto-load on `cd` into the repo.
+#
+# These knobs drive the `make prod-*` targets. Without them the
+# `prod-check` target fails fast with a helpful message.
+
+# The Hetzner VPS hostname (co-hosted with Konformia).
+export VPS_HOST=konformia-prod-01
+
+# Defaults — only override if you set up something different.
+# export VPS_USER=root
+# export VPS_PROJECT_PATH=/home/annexkit/annexkit
+
+# Optional: pin a deploy version instead of the auto git-sha+timestamp.
+# export APP_VERSION=0.2.0-rc1

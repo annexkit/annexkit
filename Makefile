@@ -11,7 +11,12 @@
         sdk-test sdk-build sdk-publish-test \
         frontend-dev frontend-build frontend-logs \
         health seed smoke demo demo-seed \
-        fmt lint clean
+        fmt lint clean \
+        prod-check prod-deploy prod-deploy-backend prod-deploy-frontend \
+        prod-ps prod-logs prod-logs-backend prod-logs-frontend prod-logs-db \
+        prod-migrate prod-db-shell prod-db-backup \
+        prod-restart prod-restart-backend prod-restart-frontend \
+        prod-shell prod-status prod-env-edit
 
 .DEFAULT_GOAL := help
 
@@ -146,3 +151,134 @@ clean: ## Remove caches and build artefacts
 	find . -type d -name .pytest_cache -exec rm -rf {} + 2>/dev/null || true
 	find . -type d -name .ruff_cache -exec rm -rf {} + 2>/dev/null || true
 	rm -rf sdk/dist sdk/build sdk/*.egg-info
+
+# =========================================================================
+# Production deploy — Hetzner VPS (co-hosted with Konformia)
+# -------------------------------------------------------------------------
+# AnnexKit shares a VPS with Konformia. The Konformia stack runs Caddy +
+# Cloudflare ACME; AnnexKit joins the `konformia_default` Docker network
+# so Caddy can reverse-proxy `annexkit.dev` to `annexkit-backend:8000`
+# and `annexkit-frontend:3000`. Full architecture in
+# ~/Desktop/AnnexKit-internal-docs/annexkit-deployment-runbook.md.
+#
+# Deploy is git-pull-based: a `prod-deploy` SSHes to the VPS, runs
+# `git pull` against the AnnexKit repo on the server, then
+# `docker compose up -d --build`. Simpler than Konformia's rsync flow
+# because the AnnexKit repo is already cloned at $(VPS_PROJECT_PATH).
+#
+# Set VPS_HOST once. Options:
+#   1. Per-command:   make prod-ps VPS_HOST=konformia-prod-01
+#   2. Shell export:  export VPS_HOST=konformia-prod-01
+#                     (add to ~/.zshrc to persist)
+#   3. Local file:    create `.envrc` next to this Makefile with:
+#                       export VPS_HOST=konformia-prod-01
+#                     (gitignored — never committed)
+#
+# CADDY: managed in the Konformia repo. To touch the Caddyfile or
+# restart Caddy, work from /Users/mykael/PycharmProjects/Konformia.
+# This Makefile intentionally has NO `prod-restart-caddy` target.
+# =========================================================================
+
+VPS_USER ?= root
+VPS_HOST ?=
+VPS_PROJECT_PATH ?= /home/annexkit/annexkit
+COMPOSE_PROD := docker compose -f docker-compose.yml -f docker-compose.prod.yml
+SSH := ssh $(VPS_USER)@$(VPS_HOST)
+
+# Computed at make-invocation time. Format: <semver>+<git-sha-short>-<utc-stamp>.
+# Examples: 0.1.0+a1b2c3d-20260523T1630, 0.1.0+a1b2c3d-dirty-... if the working
+# tree has uncommitted changes. Override at the CLI with:
+#     make prod-deploy APP_VERSION=0.2.0-rc1
+APP_VERSION ?= 0.1.0+$(shell git rev-parse --short HEAD 2>/dev/null || echo nogit)-$(shell date -u +%Y%m%dT%H%M)$(shell git diff --quiet 2>/dev/null || echo -dirty)
+
+prod-check: ## Verify VPS_HOST is set before running prod commands
+	@if [ -z "$(VPS_HOST)" ]; then \
+		echo "ERROR: VPS_HOST is not set."; \
+		echo "Set it once with:  export VPS_HOST=konformia-prod-01"; \
+		echo "Or pass per-call:  make prod-ps VPS_HOST=konformia-prod-01"; \
+		exit 1; \
+	fi
+	@echo "-> VPS: $(VPS_USER)@$(VPS_HOST)"
+
+# --- Deploy --------------------------------------------------------------
+
+prod-deploy: prod-check ## Full deploy: git pull + rebuild + migrate (~2 min)
+	@echo "-> Version: $(APP_VERSION)"
+	@echo "-> git pull on $(VPS_HOST)..."
+	$(SSH) 'cd $(VPS_PROJECT_PATH) && git pull --ff-only'
+	@echo "-> Building & restarting containers..."
+	$(SSH) 'cd $(VPS_PROJECT_PATH) && APP_VERSION=$(APP_VERSION) $(COMPOSE_PROD) up -d --build'
+	@echo "-> Applying DB migrations..."
+	$(SSH) 'cd $(VPS_PROJECT_PATH) && $(COMPOSE_PROD) exec -T backend uv run alembic upgrade head'
+	@echo "Deploy complete. Health: https://annexkit.dev/health (version=$(APP_VERSION))"
+
+prod-deploy-backend: prod-check ## Deploy only the backend (faster — skips frontend rebuild)
+	@echo "-> Version: $(APP_VERSION)"
+	$(SSH) 'cd $(VPS_PROJECT_PATH) && git pull --ff-only && APP_VERSION=$(APP_VERSION) $(COMPOSE_PROD) up -d --build backend && $(COMPOSE_PROD) exec -T backend uv run alembic upgrade head'
+	@echo "Backend deployed (version=$(APP_VERSION))."
+
+prod-deploy-frontend: prod-check ## Deploy only the frontend
+	$(SSH) 'cd $(VPS_PROJECT_PATH) && git pull --ff-only && $(COMPOSE_PROD) up -d --build frontend'
+	@echo "Frontend deployed."
+
+# --- Monitoring ----------------------------------------------------------
+
+prod-ps: prod-check ## Status of all production containers
+	$(SSH) 'cd $(VPS_PROJECT_PATH) && $(COMPOSE_PROD) ps'
+
+prod-logs: prod-check ## Tail logs from every prod service (Ctrl+C to exit)
+	$(SSH) 'cd $(VPS_PROJECT_PATH) && $(COMPOSE_PROD) logs -f --tail 50'
+
+prod-logs-backend: prod-check ## Tail backend logs only (live, Ctrl+C to exit)
+	$(SSH) 'cd $(VPS_PROJECT_PATH) && $(COMPOSE_PROD) logs -f --tail 100 backend'
+
+prod-logs-frontend: prod-check ## Tail frontend logs only
+	$(SSH) 'cd $(VPS_PROJECT_PATH) && $(COMPOSE_PROD) logs -f --tail 100 frontend'
+
+prod-logs-db: prod-check ## Tail database logs only
+	$(SSH) 'cd $(VPS_PROJECT_PATH) && $(COMPOSE_PROD) logs -f --tail 100 db'
+
+prod-status: prod-check ## Quick external health check from your laptop
+	@# /health is intentionally NOT exposed via Caddy (security — internal
+	@# orchestrator probe only). Public canaries are /api/v1/ping (backend)
+	@# and / (frontend).
+	@echo "-> API ping (backend):"
+	@curl -s -o /dev/null -w "  HTTP %{http_code}  (%{time_total}s)\n" https://annexkit.dev/api/v1/ping
+	@echo "-> Frontend home:"
+	@curl -s -o /dev/null -w "  HTTP %{http_code}  (%{time_total}s)\n" https://annexkit.dev/
+	@echo "-> Internal /health (via SSH — bypass Cloudflare/Caddy):"
+	@$(SSH) 'curl -sf http://localhost:8033/health || curl -sf http://localhost:8000/health 2>/dev/null || docker exec annexkit-backend curl -sf http://localhost:8000/health' 2>/dev/null | python3 -m json.tool 2>/dev/null || echo "  (skipped — VPS unreachable)"
+
+# --- Database ------------------------------------------------------------
+
+prod-migrate: prod-check ## Apply pending Alembic migrations on prod DB
+	$(SSH) 'cd $(VPS_PROJECT_PATH) && $(COMPOSE_PROD) exec -T backend uv run alembic upgrade head'
+
+prod-db-shell: prod-check ## Open psql against the prod database (read-write — be careful)
+	$(SSH) -t 'docker exec -it annexkit-db psql -U annexkit -d annexkit'
+
+prod-db-backup: prod-check ## pg_dump prod DB to a local timestamped .sql.gz
+	@mkdir -p backups
+	@FILE="backups/annexkit-$$(date +%Y%m%d-%H%M%S).sql.gz"; \
+	echo "-> Dumping to $$FILE..."; \
+	$(SSH) 'docker exec annexkit-db pg_dump -U annexkit annexkit' | gzip > $$FILE; \
+	echo "Backup saved: $$FILE ($$(du -h $$FILE | cut -f1))"
+
+# --- Restarts ------------------------------------------------------------
+
+prod-restart: prod-check ## Restart all prod services WITH .env reload (force-recreate, no rebuild)
+	$(SSH) 'cd $(VPS_PROJECT_PATH) && $(COMPOSE_PROD) up -d --force-recreate --no-deps backend frontend'
+
+prod-restart-backend: prod-check ## Recreate backend container (picks up .env changes)
+	$(SSH) 'cd $(VPS_PROJECT_PATH) && $(COMPOSE_PROD) up -d --force-recreate --no-deps backend'
+
+prod-restart-frontend: prod-check ## Recreate frontend container (picks up .env changes)
+	$(SSH) 'cd $(VPS_PROJECT_PATH) && $(COMPOSE_PROD) up -d --force-recreate --no-deps frontend'
+
+# --- Manual access -------------------------------------------------------
+
+prod-shell: prod-check ## SSH into the VPS as the configured user (default: root)
+	$(SSH)
+
+prod-env-edit: prod-check ## Open the prod .env in nano via SSH (careful — secrets)
+	$(SSH) -t 'nano $(VPS_PROJECT_PATH)/.env'
