@@ -43,6 +43,10 @@ class Settings(BaseSettings):
     )
 
     # --- CORS -------------------------------------------------------------
+    # Browser-side fetches from `frontend/src/app/tools/*` and
+    # `annexkit.dev/tools/*` need CORS allowance. In prod we serve both
+    # frontend + backend from the same origin via Caddy so CORS is
+    # bypassed; this list matters for `make frontend-dev` on :3000.
     cors_origins: list[str] = ["http://localhost:3000"]
 
     # --- Document storage -------------------------------------------------

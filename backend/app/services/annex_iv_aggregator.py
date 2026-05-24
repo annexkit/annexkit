@@ -107,6 +107,51 @@ async def gather(
     )
 
 
+def gather_anonymous(
+    *,
+    system: AISystemSnapshot,
+    annexkit_version: str,
+    now: datetime | None = None,
+) -> AnnexIVContext:
+    """Build an :class:`AnnexIVContext` without touching the DB.
+
+    Powers the public ``/api/v1/tools/annex-iv-generator`` endpoint:
+    an anonymous user fills the form, we classify deterministically,
+    and we render a PDF on the fly. No tenant, no spans, no audit log
+    entries (the lead-capture write goes to the ``leads`` table — see
+    ``services.anonymous_annex_iv``).
+
+    The resulting PDF looks like a v0-of-a-real-Annex-IV: the
+    declarative §1.x and §2.1 are populated from the form, the
+    runtime-dependent sections (§2.2 models, §3.2/§3.3 logging
+    statistics, §8 post-market) show "no invocations recorded yet"
+    placeholders, and the appendix gap analysis correctly flags those
+    as missing-from-runtime rather than missing-from-the-doc.
+    """
+    now = now or datetime.now(UTC)
+    aggregations = _aggregate([], now=now)
+    gap_analysis = _gap_analysis(system, aggregations)
+    executive_summary = _executive_summary(
+        system=system, aggregations=aggregations, now=now
+    )
+    return AnnexIVContext(
+        document_id=uuid.uuid4(),
+        generated_at=now,
+        annexkit_version=annexkit_version,
+        tenant=TenantSnapshot(
+            id=uuid.UUID(int=0),
+            name="Anonymous (free tool)",
+            slug="anonymous",
+        ),
+        system=system,
+        aggregations=aggregations,
+        changes=[],
+        gap_analysis=gap_analysis,
+        sample_spans=[],
+        executive_summary=executive_summary,
+    )
+
+
 # ---------------------------------------------------------------------------
 # DB fetches
 # ---------------------------------------------------------------------------
