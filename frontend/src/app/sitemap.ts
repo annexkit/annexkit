@@ -31,6 +31,18 @@ interface Entry {
 const ENTRIES: Entry[] = [
   { path: "/", changeFreq: "weekly", priority: 1.0 },
   { path: "/pricing", changeFreq: "monthly", priority: 0.9 },
+
+  // Free tools — top organic-search target. The hub gets a high priority;
+  // the two children sit below it (still in the sitemap so they can be
+  // crawled directly, not just via the hub).
+  { path: "/tools", changeFreq: "monthly", priority: 0.8 },
+  { path: "/tools/annex-iv-generator", changeFreq: "monthly", priority: 0.7 },
+  { path: "/tools/logging-schema", changeFreq: "monthly", priority: 0.7 },
+
+  // Demo — entry point for skeptical buyers who want to see an artefact
+  // before reading copy. Crawled at the same cadence as pricing.
+  { path: "/demo/annex-iv", changeFreq: "monthly", priority: 0.7 },
+
   { path: "/privacy", changeFreq: "yearly", priority: 0.4 },
   { path: "/terms", changeFreq: "yearly", priority: 0.4 },
   { path: "/cookies", changeFreq: "yearly", priority: 0.3 },

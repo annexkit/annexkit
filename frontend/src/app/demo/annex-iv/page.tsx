@@ -32,6 +32,74 @@ export const metadata: Metadata = {
   alternates: { canonical: "/demo/annex-iv" },
 };
 
+const SITE_ORIGIN =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://annexkit.dev";
+const PAGE_URL = `${SITE_ORIGIN}/demo/annex-iv`;
+
+/**
+ * Structured data — BreadcrumbList placing the demo under "Tools"
+ * (semantically it's a tool-adjacent page; under the same breadcrumb
+ * hierarchy keeps Google's site graph clean). The page itself is also
+ * declared as a `WebPage` with a `SoftwareApplication` mainEntity, so
+ * Google can pull both a breadcrumb and an entity card.
+ */
+const BREADCRUMB_LD = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "AnnexKit", item: SITE_ORIGIN },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Tools",
+      item: `${SITE_ORIGIN}/tools`,
+    },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: "Live demo",
+      item: PAGE_URL,
+    },
+  ],
+};
+
+const DEMO_LD = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  name: "Live Annex IV Demo",
+  url: PAGE_URL,
+  inLanguage: "en",
+  isPartOf: {
+    "@type": "WebSite",
+    name: "AnnexKit",
+    url: SITE_ORIGIN,
+  },
+  mainEntity: {
+    "@type": "SoftwareApplication",
+    name: "AnnexKit Annex IV demo",
+    applicationCategory: "BusinessApplication",
+    applicationSubCategory: "EU AI Act compliance",
+    operatingSystem: "Any (browser-based)",
+    inLanguage: "en",
+    isAccessibleForFree: true,
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "EUR",
+      availability: "https://schema.org/InStock",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "AnnexKit",
+      url: SITE_ORIGIN,
+    },
+  },
+  description:
+    "Three real EU AI Act Annex IV PDFs generated live by AnnexKit. " +
+    "Loan screener (HIGH), CV screener (HIGH), customer-support chatbot " +
+    "(LIMITED). No install, no signup.",
+};
+
 interface DemoScenario {
   slug: string;
   name: string;
@@ -131,6 +199,14 @@ export default async function DemoAnnexIVPage() {
 
   return (
     <main className="mx-auto w-full max-w-6xl px-6 py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(BREADCRUMB_LD) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(DEMO_LD) }}
+      />
       <ToolsBreadcrumb
         items={[
           { label: "Tools", href: "/tools" },

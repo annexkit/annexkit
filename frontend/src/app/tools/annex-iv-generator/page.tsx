@@ -39,6 +39,67 @@ export const metadata: Metadata = {
   alternates: { canonical: "/tools/annex-iv-generator" },
 };
 
+const SITE_ORIGIN =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://annexkit.dev";
+const PAGE_URL = `${SITE_ORIGIN}/tools/annex-iv-generator`;
+
+/**
+ * Structured data — three things tied to this page:
+ *   1. BreadcrumbList: AnnexKit → Tools → Annex IV generator
+ *   2. WebApplication: the tool itself (free, no account)
+ *   3. The Disclaimer text already in the rendered page satisfies E-E-A-T;
+ *      no separate JSON-LD entry needed for it.
+ *
+ * Note: the parent `/tools` page also emits a BreadcrumbList. Google
+ * handles duplicate breadcrumbs across pages fine — the schema is per-
+ * page, not per-site.
+ */
+const BREADCRUMB_LD = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "AnnexKit", item: SITE_ORIGIN },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Tools",
+      item: `${SITE_ORIGIN}/tools`,
+    },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: "Annex IV generator",
+      item: PAGE_URL,
+    },
+  ],
+};
+
+const TOOL_LD = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "Annex IV Generator",
+  url: PAGE_URL,
+  applicationCategory: "BusinessApplication",
+  applicationSubCategory: "EU AI Act compliance",
+  operatingSystem: "Any (browser-based)",
+  inLanguage: "en",
+  isAccessibleForFree: true,
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "EUR",
+    availability: "https://schema.org/InStock",
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "AnnexKit",
+    url: SITE_ORIGIN,
+  },
+  description:
+    "Generate an EU AI Act Annex IV technical-documentation PDF in 5 minutes. " +
+    "Deterministic classification against Annex III + Article 5 + Article 50 rules.",
+};
+
 // Force dynamic — the backend fetch happens at request time. Without
 // this, `docker compose build frontend` would statically prerender
 // BackendUnavailable (the build container can't reach the backend on
@@ -74,6 +135,14 @@ export default async function AnnexIVGeneratorPage() {
 
   return (
     <main className="mx-auto w-full max-w-4xl px-6 py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(BREADCRUMB_LD) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(TOOL_LD) }}
+      />
       <ToolsBreadcrumb
         items={[
           { label: "Tools", href: "/tools" },

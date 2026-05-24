@@ -42,6 +42,61 @@ export const metadata: Metadata = {
   alternates: { canonical: "/tools/logging-schema" },
 };
 
+const SITE_ORIGIN =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://annexkit.dev";
+const PAGE_URL = `${SITE_ORIGIN}/tools/logging-schema`;
+
+/**
+ * Structured data — BreadcrumbList + WebApplication.
+ * See /tools/annex-iv-generator/page.tsx for the rationale; same pattern.
+ */
+const BREADCRUMB_LD = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "AnnexKit", item: SITE_ORIGIN },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Tools",
+      item: `${SITE_ORIGIN}/tools`,
+    },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: "Article 12 schema",
+      item: PAGE_URL,
+    },
+  ],
+};
+
+const TOOL_LD = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "Article 12 Logging Schema",
+  url: PAGE_URL,
+  applicationCategory: "DeveloperApplication",
+  applicationSubCategory: "EU AI Act compliance",
+  operatingSystem: "Any (browser-based)",
+  inLanguage: "en",
+  isAccessibleForFree: true,
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "EUR",
+    availability: "https://schema.org/InStock",
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "AnnexKit",
+    url: SITE_ORIGIN,
+  },
+  description:
+    "JSON Schema for EU AI Act Article 12 per-event logging. Same shape " +
+    "the AnnexKit SDK POSTs to the collector. Drop into OTel, CI, or a " +
+    "custom adapter; every field mapped to the AI Act clause it satisfies.",
+};
+
 // Force dynamic — same reason as /tools/annex-iv-generator: the build
 // container can't reach the backend, so a static prerender would cache
 // BackendUnavailable. See that file for the full note.
@@ -76,6 +131,14 @@ export default async function LoggingSchemaPage() {
 
   return (
     <main className="mx-auto w-full max-w-6xl px-6 py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(BREADCRUMB_LD) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(TOOL_LD) }}
+      />
       <ToolsBreadcrumb
         items={[
           { label: "Tools", href: "/tools" },
