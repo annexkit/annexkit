@@ -78,80 +78,106 @@
   --color-tier-auto-bg: oklch(0.95 0 0);
 }
 
+/* =====================================================================
+   PREVIEW MODE — "Editorial Engineering" palette experiment.
+
+   This file is the ONLY change for a preview swap. Token NAMES are kept
+   ("brand-cobalt", "primary", "ring", "accent", etc.) so no component
+   needs editing — they all read `var(--brand-cobalt)` and now get sage
+   instead of blue. The names lie semantically during preview ("cobalt"
+   is now sage); rename in a follow-up commit if the preview lands.
+
+   What changes vs the original cobalt palette:
+     - Accent     : cobalt (hue ~250, cool blue) → sage (hue ~160, green)
+     - Canvas     : cool near-white / blue-ink dark → warm cream / warm ink
+     - Foreground : blue-cool ink → warm near-black (hue ~80)
+     - Borders    : cool grey → warm grey
+     - Destructive: untouched (already a warm red, OK with the palette)
+     - Risk tiers : untouched (independent OKLCH swatches, not in this block)
+
+   How to revert to cobalt:
+     git revert <this commit's sha>
+   ====================================================================== */
+
 :root {
-  /* ---- Light mode — supported, but secondary citizen --------------------
-     A near-white canvas with a faint cool tint. Foreground inks slightly
-     blue-cool to read as "engineering doc", not "office Word file". */
-  --background: oklch(0.99 0.005 250);
-  --foreground: oklch(0.18 0.025 260);
+  /* ---- Light mode — first-class citizen in the editorial direction ----
+     Warm cream canvas, not cool-white office-Word. The hue (~80) pulls
+     the page toward paper / archival, away from "another cobalt SaaS". */
+  --background: oklch(0.97 0.012 80);
+  --foreground: oklch(0.18 0.02 80);
 
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.18 0.025 260);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.18 0.025 260);
+  --card: oklch(0.985 0.008 80);
+  --card-foreground: oklch(0.18 0.02 80);
+  --popover: oklch(0.985 0.008 80);
+  --popover-foreground: oklch(0.18 0.02 80);
 
-  /* Primary — cobalt. Saturated enough to act as a CTA on a white field
-     without going carnival-blue. */
-  --primary: oklch(0.55 0.2 250);
-  --primary-foreground: oklch(0.99 0 0);
+  /* Primary — sage. Saturated enough to act as a CTA on a cream field
+     without going kindergarten-green. Hue ~160 = eucalyptus / regulator
+     calm, distinct from the blue/teal neighbourhood every competitor
+     occupies. */
+  --primary: oklch(0.55 0.13 160);
+  --primary-foreground: oklch(0.99 0.005 80);
 
-  --secondary: oklch(0.965 0.008 250);
-  --secondary-foreground: oklch(0.22 0.04 260);
-  --muted: oklch(0.965 0.008 250);
-  --muted-foreground: oklch(0.5 0.018 260);
+  --secondary: oklch(0.94 0.012 80);
+  --secondary-foreground: oklch(0.22 0.02 80);
+  --muted: oklch(0.94 0.012 80);
+  --muted-foreground: oklch(0.42 0.018 80);
 
-  --accent: oklch(0.95 0.04 250);
-  --accent-foreground: oklch(0.4 0.18 250);
+  --accent: oklch(0.92 0.06 160);
+  --accent-foreground: oklch(0.4 0.15 160);
 
   --destructive: oklch(0.555 0.218 27);
-  --border: oklch(0.92 0.01 250);
-  --input: oklch(0.92 0.01 250);
-  --ring: oklch(0.6 0.18 250);
+  --border: oklch(0.88 0.012 80);
+  --input: oklch(0.88 0.012 80);
+  --ring: oklch(0.55 0.13 160);
 
   /* Tighter than Konformia (0.75) — radius 0.5rem reads more "Linear /
      Vercel CLI" than "premium SaaS". Subtle but it shapes the whole feel. */
   --radius: 0.5rem;
 
-  /* Brand tokens. */
-  --brand-cobalt: oklch(0.55 0.2 250);
-  --brand-cobalt-bright: oklch(0.65 0.2 250);
-  --brand-ink: oklch(0.13 0.025 260);
-  --brand-fog: oklch(0.965 0.008 250);
+  /* Brand tokens — names preserved as aliases. Values now point at sage
+     + warm-ink. Rename to --brand-accent / --brand-canvas / etc. in a
+     follow-up if the preview lands. */
+  --brand-cobalt: oklch(0.55 0.13 160);
+  --brand-cobalt-bright: oklch(0.62 0.15 160);
+  --brand-ink: oklch(0.18 0.02 80);
+  --brand-fog: oklch(0.94 0.012 80);
 }
 
 .dark {
-  /* ---- Dark mode — canonical -------------------------------------------
-     Deep blue-ink canvas. Bg is a hair lighter than pure black so cards
-     can lift visually with their shadow + border. */
-  --background: oklch(0.13 0.025 260);
-  --foreground: oklch(0.96 0.005 250);
+  /* ---- Dark mode — warm-ink canvas instead of blue-ink ----------------
+     Bg is still well under 20% lightness so cards can lift with shadow,
+     but the hue (~80) shifts the whole surface from "datacenter blue" to
+     "library at dusk". Subtle, but pairs with the sage accent. */
+  --background: oklch(0.16 0.018 80);
+  --foreground: oklch(0.95 0.01 80);
 
-  --card: oklch(0.165 0.028 260);
-  --card-foreground: oklch(0.96 0.005 250);
-  --popover: oklch(0.165 0.028 260);
-  --popover-foreground: oklch(0.96 0.005 250);
+  --card: oklch(0.195 0.022 80);
+  --card-foreground: oklch(0.95 0.01 80);
+  --popover: oklch(0.195 0.022 80);
+  --popover-foreground: oklch(0.95 0.01 80);
 
-  /* Primary — cobalt brightened so it pops against the dark canvas. */
-  --primary: oklch(0.7 0.2 250);
-  --primary-foreground: oklch(0.13 0.025 260);
+  /* Primary — sage brightened so it pops against the warm dark canvas. */
+  --primary: oklch(0.72 0.14 160);
+  --primary-foreground: oklch(0.16 0.018 80);
 
-  --secondary: oklch(0.21 0.025 260);
-  --secondary-foreground: oklch(0.96 0.005 250);
-  --muted: oklch(0.21 0.025 260);
-  --muted-foreground: oklch(0.7 0.018 260);
+  --secondary: oklch(0.23 0.02 80);
+  --secondary-foreground: oklch(0.95 0.01 80);
+  --muted: oklch(0.23 0.02 80);
+  --muted-foreground: oklch(0.7 0.015 80);
 
-  --accent: oklch(0.27 0.06 250);
-  --accent-foreground: oklch(0.85 0.18 250);
+  --accent: oklch(0.28 0.08 160);
+  --accent-foreground: oklch(0.85 0.14 160);
 
   --destructive: oklch(0.7 0.18 22);
   --border: oklch(1 0 0 / 9%);
   --input: oklch(1 0 0 / 14%);
-  --ring: oklch(0.7 0.18 250);
+  --ring: oklch(0.72 0.14 160);
 
-  --brand-cobalt: oklch(0.7 0.2 250);
-  --brand-cobalt-bright: oklch(0.78 0.18 250);
-  --brand-ink: oklch(0.96 0.005 250);
-  --brand-fog: oklch(0.21 0.025 260);
+  --brand-cobalt: oklch(0.72 0.14 160);
+  --brand-cobalt-bright: oklch(0.78 0.16 160);
+  --brand-ink: oklch(0.95 0.01 80);
+  --brand-fog: oklch(0.23 0.02 80);
 }
 
 @layer base {
