@@ -38,7 +38,7 @@ import annexkit
 # ---------------------------------------------------------------------------
 # Setup
 # ---------------------------------------------------------------------------
-load_dotenv()
+load_dotenv(override=True)  # demo .env wins over an empty shell var
 
 COLLECTOR_URL = os.getenv("ANNEXKIT_COLLECTOR_URL", "http://localhost:8033")
 API_KEY = os.environ.get("ANNEXKIT_API_KEY")
