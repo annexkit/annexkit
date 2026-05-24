@@ -1,23 +1,36 @@
 /**
- * Homepage — orchestrates the seven landing sections.
+ * Homepage — six landing sections in deliberate narrative order.
  *
- * Order is deliberate. Skim-friendly: a visitor can stop after the hero
- * and still know what AnnexKit is; reach the bottom and they have all
- * three of (capability, fit, price). The architecture and feature
- * sections are the "engineer-skim" middle; comparison + pricing are
- * the "buyer-skim" middle.
+ * Order is the pitch:
+ *   1. Hero        — what AnnexKit does, in one breath
+ *   2. Stakes      — why now (AI Act countdown, fines, articles in scope)
+ *   3. HowItWorks  — three steps + the four invariants under the hood
+ *   4. TrustPreview— what the buyer's customers will see
+ *   5. Comparison  — where AnnexKit sits next to obs tools & gov platforms
+ *   6. FinalCTA    — talk-to-founder, mailto (NOT a second "Get started")
  *
- * If a section starts feeling overloaded, refactor inside its own file
- * — keep this orchestrator as a one-line-per-section index.
+ * Removed in 2026-05-24 redesign:
+ *   - Architecture (box-and-arrows diagram) → fused into HowItWorks as a
+ *     compact "Under the hood" strip with the four invariants
+ *   - FeatureGrid (6 cards) → the relevant facts now live in the trust
+ *     preview + comparison + final-cta micro-copy
+ *   - PricingTeaser → replaced by a single contextual link in FinalCTA;
+ *     the dedicated /pricing page does the buying work
+ *
+ * CTA hierarchy (was a single "Get started" repeated, now escalates):
+ *   - Hero primary       → /pricing       ("see what hosted costs")
+ *   - Hero secondary     → GitHub repo    ("self-host route")
+ *   - FinalCTA primary   → mailto founder ("talk to a human")
+ *   - FinalCTA secondary → GitHub repo    ("still on the fence")
+ *
+ * If a section starts feeling overloaded, refactor inside its own file —
+ * keep this orchestrator as a one-line-per-section index.
  */
 
-import { Architecture } from "@/components/landing/architecture";
 import { Comparison } from "@/components/landing/comparison";
-import { FeatureGrid } from "@/components/landing/feature-grid";
 import { FinalCTA } from "@/components/landing/final-cta";
 import { Hero } from "@/components/landing/hero";
 import { HowItWorks } from "@/components/landing/how-it-works";
-import { PricingTeaser } from "@/components/landing/pricing-teaser";
 import { Stakes } from "@/components/landing/stakes";
 import { TrustPreview } from "@/components/landing/trust-preview";
 
@@ -34,11 +47,8 @@ export default function HomePage() {
       <Hero />
       <Stakes />
       <HowItWorks />
-      <Architecture />
       <TrustPreview />
-      <FeatureGrid />
       <Comparison />
-      <PricingTeaser />
       <FinalCTA />
     </>
   );

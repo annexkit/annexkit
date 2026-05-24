@@ -88,7 +88,7 @@ export function Comparison() {
                     AnnexKit
                   </div>
                   <div className="mt-0.5 text-xs text-muted-foreground">
-                    Open-core · EU-hosted · self-serve
+                    Open-core · EU-hosted · early access
                   </div>
                 </td>
                 <td className="px-5 py-5 text-foreground">
@@ -98,7 +98,7 @@ export function Comparison() {
                   </span>
                 </td>
                 <td className="px-5 py-5 text-foreground">
-                  €49 — €5K/mo
+                  €49/mo — €5K/yr
                 </td>
                 <td className="px-5 py-5 text-foreground">10 minutes</td>
                 <td className="px-5 py-5 text-foreground">

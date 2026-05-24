@@ -2,12 +2,19 @@
  * Hero — top of homepage. Two-column on desktop, stacked on mobile.
  *
  * Left: eyebrow + h1 + subhead + 2 CTAs (primary + outline).
- * Right: a code snippet rendered as a "fake terminal" so the engineer
- *        scrolling at 11pm sees what AnnexKit actually integrates with.
+ * Right: a code snippet rendered as an editorial excerpt (filename
+ *        caption, no fake browser chrome) so it reads as "code sample
+ *        from the docs" rather than "screenshot of a terminal".
  *
  * Backdrop: brand-wash radial gradient over a faint surface-grid. The
  * grid is subtle on purpose (40% opacity) so it telegraphs "code/IDE"
  * without competing with the foreground copy.
+ *
+ * CTA hierarchy note: the primary CTA points to /pricing (intent: "see
+ * the cost"), the secondary to the GitHub repo (intent: "self-host
+ * route"). The FinalCTA at the bottom of the page deliberately uses a
+ * *different* primary action (mailto founder) so the two bands don't
+ * cannibalise — see page.tsx orchestrator for the full hierarchy.
  */
 
 import Link from "next/link";
@@ -64,21 +71,25 @@ export function Hero() {
   );
 }
 
-/** Fake terminal showing the only integration step that matters. */
+/**
+ * Editorial code excerpt — the smallest possible illustration of "what
+ * AnnexKit actually integrates with". No fake browser chrome (traffic
+ * lights) — that pattern is the default on every dev-tool landing page
+ * shipped in the last three years and was flagged W5 in DESIGN_STRATEGY.
+ * Instead: a quiet filename caption above and a hairline divider, so
+ * the snippet reads as a doc excerpt, not a screenshot.
+ */
 function HeroCode() {
   return (
     <div className="surface-card relative flex flex-col overflow-hidden bg-card/80 p-0 shadow-lg backdrop-blur-sm">
-      {/* Window chrome */}
-      <div className="flex items-center justify-between border-b border-border/60 px-4 py-2.5">
-        <div className="flex gap-1.5">
-          <span className="size-2.5 rounded-full bg-muted-foreground/30" />
-          <span className="size-2.5 rounded-full bg-muted-foreground/30" />
-          <span className="size-2.5 rounded-full bg-muted-foreground/30" />
-        </div>
+      {/* Filename caption — quiet, no traffic lights */}
+      <div className="flex items-center justify-between border-b border-border/60 px-5 py-2.5">
         <span className="font-mono text-xs text-muted-foreground">
-          loan_screener.py
+          examples/loan_screener.py
         </span>
-        <span className="w-12" />
+        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+          python
+        </span>
       </div>
 
       {/* Code body */}
