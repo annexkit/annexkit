@@ -210,7 +210,7 @@ prod-deploy: prod-check ## Full deploy: git pull + rebuild + migrate (~2 min)
 	$(SSH) 'cd $(VPS_PROJECT_PATH) && APP_VERSION=$(APP_VERSION) $(COMPOSE_PROD) up -d --build'
 	@echo "-> Applying DB migrations..."
 	$(SSH) 'cd $(VPS_PROJECT_PATH) && $(COMPOSE_PROD) exec -T backend uv run alembic upgrade head'
-	@echo "Deploy complete. Health: https://annexkit.dev/health (version=$(APP_VERSION))"
+	@echo "Deploy complete (version=$(APP_VERSION)). Verify with: make prod-status"
 
 prod-deploy-backend: prod-check ## Deploy only the backend (faster — skips frontend rebuild)
 	@echo "-> Version: $(APP_VERSION)"

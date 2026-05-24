@@ -36,6 +36,22 @@ services:
     ports: !reset []
 
   backend:
+    # Override the dev `--reload` command — production runs a single
+    # worker without the file watcher. The reloader's parent-watcher
+    # pattern masks startup failures as "Up" containers (the parent
+    # stays alive after the child crashes), which we hit in prod when
+    # a new dep was in the image but missing from the stale anon volume.
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    # Drop the dev bind-mount (./backend:/app) and the anonymous
+    # /app/.venv volume — both cause stale state in prod:
+    #   - the bind mount would overlay the image's source with the
+    #     host's, undoing the build
+    #   - the anonymous /app/.venv persists across `up --build`, so a
+    #     newly-added pyproject dep stays missing until something else
+    #     opportunistically resyncs (e.g. `uv run alembic` during a
+    #     migration step). We keep only `docstore` for PDF persistence.
+    volumes: !override
+      - docstore:/data/documents
     ports: !reset []
     networks:
       - default
