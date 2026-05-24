@@ -115,7 +115,7 @@ export function SiteFooter() {
               <span className="inline-flex items-center gap-2">
                 <span
                   aria-hidden
-                  className="size-1.5 rounded-full bg-[var(--brand-cobalt)]"
+                  className="size-1.5 rounded-full bg-[var(--brand-accent)]"
                 />
                 EU-hosted · Falkenstein / Helsinki
               </span>

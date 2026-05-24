@@ -510,7 +510,7 @@ function PricingHero() {
         <span className="eyebrow">Pricing</span>
         <h1 className="text-balance text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
           Same pipeline.{" "}
-          <span className="text-[var(--brand-cobalt)]">
+          <span className="text-[var(--brand-accent)]">
             Pick your tier.
           </span>
         </h1>
@@ -546,7 +546,7 @@ function TierGrid() {
             doesn't apologise. */}
         <div className="mx-auto mt-10 max-w-3xl space-y-2 text-center text-sm text-muted-foreground">
           <p>
-            <sup className="mr-0.5 text-[var(--brand-cobalt)]">¹</sup>
+            <sup className="mr-0.5 text-[var(--brand-accent)]">¹</sup>
             Volume caps are <strong className="text-foreground">
               fair-use indicators
             </strong>{" "}
@@ -573,7 +573,7 @@ function TierCard({ tier }: { tier: Tier }) {
       className={cn(
         "surface-card flex scroll-mt-20 flex-col gap-5 p-6",
         tier.highlight &&
-          "ring-2 ring-[var(--brand-cobalt)] ring-offset-2 ring-offset-background",
+          "ring-2 ring-[var(--brand-accent)] ring-offset-2 ring-offset-background",
       )}
     >
       <div className="flex items-center justify-between">
@@ -581,7 +581,7 @@ function TierCard({ tier }: { tier: Tier }) {
           {tier.name}
         </h2>
         {tier.highlight && (
-          <span className="rounded-full bg-[var(--brand-cobalt)]/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--brand-cobalt)]">
+          <span className="rounded-full bg-[var(--brand-accent)]/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--brand-accent)]">
             Most picked
           </span>
         )}
@@ -608,11 +608,11 @@ function TierCard({ tier }: { tier: Tier }) {
           const showFootnote = tier.hasFairUse && idx === 0;
           return (
             <li key={feature} className="flex items-start gap-2">
-              <Check className="mt-0.5 size-4 shrink-0 text-[var(--brand-cobalt)]" />
+              <Check className="mt-0.5 size-4 shrink-0 text-[var(--brand-accent)]" />
               <span className="text-foreground/90">
                 <FeatureText text={feature} />
                 {showFootnote && (
-                  <sup className="ml-0.5 text-[var(--brand-cobalt)]">¹</sup>
+                  <sup className="ml-0.5 text-[var(--brand-accent)]">¹</sup>
                 )}
               </span>
             </li>
@@ -702,7 +702,7 @@ function FAQ() {
           Still got questions?{" "}
           <Link
             href="mailto:founder@annexkit.dev"
-            className="text-[var(--brand-cobalt)] underline-offset-4 hover:underline"
+            className="text-[var(--brand-accent)] underline-offset-4 hover:underline"
           >
             founder@annexkit.dev
           </Link>{" "}

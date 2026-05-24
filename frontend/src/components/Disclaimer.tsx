@@ -13,7 +13,7 @@
 export function Disclaimer() {
   return (
     <aside className="rounded-lg border border-border bg-secondary/60 p-4 text-sm text-foreground">
-      <p className="border-l-2 border-[var(--brand-cobalt)] pl-3">
+      <p className="border-l-2 border-[var(--brand-accent)] pl-3">
         <strong className="font-semibold">
           AnnexKit is not a law firm / AnnexKit non è uno studio legale.
         </strong>{" "}

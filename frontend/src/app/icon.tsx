@@ -36,7 +36,7 @@ export default async function Icon() {
         style={{
           width: "100%",
           height: "100%",
-          background: "#0a0d14",
+          background: "#110c05",
           borderRadius: 6,
           display: "flex",
           alignItems: "center",
@@ -71,7 +71,7 @@ export default async function Icon() {
             fontStyle: "italic",
             fontSize: 11,
             fontWeight: 700,
-            color: "#3d7aff",
+            color: "#3fbf86",
             lineHeight: 1,
             display: "flex",
           }}
@@ -86,7 +86,7 @@ export default async function Icon() {
             top: 14,
             width: 9,
             height: 1.5,
-            background: "#3d7aff",
+            background: "#3fbf86",
             borderRadius: 1,
           }}
         />

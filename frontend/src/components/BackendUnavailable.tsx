@@ -36,7 +36,7 @@ export function BackendUnavailable({
       <p>
         <a
           href="/"
-          className="inline-flex items-center gap-1 text-[var(--brand-cobalt)] underline-offset-4 hover:underline"
+          className="inline-flex items-center gap-1 text-[var(--brand-accent)] underline-offset-4 hover:underline"
         >
           ← Back to home
         </a>

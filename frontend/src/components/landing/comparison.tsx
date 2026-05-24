@@ -78,12 +78,12 @@ export function Comparison() {
                 <ComparisonRow key={row.category} row={row} />
               ))}
               {/* AnnexKit row, highlighted */}
-              <tr className="border-t border-border/60 bg-[var(--brand-cobalt)]/5">
+              <tr className="border-t border-border/60 bg-[var(--brand-accent)]/5">
                 <td className="px-5 py-5">
                   <div className="flex items-center gap-2 font-semibold text-foreground">
                     <span
                       aria-hidden
-                      className="size-1.5 rounded-full bg-[var(--brand-cobalt)]"
+                      className="size-1.5 rounded-full bg-[var(--brand-accent)]"
                     />
                     AnnexKit
                   </div>
@@ -92,7 +92,7 @@ export function Comparison() {
                   </div>
                 </td>
                 <td className="px-5 py-5 text-foreground">
-                  <span className="inline-flex items-center gap-1.5 font-medium text-[var(--brand-cobalt)]">
+                  <span className="inline-flex items-center gap-1.5 font-medium text-[var(--brand-accent)]">
                     <Check className="size-4" />
                     Annex III + IV native
                   </span>
@@ -102,7 +102,7 @@ export function Comparison() {
                 </td>
                 <td className="px-5 py-5 text-foreground">10 minutes</td>
                 <td className="px-5 py-5 text-foreground">
-                  <Check className="size-4 text-[var(--brand-cobalt)]" />
+                  <Check className="size-4 text-[var(--brand-accent)]" />
                 </td>
               </tr>
             </tbody>

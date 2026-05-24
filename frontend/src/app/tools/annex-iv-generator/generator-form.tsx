@@ -263,7 +263,7 @@ export function GeneratorForm({ rules }: { rules: AnnexRules }) {
           onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
             setState({ ...state, purpose: e.target.value })
           }
-          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-cobalt)]"
+          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-accent)]"
           placeholder="e.g. CV screening AI for HR. Filters incoming candidates against role criteria, produces a ranked shortlist for human recruiters."
         />
         <p className="mt-1 text-xs text-muted-foreground">
@@ -405,7 +405,7 @@ export function GeneratorForm({ rules }: { rules: AnnexRules }) {
             setState({ ...state, email: e.target.value })
           }
           placeholder="founder@your-company.example"
-          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-cobalt)]"
+          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-accent)]"
         />
       </Section>
 
@@ -499,7 +499,7 @@ function CheckRow({
       className={cn(
         "flex cursor-pointer items-start gap-3 rounded-md border p-3 transition-colors",
         checked
-          ? "border-[var(--brand-cobalt)] bg-[var(--brand-cobalt)]/5"
+          ? "border-[var(--brand-accent)] bg-[var(--brand-accent)]/5"
           : "border-input hover:border-muted-foreground",
       )}
     >
@@ -548,7 +548,7 @@ function TextInput({
         maxLength={maxLength}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-cobalt)]"
+        className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--brand-accent)]"
       />
     </div>
   );

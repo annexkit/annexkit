@@ -226,7 +226,7 @@ export default async function LoggingSchemaPage() {
           The current shape comes from the AnnexKit SDK{" "}
           <Link
             href="/docs/sdk-quickstart"
-            className="text-[var(--brand-cobalt)] underline-offset-4 hover:underline"
+            className="text-[var(--brand-accent)] underline-offset-4 hover:underline"
           >
             wire format
           </Link>{" "}

@@ -54,7 +54,7 @@ export function ToolsCrossLinks({ exclude }: { exclude: string }) {
               href={l.href}
               className="flex items-start gap-4 px-5 py-4 transition hover:bg-secondary/40"
             >
-              <ArrowUpRight className="mt-0.5 size-4 shrink-0 text-[var(--brand-cobalt)]" />
+              <ArrowUpRight className="mt-0.5 size-4 shrink-0 text-[var(--brand-accent)]" />
               <div className="flex flex-col gap-1">
                 <span className="text-sm font-semibold tracking-tight text-foreground">
                   {l.label}

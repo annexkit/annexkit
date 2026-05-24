@@ -160,7 +160,7 @@ export function SchemaTool({ schema }: { schema: AnnotatedSchema }) {
           </Button>
         </div>
 
-        <div className="rounded-lg border border-[var(--brand-cobalt)]/40 bg-[var(--brand-cobalt)]/5 p-6">
+        <div className="rounded-lg border border-[var(--brand-accent)]/40 bg-[var(--brand-accent)]/5 p-6">
           <h3 className="mb-2 text-lg font-semibold text-foreground">
             Annotated schema (v1)
           </h3>

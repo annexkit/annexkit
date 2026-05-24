@@ -55,21 +55,21 @@ export function TrustPreview() {
             <li className="flex items-start gap-2">
               <span
                 aria-hidden
-                className="mt-2 size-1.5 shrink-0 rounded-full bg-[var(--brand-cobalt)]"
+                className="mt-2 size-1.5 shrink-0 rounded-full bg-[var(--brand-accent)]"
               />
               Risk-tier breakdown per declared system
             </li>
             <li className="flex items-start gap-2">
               <span
                 aria-hidden
-                className="mt-2 size-1.5 shrink-0 rounded-full bg-[var(--brand-cobalt)]"
+                className="mt-2 size-1.5 shrink-0 rounded-full bg-[var(--brand-accent)]"
               />
               Annex III categories + Article 50 triggers, in plain text
             </li>
             <li className="flex items-start gap-2">
               <span
                 aria-hidden
-                className="mt-2 size-1.5 shrink-0 rounded-full bg-[var(--brand-cobalt)]"
+                className="mt-2 size-1.5 shrink-0 rounded-full bg-[var(--brand-accent)]"
               />
               Whitelist-redacted provider info (no contact emails leak)
             </li>
@@ -162,7 +162,7 @@ export function TrustPreview() {
             </ul>
 
             {/* Click affordance */}
-            <div className="flex items-center gap-1 pt-1 text-xs font-medium text-[var(--brand-cobalt)]">
+            <div className="flex items-center gap-1 pt-1 text-xs font-medium text-[var(--brand-accent)]">
               Open the live page
               <ChevronRight className="size-3 transition-transform group-hover:translate-x-0.5" />
             </div>

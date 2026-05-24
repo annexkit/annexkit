@@ -32,7 +32,7 @@ export function Hero() {
           <span className="eyebrow">EU AI Act compliance pipeline</span>
           <h1 className="text-balance text-5xl font-bold tracking-tight text-foreground sm:text-6xl">
             Audit-ready{" "}
-            <span className="text-[var(--brand-cobalt)]">Annex IV</span>{" "}
+            <span className="text-[var(--brand-accent)]">Annex IV</span>{" "}
             docs from your LLM telemetry.
           </h1>
           <p className="max-w-xl text-lg leading-relaxed text-muted-foreground">
@@ -95,9 +95,9 @@ function HeroCode() {
       {/* Code body */}
       <pre className="overflow-x-auto p-5 font-mono text-[13px] leading-relaxed">
         <code>
-          <span className="text-[var(--brand-cobalt)]">from</span>{" "}
+          <span className="text-[var(--brand-accent)]">from</span>{" "}
           <span className="text-foreground">annexkit</span>{" "}
-          <span className="text-[var(--brand-cobalt)]">import</span>{" "}
+          <span className="text-[var(--brand-accent)]">import</span>{" "}
           <span className="text-foreground">track</span>
           {"\n\n"}
           <span className="text-muted-foreground">
@@ -121,11 +121,11 @@ function HeroCode() {
             )
           </span>
           {"\n"}
-          <span className="text-[var(--brand-cobalt)]">def</span>{" "}
+          <span className="text-[var(--brand-accent)]">def</span>{" "}
           <span className="text-foreground">screen</span>(applicant):
           {"\n"}
           {"    "}
-          <span className="text-[var(--brand-cobalt)]">return</span> openai
+          <span className="text-[var(--brand-accent)]">return</span> openai
           .chat.completions.create(
           {"\n"}
           {"        "}model=
@@ -158,7 +158,7 @@ function HeroCode() {
 
       {/* Footer hint */}
       <div className="border-t border-border/60 bg-secondary/40 px-5 py-3 text-xs text-muted-foreground">
-        <span className="text-[var(--brand-cobalt)]">▸</span>{" "}
+        <span className="text-[var(--brand-accent)]">▸</span>{" "}
         Spans ship to the collector. Annex IV PDF generates on demand.
       </div>
     </div>

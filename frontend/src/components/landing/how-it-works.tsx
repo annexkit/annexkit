@@ -95,7 +95,7 @@ function Step({ n, title, body, code, language }: StepProps) {
   return (
     <li className="surface-card flex flex-col gap-5 p-6">
       <div className="flex items-center gap-3">
-        <span className="display-num inline-flex size-9 items-center justify-center rounded-md bg-[var(--brand-cobalt)]/10 text-base font-semibold text-[var(--brand-cobalt)]">
+        <span className="display-num inline-flex size-9 items-center justify-center rounded-md bg-[var(--brand-accent)]/10 text-base font-semibold text-[var(--brand-accent)]">
           {n}
         </span>
         <h3 className="text-lg font-semibold tracking-tight text-foreground">
@@ -190,8 +190,8 @@ function Invariant({ icon: Icon, art, title, body }: InvariantProps) {
   return (
     <li className="rounded-md border border-border/70 bg-background/60 p-4">
       <div className="flex items-center gap-2">
-        <Icon className="size-3.5 text-[var(--brand-cobalt)]" aria-hidden />
-        <span className="rounded-sm bg-[var(--brand-cobalt)]/10 px-1.5 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wide text-[var(--brand-cobalt)]">
+        <Icon className="size-3.5 text-[var(--brand-accent)]" aria-hidden />
+        <span className="rounded-sm bg-[var(--brand-accent)]/10 px-1.5 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wide text-[var(--brand-accent)]">
           {art}
         </span>
       </div>

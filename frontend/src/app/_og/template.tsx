@@ -83,7 +83,7 @@ export async function renderOg(input: OgInput): Promise<ImageResponse> {
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          background: "#0a0d14",
+          background: "#110c05",
           backgroundImage: [
             "radial-gradient(circle at 100% 0%, rgba(61,122,255,0.30) 0%, transparent 55%)",
             "radial-gradient(circle at 0% 100%, rgba(61,122,255,0.18) 0%, transparent 55%)",
@@ -104,7 +104,7 @@ export async function renderOg(input: OgInput): Promise<ImageResponse> {
               display: "flex",
             }}
           >
-            <span style={{ color: "#3d7aff" }}>a</span>
+            <span style={{ color: "#3fbf86" }}>a</span>
             <span>nnexkit</span>
           </span>
         </div>
@@ -165,7 +165,7 @@ export async function renderOg(input: OgInput): Promise<ImageResponse> {
                 width: 10,
                 height: 10,
                 borderRadius: 9999,
-                background: "#3d7aff",
+                background: "#3fbf86",
               }}
             />
             <span>annexkit.dev</span>
@@ -219,7 +219,7 @@ function Monogram(): ReactElement {
           fontWeight: 700,
           fontStyle: "italic",
           fontFamily: "EB Garamond",
-          color: "#3d7aff",
+          color: "#3fbf86",
           lineHeight: 1,
           display: "flex",
         }}
@@ -233,7 +233,7 @@ function Monogram(): ReactElement {
           top: 28,
           width: 18,
           height: 2.5,
-          background: "#3d7aff",
+          background: "#3fbf86",
           borderRadius: 1.5,
         }}
       />
@@ -262,7 +262,7 @@ function renderTitleWithAccents(
     .filter((p) => p !== "")
     .map((part, i) =>
       accents.includes(part) ? (
-        <span key={i} style={{ color: "#3d7aff" }}>
+        <span key={i} style={{ color: "#3fbf86" }}>
           {part}
         </span>
       ) : (

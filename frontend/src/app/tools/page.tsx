@@ -150,7 +150,7 @@ function Hero() {
           style={{ letterSpacing: "-0.03em" }}
         >
           EU AI Act tools,{" "}
-          <span className="text-[var(--brand-cobalt)]">
+          <span className="text-[var(--brand-accent)]">
             no account required.
           </span>
         </h1>
@@ -188,7 +188,7 @@ function ToolsGrid() {
                 className="surface-card surface-hoverable group flex flex-col gap-3 p-6 transition"
               >
                 <div className="flex items-center justify-between gap-3">
-                  <span className="inline-flex size-10 items-center justify-center rounded-lg bg-[var(--brand-cobalt)]/10 text-[var(--brand-cobalt)]">
+                  <span className="inline-flex size-10 items-center justify-center rounded-lg bg-[var(--brand-accent)]/10 text-[var(--brand-accent)]">
                     <Icon className="size-5" />
                   </span>
                   <span className="rounded-full bg-secondary px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
@@ -215,7 +215,7 @@ function ToolsGrid() {
           flowchart, embeddable trust badge. Subscribe at{" "}
           <a
             href="mailto:founder@annexkit.dev"
-            className="text-[var(--brand-cobalt)] underline-offset-4 hover:underline"
+            className="text-[var(--brand-accent)] underline-offset-4 hover:underline"
           >
             founder@annexkit.dev
           </a>{" "}

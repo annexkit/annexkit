@@ -58,7 +58,7 @@ export function NavLink({
         // padding box — reads as an underline, not a bottom border.
         <span
           aria-hidden
-          className="pointer-events-none absolute inset-x-3 -bottom-px h-[2px] rounded-full bg-[var(--brand-cobalt)]"
+          className="pointer-events-none absolute inset-x-3 -bottom-px h-[2px] rounded-full bg-[var(--brand-accent)]"
         />
       )}
     </Link>

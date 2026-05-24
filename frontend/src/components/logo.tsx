@@ -122,13 +122,13 @@ function CoreLetterform({
           fontWeight: 700,
           fontSize: 20,
         }}
-        fill="var(--brand-cobalt)"
+        fill="var(--brand-accent)"
       >
         iv
       </text>
       {/* Cobalt underline beneath the 'iv' — the citation-mark cue.
           Sits 2px under the iv baseline so it reads as a footnote ref. */}
-      <rect x={46} y={30} width={14} height={2} rx={1} fill="var(--brand-cobalt)" />
+      <rect x={46} y={30} width={14} height={2} rx={1} fill="var(--brand-accent)" />
     </g>
   );
 }
@@ -275,7 +275,7 @@ export function LogoWordmark({
     >
       <span
         aria-hidden
-        className={monoTone ? "" : "text-[var(--brand-cobalt)]"}
+        className={monoTone ? "" : "text-[var(--brand-accent)]"}
       >
         a
       </span>

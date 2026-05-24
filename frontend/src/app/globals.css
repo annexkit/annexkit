@@ -56,10 +56,10 @@
   /* Bespoke brand tokens — used by hand-built marketing components only.
      shadcn primitives stick to --primary/--secondary so the palette
      stays predictable. */
-  --color-brand-cobalt: var(--brand-cobalt);
-  --color-brand-cobalt-bright: var(--brand-cobalt-bright);
+  --color-brand-accent: var(--brand-accent);
+  --color-brand-accent-bright: var(--brand-accent-bright);
   --color-brand-ink: var(--brand-ink);
-  --color-brand-fog: var(--brand-fog);
+  --color-brand-canvas: var(--brand-canvas);
 
   /* Risk-tier palette — preserved from the Annex IV PDF, used by RiskBadge
      and any future status indicator. Never reuse these as primary brand.
@@ -82,8 +82,8 @@
    PREVIEW MODE — "Editorial Engineering" palette experiment.
 
    This file is the ONLY change for a preview swap. Token NAMES are kept
-   ("brand-cobalt", "primary", "ring", "accent", etc.) so no component
-   needs editing — they all read `var(--brand-cobalt)` and now get sage
+   ("brand-accent", "primary", "ring", "accent", etc.) so no component
+   needs editing — they all read `var(--brand-accent)` and now get sage
    instead of blue. The names lie semantically during preview ("cobalt"
    is now sage); rename in a follow-up commit if the preview lands.
 
@@ -138,10 +138,10 @@
   /* Brand tokens — names preserved as aliases. Values now point at sage
      + warm-ink. Rename to --brand-accent / --brand-canvas / etc. in a
      follow-up if the preview lands. */
-  --brand-cobalt: oklch(0.55 0.13 160);
-  --brand-cobalt-bright: oklch(0.62 0.15 160);
+  --brand-accent: oklch(0.55 0.13 160);
+  --brand-accent-bright: oklch(0.62 0.15 160);
   --brand-ink: oklch(0.18 0.02 80);
-  --brand-fog: oklch(0.94 0.012 80);
+  --brand-canvas: oklch(0.94 0.012 80);
 }
 
 .dark {
@@ -174,10 +174,10 @@
   --input: oklch(1 0 0 / 14%);
   --ring: oklch(0.72 0.14 160);
 
-  --brand-cobalt: oklch(0.72 0.14 160);
-  --brand-cobalt-bright: oklch(0.78 0.16 160);
+  --brand-accent: oklch(0.72 0.14 160);
+  --brand-accent-bright: oklch(0.78 0.16 160);
   --brand-ink: oklch(0.95 0.01 80);
-  --brand-fog: oklch(0.23 0.02 80);
+  --brand-canvas: oklch(0.23 0.02 80);
 }
 
 @layer base {
@@ -212,7 +212,7 @@
     outline-offset: 2px;
     box-shadow:
       0 0 0 2px var(--background),
-      0 0 0 3.5px var(--brand-cobalt);
+      0 0 0 3.5px var(--brand-accent);
     border-radius: var(--radius-sm);
   }
 
@@ -282,7 +282,7 @@
         oklch(0.55 0.2 250 / 14%) 0,
         transparent 55%
       ),
-      var(--brand-fog);
+      var(--brand-canvas);
   }
   .dark .brand-wash {
     background:
@@ -296,7 +296,7 @@
         oklch(0.55 0.2 250 / 18%) 0,
         transparent 55%
       ),
-      var(--brand-fog);
+      var(--brand-canvas);
   }
 
   /* Grid background — dev-tool empty-state texture. Reads as "code IDE"

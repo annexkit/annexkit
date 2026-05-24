@@ -68,7 +68,7 @@ export function FinalCTA() {
           Prefer to skim the cost first?{" "}
           <Link
             href="/pricing"
-            className="text-[var(--brand-cobalt)] underline-offset-4 hover:underline"
+            className="text-[var(--brand-accent)] underline-offset-4 hover:underline"
           >
             See pricing
           </Link>{" "}

@@ -78,7 +78,7 @@ export function LegalShell({
         <article className="legal-prose space-y-10">
           {preLaunch && <PreLaunchNotice />}
           {summary && (
-            <section className="surface-card border-l-2 border-l-[var(--brand-cobalt)] p-5 text-sm leading-relaxed text-muted-foreground">
+            <section className="surface-card border-l-2 border-l-[var(--brand-accent)] p-5 text-sm leading-relaxed text-muted-foreground">
               {summary}
             </section>
           )}
@@ -189,7 +189,7 @@ export function LegalProseStyles() {
       .legal-prose ul li { list-style: disc; }
       .legal-prose ol li { list-style: decimal; }
       .legal-prose a {
-        color: var(--brand-cobalt);
+        color: var(--brand-accent);
         text-underline-offset: 4px;
       }
       .legal-prose a:hover { text-decoration: underline; }
