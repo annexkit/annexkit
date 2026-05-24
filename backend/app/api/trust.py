@@ -20,10 +20,11 @@ is closed.
 
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, Request, status
 
 from app.api.deps import SessionDep
 from app.config import settings
+from app.rate_limit import limiter
 from app.schemas.trust import (
     TrustOverview,
     TrustSystemDetailResponse,
@@ -33,6 +34,14 @@ from app.services import trust_service
 
 router = APIRouter(prefix="/trust", tags=["trust"])
 
+# Public unauthenticated endpoints — rate-limited per IP to prevent
+# DOS. 60 req/min/IP is generous for legitimate browsing of a trust
+# page; aggressive enough to stop trivial bots. Cloudflare provides a
+# coarse fallback (~10K/5min/IP) but per-endpoint app-layer limit is
+# the right place. In-memory storage — see app/main.py for the Redis
+# upgrade path when we run >1 backend.
+_RATE_LIMIT = "60/minute"
+
 
 @router.get(
     "/{slug}",
@@ -41,10 +50,12 @@ router = APIRouter(prefix="/trust", tags=["trust"])
     description=(
         "Returns the tenant's name + count of declared AI systems "
         "broken down by EU AI Act risk tier. **No auth required** — "
-        "the slug acts as the public URL."
+        "the slug acts as the public URL. Rate-limited at "
+        f"{_RATE_LIMIT} per IP."
     ),
 )
-async def get_overview(slug: str, session: SessionDep) -> TrustOverview:
+@limiter.limit(_RATE_LIMIT)
+async def get_overview(request: Request, slug: str, session: SessionDep) -> TrustOverview:
     tenant = await trust_service.get_tenant_by_slug(session, slug)
     if tenant is None:
         raise _not_found()
@@ -56,7 +67,8 @@ async def get_overview(slug: str, session: SessionDep) -> TrustOverview:
     response_model=TrustSystemsResponse,
     summary="List the tenant's declared AI systems (public)",
 )
-async def list_systems(slug: str, session: SessionDep) -> TrustSystemsResponse:
+@limiter.limit(_RATE_LIMIT)
+async def list_systems(request: Request, slug: str, session: SessionDep) -> TrustSystemsResponse:
     tenant = await trust_service.get_tenant_by_slug(session, slug)
     if tenant is None:
         raise _not_found()
@@ -73,7 +85,10 @@ async def list_systems(slug: str, session: SessionDep) -> TrustSystemsResponse:
         "operational telemetry is not exposed."
     ),
 )
-async def get_system(slug: str, system_id: str, session: SessionDep) -> TrustSystemDetailResponse:
+@limiter.limit(_RATE_LIMIT)
+async def get_system(
+    request: Request, slug: str, system_id: str, session: SessionDep
+) -> TrustSystemDetailResponse:
     tenant = await trust_service.get_tenant_by_slug(session, slug)
     if tenant is None:
         raise _not_found()

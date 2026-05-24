@@ -27,12 +27,15 @@ from pathlib import Path
 from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
 from sqlalchemy import text
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.api.router import api_router
 from app.config import Settings, settings
 from app.database import engine
+from app.rate_limit import limiter
 
 logging.basicConfig(
     level=logging.INFO if settings.env != "dev" else logging.DEBUG,
@@ -184,6 +187,11 @@ app = FastAPI(
     openapi_url="/openapi.json",
     lifespan=lifespan,
 )
+
+# Wire the rate limiter onto the app + its exception handler.
+# Endpoints opt in via `@limiter.limit(...)` (see app/api/trust.py).
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # Order matters: CORS first so preflight responses also get the
 # Request-Id header; size limit before everything so bogus huge requests
