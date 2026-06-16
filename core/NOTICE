@@ -1,0 +1,36 @@
+Konformia Core (konformia-core)
+Copyright (c) 2026 Konformia
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option) any
+later version. The full text is in the LICENSE file in this directory.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+
+==============================================================================
+COPYRIGHT HOLDER'S RESERVATION — DUAL LICENSING
+==============================================================================
+
+Konformia is the SOLE copyright holder of konformia-core and offers it to the
+public under the AGPL-3.0 (above). As the copyright holder, Konformia ALSO
+reserves the right to use, modify, sublicense, and distribute this code under
+separate proprietary or commercial terms, without being bound by the AGPL.
+
+In particular, the closed-source Konformia platform (apps/konformia) embeds
+konformia-core under these reserved commercial rights — NOT under the AGPL
+public grant. Third parties receive only the AGPL grant.
+
+This dual-licensing posture is what allows an AGPL engine to sit beneath a
+proprietary product owned by the same entity (the pattern used by Sentry,
+MongoDB, GitLab and others). It works ONLY while Konformia holds the full
+rights to every line of core.
+
+To preserve it, third-party contributions to core/ are accepted EXCLUSIVELY
+under the Contributor License Agreement (see CLA.md at the repository root). Do
+not merge an external contribution into core/ without it.
+
+Need a commercial license that exempts a specific deployment from AGPL
+obligations? Contact: commercial@konformia.eu      [replace with real contact]

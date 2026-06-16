@@ -1,0 +1,45 @@
+[project]
+name = "konformia-core"
+version = "0.0.1"
+description = "Shared EU AI Act compliance engine — the single source of truth for the deterministic risk classifier, artifact generation, and the append-only audit log. Imported by both apps/annexkit and apps/konformia."
+readme = "README.md"
+requires-python = ">=3.13"
+# AGPL-3.0 to the public; Konformia owns the copyright and ALSO uses core under
+# reserved commercial terms in the proprietary platform (dual-licensing — see NOTICE).
+license = { text = "AGPL-3.0-or-later" }
+authors = [{ name = "Konformia" }]
+dependencies = [
+    # Kept deliberately small: core is a library both backends import in-process.
+    # No web framework, no HTTP server — it is NOT a microservice. Persistence-free
+    # (the data-layer decision), so no SQLAlchemy.
+    "pydantic>=2.0",
+    "jinja2>=3.1",
+]
+
+[project.optional-dependencies]
+# html_to_pdf lazy-imports WeasyPrint; the app backends already ship it (+ the
+# native cairo/pango libs). Declared here so `konformia-core[pdf]` is installable.
+pdf = ["weasyprint>=68.1"]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",
+    "ruff>=0.7",
+]
+
+[tool.ruff]
+# Match the app backends so core lints identically (it is imported by both).
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "N", "SIM", "RUF"]
+ignore = ["E501"]  # line-too-long handled by the formatter, like the apps
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["konformia_core"]

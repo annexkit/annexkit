@@ -1,0 +1,16 @@
+AnnexKit collector — GNU AGPL-3.0
+=================================
+
+The AnnexKit runtime collector in this directory (backend + frontend) is
+licensed under the GNU Affero General Public License, version 3.0. The full
+canonical text is in:
+
+  * apps/annexkit/backend/LICENSE
+  * apps/annexkit/frontend/LICENSE
+
+The collector imports the shared engine at ../../core (konformia-core), which
+is also AGPL-3.0 — so the combined open-source work is consistent copyleft.
+
+This is one package in an open-core monorepo. For the complete licensing map
+(SDK = MIT, core + collector = AGPL-3.0, Konformia platform = proprietary) and
+the dual-licensing rationale, see LICENSING.md at the repository root.
